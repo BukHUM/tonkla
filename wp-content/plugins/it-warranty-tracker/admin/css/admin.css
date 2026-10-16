@@ -1672,7 +1672,18 @@ body.itwt-modal-open {
 .itwt-list-panel .wp-list-table .column-actions,
 .itwt-panel__table .wp-list-table .column-actions {
 	white-space: nowrap;
-	width: 1%;
+	width: auto;
+	min-width: 14rem;
+	vertical-align: middle;
+}
+
+.itwt-list-panel .column-actions .itwt-row-actions,
+.itwt-panel__table .column-actions .itwt-row-actions,
+.itwt-list-panel .wp-list-table .column-actions .itwt-row-actions {
+	display: inline-flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	max-width: none;
 }
 
 .itwt-list-panel .itwt-tag-link,
@@ -2918,35 +2929,56 @@ body.itwt-modal-open {
 	max-width: none;
 }
 
-/* Asset list QR column */
-.wp-list-table .column-qr {
-	width: 72px;
-	text-align: center;
+/* Asset list QR modal */
+.itwt-modal__panel--qr {
+	max-width: 22rem;
 }
 
-.itwt-list-qr {
-	display: inline-flex;
+.itwt-asset-qr {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	gap: 10px;
+}
+
+.itwt-asset-qr__tag {
+	margin: 0;
+	font-size: 14px;
+}
+
+.itwt-asset-qr__canvas {
+	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 56px;
-	height: 56px;
-	border: 1px solid var(--itwt-border, #c3c4c7);
-	border-radius: var(--itwt-radius, 4px);
+	min-height: 180px;
+	padding: 12px;
+	border: 1px solid var(--itwt-border);
+	border-radius: var(--itwt-radius-lg, 8px);
 	background: #fff;
-	line-height: 0;
-	text-decoration: none;
 }
 
-.itwt-list-qr:focus {
-	border-color: var(--itwt-accent, #2271b1);
-	outline: none;
-}
-
-.itwt-list-qr__canvas,
-.itwt-list-qr__canvas img {
+.itwt-asset-qr__canvas img {
 	display: block;
-	width: 56px;
-	height: 56px;
+	width: 180px;
+	height: 180px;
+}
+
+.itwt-asset-qr__hint {
+	margin: 0;
+	color: var(--itwt-muted);
+	font-size: 13px;
+}
+
+.itwt-asset-qr__url {
+	margin: 0;
+	max-width: 100%;
+	word-break: break-all;
+	font-size: 12px;
+}
+
+.itwt-asset-qr__url a {
+	color: var(--itwt-accent, #2271b1);
 }
 
 /* Print labels */

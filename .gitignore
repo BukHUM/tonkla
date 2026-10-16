@@ -40,6 +40,9 @@ secrets.json
 **/secrets/
 **/private/
 
+# Local ops docs (production git, Sonar, contacts — keep on server/dev, not in repo)
+/docs/
+
 # ------------------------------------------------------------
 # wp-content: track only our theme + custom plugins
 # ------------------------------------------------------------

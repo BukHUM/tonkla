@@ -11,7 +11,7 @@
 ├── wp-content/
 │   ├── themes/tonkla/               ← theme
 │   └── plugins/it-warranty-tracker/ ← custom plugin
-├── docs/
+├── docs/                            ← local only (gitignore)
 ├── sonarqube/*.example
 ├── AGENTS.md
 └── README.md
@@ -23,7 +23,8 @@
 | :--- | :--- |
 | Theme | `wp-content/themes/tonkla/` |
 | IT Warranty Tracker | `wp-content/plugins/it-warranty-tracker/` |
-| สเปก / เอกสาร | `docs/` (เช่น `warranty-checker-plugin.md`, `sonarqube-setup.md`) |
+
+โฟลเดอร์ `docs/` ถูก ignore — เก็บคู่มือคอนฟิคไว้ในเครื่อง/เซิร์ฟเวอร์เอง (ไม่ขึ้น GitHub)
 
 ## ติดตั้งบนเซิร์ฟเวอร์ / เครื่องใหม่
 

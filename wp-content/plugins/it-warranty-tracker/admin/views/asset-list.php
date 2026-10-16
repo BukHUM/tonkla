@@ -162,4 +162,24 @@ $has_items  = $total > 0;
 			</form>
 		</div>
 	</div>
+
+	<div class="itwt-modal" id="itwt-asset-qr-modal" hidden aria-hidden="true">
+		<button type="button" class="itwt-modal__backdrop" data-itwt-modal-close aria-label="<?php esc_attr_e( 'ปิด', 'it-warranty-tracker' ); ?>"></button>
+		<div class="itwt-modal__panel itwt-modal__panel--qr" role="dialog" aria-modal="true" aria-labelledby="itwt-asset-qr-modal-title">
+			<header class="itwt-modal__header">
+				<h2 id="itwt-asset-qr-modal-title"><?php esc_html_e( 'QR Code', 'it-warranty-tracker' ); ?></h2>
+				<button type="button" class="itwt-modal__close" data-itwt-modal-close aria-label="<?php esc_attr_e( 'ปิด', 'it-warranty-tracker' ); ?>">&times;</button>
+			</header>
+			<div class="itwt-modal__body itwt-asset-qr">
+				<p class="itwt-asset-qr__tag"><code id="itwt-asset-qr-tag"></code></p>
+				<div class="itwt-asset-qr__canvas" id="itwt-asset-qr-canvas" aria-hidden="true"></div>
+				<p class="itwt-asset-qr__hint"><?php esc_html_e( 'สแกนเพื่อเปิดหน้าเช็คประกัน', 'it-warranty-tracker' ); ?></p>
+				<p class="itwt-asset-qr__url"><a id="itwt-asset-qr-link" href="#" target="_blank" rel="noopener noreferrer"></a></p>
+			</div>
+			<footer class="itwt-modal__footer">
+				<button type="button" class="itwt-action" data-itwt-modal-close><?php esc_html_e( 'ปิด', 'it-warranty-tracker' ); ?></button>
+				<a class="itwt-action itwt-action--primary" id="itwt-asset-qr-print" href="#"><?php esc_html_e( 'พิมพ์สติ๊กเกอร์', 'it-warranty-tracker' ); ?></a>
+			</footer>
+		</div>
+	</div>
 </div>

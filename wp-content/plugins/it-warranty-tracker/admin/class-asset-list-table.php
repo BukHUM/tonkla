@@ -49,7 +49,6 @@ final class Asset_List_Table extends \WP_List_Table {
 	public function get_columns(): array {
 		return array(
 			'cb'          => '<input type="checkbox" />',
-			'qr'          => __( 'QR', 'it-warranty-tracker' ),
 			'service_tag' => __( 'Service Tag', 'it-warranty-tracker' ),
 			'brand'       => __( 'ยี่ห้อ', 'it-warranty-tracker' ),
 			'model_name'  => __( 'รุ่น', 'it-warranty-tracker' ),
@@ -168,29 +167,6 @@ final class Asset_List_Table extends \WP_List_Table {
 	}
 
 	/**
-	 * Inline QR for lookup URL.
-	 *
-	 * @param object $item Row.
-	 */
-	protected function column_qr( $item ): string {
-		$url   = Settings::lookup_url( (string) $item->service_tag );
-		$print = admin_url( 'admin.php?page=itwt-print-label&ids=' . (int) $item->id );
-
-		return sprintf(
-			'<a class="itwt-list-qr" href="%1$s" title="%2$s" data-qr-url="%3$s" aria-label="%2$s"><span class="itwt-list-qr__canvas" aria-hidden="true"></span></a>',
-			esc_url( $print ),
-			esc_attr(
-				sprintf(
-					/* translators: %s: service tag */
-					__( 'พิมพ์สติ๊กเกอร์ QR ของ %s', 'it-warranty-tracker' ),
-					(string) $item->service_tag
-				)
-			),
-			esc_attr( $url )
-		);
-	}
-
-	/**
 	 * Service tag with actions.
 	 *
 	 * @param object $item Row.
@@ -208,8 +184,12 @@ final class Asset_List_Table extends \WP_List_Table {
 	protected function column_actions( $item ): string {
 		$edit  = admin_url( 'admin.php?page=itwt-assets&action=edit&id=' . (int) $item->id );
 		$print = admin_url( 'admin.php?page=itwt-print-label&ids=' . (int) $item->id );
+		$url   = Settings::lookup_url( (string) $item->service_tag );
+		$tag   = (string) $item->service_tag;
+
 		return '<div class="itwt-row-actions">'
 			. '<a class="itwt-row-action" href="' . esc_url( $edit ) . '">' . esc_html__( 'แก้ไข', 'it-warranty-tracker' ) . '</a>'
+			. '<button type="button" class="itwt-row-action itwt-open-asset-qr" data-qr-url="' . esc_attr( $url ) . '" data-qr-tag="' . esc_attr( $tag ) . '" data-qr-print="' . esc_attr( $print ) . '">' . esc_html__( 'QR Code', 'it-warranty-tracker' ) . '</button>'
 			. '<a class="itwt-row-action" href="' . esc_url( $print ) . '">' . esc_html__( 'พิมพ์สติ๊กเกอร์', 'it-warranty-tracker' ) . '</a>'
 			. '</div>';
 	}
