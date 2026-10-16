@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<ruleset name="IT Warranty Tracker">
+	<description>WordPress Coding Standards for IT Warranty Tracker</description>
+
+	<file>.</file>
+
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/admin/js/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+
+	<arg name="extensions" value="php"/>
+	<arg value="s"/>
+	<arg name="basepath" value="."/>
+	<arg name="parallel" value="4"/>
+
+	<rule ref="WordPress">
+		<exclude name="WordPress.Files.FileName"/>
+	</rule>
+
+	<config name="minimum_supported_wp_version" value="6.0"/>
+	<config name="testVersion" value="8.1-"/>
+
+	<rule ref="PHPCompatibilityWP"/>
+</ruleset>

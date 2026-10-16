@@ -1,0 +1,5 @@
+---
+description: กฎหลักของโปรเจกต์ WordPress (performance, OWASP, DRY, database, UI)
+alwaysApply: true
+---
+ทำตามกฎทั้งหมดในไฟล์ @AGENTS.md ที่ root ของโปรเจกต์อย่างเคร่งครัด

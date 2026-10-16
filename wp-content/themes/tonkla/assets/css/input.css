@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --tk-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --tk-duration: 320ms;
+    --tk-duration-slow: 560ms;
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+    }
+}
+
+@layer components {
+    .hero-bg {
+        background-color: #0f172a;
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310b981' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    /* Scroll reveal — applied by main.js */
+    .tk-reveal {
+        opacity: 0;
+        transform: translateY(18px);
+        transition:
+            opacity var(--tk-duration-slow) var(--tk-ease),
+            transform var(--tk-duration-slow) var(--tk-ease);
+        will-change: opacity, transform;
+    }
+
+    .tk-reveal.is-visible {
+        opacity: 1;
+        transform: none;
+        will-change: auto;
+    }
+
+    .tk-reveal-delay-1 {
+        transition-delay: 80ms;
+    }
+
+    .tk-reveal-delay-2 {
+        transition-delay: 160ms;
+    }
+
+    .tk-reveal-delay-3 {
+        transition-delay: 240ms;
+    }
+
+    /* Mobile menu panel */
+    #mobile-menu {
+        max-height: 0;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        overflow: hidden;
+        pointer-events: none;
+        transition:
+            max-height var(--tk-duration-slow) var(--tk-ease),
+            opacity var(--tk-duration) var(--tk-ease),
+            transform var(--tk-duration) var(--tk-ease),
+            visibility 0s linear var(--tk-duration);
+    }
+
+    #mobile-menu.is-open {
+        max-height: calc(100vh - 80px);
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        pointer-events: auto;
+        overflow-y: auto;
+        transition:
+            max-height var(--tk-duration-slow) var(--tk-ease),
+            opacity var(--tk-duration) var(--tk-ease),
+            transform var(--tk-duration) var(--tk-ease),
+            visibility 0s linear 0s;
+    }
+
+    /* Soften default Tailwind "transition" feel site-wide */
+    a,
+    button,
+    .group,
+    input,
+    textarea,
+    select {
+        transition-timing-function: var(--tk-ease);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tk-reveal,
+    .tk-reveal.is-visible,
+    #mobile-menu,
+    #mobile-menu.is-open {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+        max-height: none !important;
+        visibility: visible !important;
+        will-change: auto !important;
+    }
+
+    #mobile-menu:not(.is-open) {
+        display: none;
+    }
+}
+
+/* Newsletter honeypot — keep off-screen without inline styles */
+.tonkla-hp-field {
+    position: absolute;
+    left: -9999px;
+    height: 0;
+    overflow: hidden;
+}
+
+/* Sitemap page */
+.sitemap-list ul.children {
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding-left: 1rem;
+    border-left: 2px solid #e2e8f0;
+}
+
+.sitemap-list li {
+    margin-bottom: 0.5rem;
+}
+
+.sitemap-list a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #475569;
+    transition: color 0.2s;
+}
+
+.sitemap-list a:hover {
+    color: var(--color-brand, #10b981);
+}
+
+.sitemap-list a::before {
+    content: "\f105";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 0.75rem;
+    color: #cbd5e1;
+}

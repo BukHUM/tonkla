@@ -1,0 +1,63 @@
+@echo off
+setlocal EnableExtensions
+
+REM === Config (do not commit a real token) ===
+REM Copy this file to scan.bat and set SONAR_TOKEN locally:
+REM   copy scan.bat.example scan.bat
+set "PROJECT_DIR=C:\laragon\www\tonkla"
+set "SONAR_HOST=https://sonarqube.tonkla.co"
+set "PROJECT_KEY=tonkla"
+
+REM Set token here for local runs, or set SONAR_TOKEN in the environment first.
+REM set "SONAR_TOKEN=sqp_xxxxxxxx"
+if not defined SONAR_TOKEN set "SONAR_TOKEN="
+if "%SONAR_TOKEN%"=="" (
+    echo.
+    echo SONAR_TOKEN is empty. Paste your SonarQube user token, then press Enter.
+    set /p "SONAR_TOKEN=Token: "
+)
+if "%SONAR_TOKEN%"=="" (
+    echo ERROR: SONAR_TOKEN is required.
+    pause
+    exit /b 1
+)
+
+if not exist "%PROJECT_DIR%" (
+    echo ERROR: PROJECT_DIR not found: %PROJECT_DIR%
+    pause
+    exit /b 1
+)
+
+if not exist "%PROJECT_DIR%\sonar-project.properties" (
+    echo ERROR: Missing sonar-project.properties in PROJECT_DIR
+    pause
+    exit /b 1
+)
+
+echo Starting SonarQube scan...
+echo Project: %PROJECT_KEY%
+echo Host:    %SONAR_HOST%
+echo Dir:     %PROJECT_DIR%
+echo Config:  sonar-project.properties
+echo.
+
+REM Analysis settings live in sonar-project.properties (exclusions + issue ignores).
+REM scm.disabled=true avoids Missing blob blame errors via Docker on Windows.
+docker run --rm ^
+    -e "SONAR_HOST_URL=%SONAR_HOST%" ^
+    -e "SONAR_TOKEN=%SONAR_TOKEN%" ^
+    -v "%PROJECT_DIR%:/usr/src" ^
+    -w /usr/src ^
+    sonarsource/sonar-scanner-cli ^
+    -Dsonar.projectKey=%PROJECT_KEY% ^
+    -Dsonar.scm.disabled=true
+
+set "ERR=%ERRORLEVEL%"
+echo.
+if not "%ERR%"=="0" (
+    echo Scan FAILED - exit %ERR%
+) else (
+    echo Scan completed.
+)
+pause
+exit /b %ERR%

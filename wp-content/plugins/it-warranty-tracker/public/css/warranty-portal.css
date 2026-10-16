@@ -1,0 +1,250 @@
+/* IT Warranty Tracker — Public portal */
+
+.itwt-portal {
+	--itwt-border: var(--wp--preset--color--contrast, #1d2327);
+	--itwt-muted: var(--wp--preset--color--contrast-2, #50575e);
+	--itwt-bg: var(--wp--preset--color--base, #fff);
+	--itwt-accent: var(--wp--preset--color--primary, #0b5cab);
+	--itwt-ok: #0a7a3e;
+	--itwt-warn: #8a5b00;
+	--itwt-bad: #b32d2e;
+	--itwt-radius: 4px;
+	--itwt-space: 16px;
+	max-width: 40rem;
+	margin: 0 auto;
+	color: var(--itwt-border);
+	font-size: 1rem;
+	line-height: 1.6;
+}
+
+.itwt-search__label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 8px;
+}
+
+.itwt-search__row {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.itwt-search__input,
+.itwt-dialog input[type="text"],
+.itwt-dialog input[type="tel"],
+.itwt-dialog select,
+.itwt-dialog textarea {
+	flex: 1 1 12rem;
+	min-height: 44px;
+	padding: 8px 12px;
+	border: 1px solid var(--itwt-border);
+	border-radius: var(--itwt-radius);
+	background: var(--itwt-bg);
+	font: inherit;
+}
+
+.itwt-search__input:focus,
+.itwt-dialog input:focus,
+.itwt-dialog select:focus,
+.itwt-dialog textarea:focus,
+.itwt-btn:focus {
+	outline: none;
+	border-color: var(--itwt-accent);
+}
+
+.itwt-btn {
+	min-height: 44px;
+	padding: 8px 16px;
+	border: 1px solid var(--itwt-border);
+	border-radius: var(--itwt-radius);
+	background: var(--itwt-bg);
+	color: var(--itwt-border);
+	font: inherit;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.itwt-btn--primary {
+	background: var(--itwt-accent);
+	border-color: var(--itwt-accent);
+	color: #fff;
+}
+
+.itwt-btn--ghost {
+	background: transparent;
+}
+
+.itwt-btn--renew {
+	border-color: var(--itwt-warn);
+	color: var(--itwt-warn);
+}
+
+.itwt-status {
+	margin-top: var(--itwt-space);
+	padding: 12px;
+	border: 1px solid var(--itwt-border);
+	border-radius: var(--itwt-radius);
+}
+
+.itwt-status[data-state="error"],
+.itwt-status[data-state="rate"] {
+	border-color: var(--itwt-bad);
+	color: var(--itwt-bad);
+}
+
+.itwt-result {
+	margin-top: 24px;
+}
+
+.itwt-card {
+	border: 1px solid var(--itwt-border);
+	border-radius: var(--itwt-radius);
+	padding: var(--itwt-space);
+	background: var(--itwt-bg);
+}
+
+.itwt-card__meta {
+	display: grid;
+	gap: 4px;
+	margin-bottom: 16px;
+}
+
+.itwt-card__tag {
+	font-family: ui-monospace, monospace;
+	font-size: 1.25rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+}
+
+.itwt-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	border: 1px solid currentColor;
+	border-radius: var(--itwt-radius);
+	font-weight: 600;
+}
+
+.itwt-badge svg {
+	width: 1.25rem;
+	height: 1.25rem;
+	flex-shrink: 0;
+}
+
+.itwt-badge--covered {
+	color: var(--itwt-ok);
+}
+
+.itwt-badge--expiring {
+	color: var(--itwt-warn);
+}
+
+.itwt-badge--expired,
+.itwt-badge--void,
+.itwt-badge--decommissioned {
+	color: var(--itwt-bad);
+}
+
+.itwt-progress {
+	margin: 12px 0 16px;
+	height: 8px;
+	border: 1px solid var(--itwt-border);
+	border-radius: var(--itwt-radius);
+	overflow: hidden;
+	background: transparent;
+}
+
+.itwt-progress__bar {
+	height: 100%;
+	background: var(--itwt-accent);
+}
+
+.itwt-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 16px 0;
+}
+
+.itwt-section-title {
+	font-size: 1rem;
+	font-weight: 700;
+	margin: 20px 0 8px;
+}
+
+.itwt-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.itwt-list li {
+	padding: 8px 0;
+	border-bottom: 1px solid color-mix(in srgb, var(--itwt-border) 25%, transparent);
+}
+
+.itwt-list li:last-child {
+	border-bottom: 0;
+}
+
+.itwt-choices button {
+	width: 100%;
+	text-align: left;
+	margin-bottom: 8px;
+}
+
+.itwt-hp {
+	position: absolute;
+	left: -9999px;
+	height: 0;
+	overflow: hidden;
+}
+
+.itwt-dialog {
+	border: 1px solid var(--itwt-border);
+	border-radius: var(--itwt-radius);
+	padding: 0;
+	max-width: 28rem;
+	width: calc(100% - 2rem);
+}
+
+.itwt-dialog::backdrop {
+	background: rgb(0 0 0 / 0.4);
+}
+
+.itwt-dialog__form {
+	padding: var(--itwt-space);
+}
+
+.itwt-dialog__title {
+	margin: 0 0 12px;
+	font-size: 1.15rem;
+}
+
+.itwt-dialog__form p {
+	margin: 0 0 12px;
+}
+
+.itwt-dialog__form label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+
+.itwt-consent {
+	font-weight: 400 !important;
+	display: flex !important;
+	gap: 8px;
+	align-items: flex-start;
+}
+
+.itwt-dialog__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.itwt-dialog__msg {
+	margin-top: 12px;
+}

@@ -1,0 +1,238 @@
+/* IT Warranty Tracker — Admin */
+
+.itwt-wrap {
+	--itwt-border: #c3c4c7;
+	--itwt-text: #1d2327;
+	--itwt-muted: #646970;
+	--itwt-accent: #2271b1;
+	--itwt-radius: 4px;
+	--itwt-space: 16px;
+}
+
+.itwt-dash-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	gap: var(--itwt-space);
+	margin: 24px 0;
+}
+
+.itwt-stat {
+	border: 1px solid var(--itwt-border);
+	border-radius: var(--itwt-radius);
+	padding: var(--itwt-space);
+	background: #fff;
+}
+
+.itwt-stat__label {
+	display: block;
+	color: var(--itwt-muted);
+	font-size: 12px;
+	margin-bottom: 8px;
+}
+
+.itwt-stat__value {
+	font-size: 28px;
+	font-weight: 600;
+	color: var(--itwt-text);
+	line-height: 1.2;
+}
+
+.itwt-spec-builder {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+.itwt-spec-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+.itwt-spec-row input[type="text"] {
+	min-width: 160px;
+}
+
+.itwt-import-form {
+	margin: 16px 0;
+	padding: 12px;
+	border: 1px solid var(--itwt-border);
+	border-radius: var(--itwt-radius);
+	background: #fff;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+.itwt-inline-status {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	align-items: center;
+}
+
+.itwt-request-detail {
+	margin-top: 8px;
+}
+
+.itwt-renew-form {
+	margin-top: 16px;
+	padding: 12px;
+	border: 1px solid var(--itwt-border);
+	border-radius: var(--itwt-radius);
+	background: #fff;
+}
+
+.itwt-asset-types {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-width: 640px;
+	margin-bottom: 8px;
+}
+
+.itwt-asset-type-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+.itwt-asset-type-row input[type="text"] {
+	min-width: 140px;
+}
+
+/* Asset list QR column */
+.wp-list-table .column-qr {
+	width: 72px;
+	text-align: center;
+}
+
+.itwt-list-qr {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+	border: 1px solid var(--itwt-border, #c3c4c7);
+	border-radius: var(--itwt-radius, 4px);
+	background: #fff;
+	line-height: 0;
+	text-decoration: none;
+}
+
+.itwt-list-qr:focus {
+	border-color: var(--itwt-accent, #2271b1);
+	outline: none;
+}
+
+.itwt-list-qr__canvas,
+.itwt-list-qr__canvas img {
+	display: block;
+	width: 56px;
+	height: 56px;
+}
+
+/* Print labels */
+.itwt-labels {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 24px;
+}
+
+.itwt-label {
+	border: 1px solid #000;
+	box-sizing: border-box;
+	padding: 4px 6px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+	page-break-inside: avoid;
+}
+
+.itwt-labels--50x30 .itwt-label {
+	width: 50mm;
+	height: 30mm;
+}
+
+.itwt-labels--60x40 .itwt-label {
+	width: 60mm;
+	height: 40mm;
+}
+
+.itwt-label__brand {
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 8px;
+	gap: 4px;
+}
+
+.itwt-label__logo {
+	max-height: 10mm;
+	width: auto;
+}
+
+.itwt-label__qr {
+	width: 16mm;
+	height: 16mm;
+}
+
+.itwt-labels--60x40 .itwt-label__qr {
+	width: 22mm;
+	height: 22mm;
+}
+
+.itwt-label__qr canvas,
+.itwt-label__qr img {
+	width: 100%;
+	height: 100%;
+}
+
+.itwt-label__tag {
+	font-family: ui-monospace, monospace;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+}
+
+@media print {
+	.itwt-no-print,
+	#wpadminbar,
+	#adminmenumain,
+	#wpfooter,
+	.notice,
+	h1 {
+		display: none !important;
+	}
+
+	.itwt-print-wrap {
+		margin: 0;
+		padding: 0;
+	}
+
+	body {
+		background: #fff;
+	}
+
+	@page {
+		margin: 4mm;
+	}
+
+	.itwt-labels--50x30 .itwt-label {
+		width: 50mm;
+		height: 30mm;
+	}
+
+	.itwt-labels--60x40 .itwt-label {
+		width: 60mm;
+		height: 40mm;
+	}
+}

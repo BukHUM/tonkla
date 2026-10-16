@@ -1,0 +1,50 @@
+@echo off
+setlocal EnableExtensions
+
+REM === Config (do not commit a real token) ===
+REM Copy this file to export-sonar.bat and set SONAR_TOKEN locally:
+REM   copy export-sonar.bat.example export-sonar.bat
+set "PROJECT_DIR=C:\laragon\www\tonkla"
+set "SONAR_HOST=https://sonarqube.tonkla.co"
+set "PROJECT_KEY=tonkla"
+
+REM Set token here for local runs, or set SONAR_TOKEN in the environment first.
+REM set "SONAR_TOKEN=sqp_xxxxxxxx"
+if not defined SONAR_TOKEN set "SONAR_TOKEN="
+if "%SONAR_TOKEN%"=="" (
+    echo.
+    echo SONAR_TOKEN is empty. Paste your SonarQube user token, then press Enter.
+    set /p "SONAR_TOKEN=Token: "
+)
+if "%SONAR_TOKEN%"=="" (
+    echo ERROR: SONAR_TOKEN is required.
+    pause
+    exit /b 1
+)
+
+set "SCRIPT=%PROJECT_DIR%\sonarqube\export-sonar-issues.ps1"
+if not exist "%SCRIPT%" (
+    echo ERROR: Script not found: %SCRIPT%
+    pause
+    exit /b 1
+)
+
+echo.
+echo Exporting SonarQube issues for project %PROJECT_KEY% ...
+echo Host: %SONAR_HOST%
+echo.
+
+powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT%" ^
+    -SonarHost "%SONAR_HOST%" ^
+    -ProjectKey "%PROJECT_KEY%" ^
+    -Token "%SONAR_TOKEN%"
+
+set "ERR=%ERRORLEVEL%"
+echo.
+if not "%ERR%"=="0" (
+    echo Export FAILED - exit %ERR%
+) else (
+    echo Export OK - see folder sonar-reports\
+)
+pause
+exit /b %ERR%

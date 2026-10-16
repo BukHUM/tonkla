@@ -1,0 +1,267 @@
+/*
+ * Admin Styles for Tonkla Theme
+ * Custom styles for WordPress admin area
+ */
+
+/* Featured image column on Posts / Pages lists */
+.column-tonkla_thumbnail {
+	width: 70px;
+	text-align: center;
+}
+
+.tonkla-admin-thumbnail {
+	display: block;
+	width: 60px;
+	height: 60px;
+	margin: 0 auto;
+	object-fit: cover;
+	border: 1px solid #c3c4c7;
+	border-radius: 2px;
+	background: #f0f0f1;
+}
+
+.tonkla-admin-thumbnail-empty {
+	display: inline-block;
+	color: #a7aaad;
+	line-height: 60px;
+}
+
+.tonkla-nl-status {
+	font-weight: 700;
+}
+
+.tonkla-nl-status--active {
+	color: #008a20;
+}
+
+.tonkla-nl-status--pending {
+	color: #996800;
+}
+
+/* Dashboard */
+.tonkla-dashboard {
+	padding: 20px;
+	max-width: 1200px;
+}
+
+.tonkla-dashboard__hero {
+	background: #059669;
+	color: #fff;
+	padding: 40px;
+	border-radius: 8px;
+	margin-bottom: 30px;
+	border: 1px solid #047857;
+}
+
+.tonkla-dashboard__hero h1 {
+	color: #fff;
+	margin: 0 0 10px;
+	font-size: 32px;
+}
+
+.tonkla-dashboard__hero p {
+	margin: 0;
+	opacity: 0.9;
+	font-size: 16px;
+}
+
+.tonkla-dashboard__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 20px;
+	margin-bottom: 30px;
+}
+
+.tonkla-dashboard__card {
+	background: #fff;
+	padding: 25px;
+	border-radius: 8px;
+	border: 1px solid #e2e8f0;
+}
+
+.tonkla-dashboard__card h3 {
+	margin-top: 0;
+	color: #1e293b;
+	border-bottom: 1px solid #f1f5f9;
+	padding-bottom: 15px;
+	margin-bottom: 15px;
+}
+
+.tonkla-dashboard__card h3 .dashicons {
+	color: #64748b;
+	margin-right: 8px;
+}
+
+.tonkla-dashboard__list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.tonkla-dashboard__list li {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 0;
+	border-bottom: 1px dashed #e2e8f0;
+}
+
+.tonkla-dashboard__list li:last-child {
+	border-bottom: none;
+}
+
+.tonkla-dashboard__label {
+	color: #64748b;
+}
+
+.tonkla-dashboard__value {
+	font-weight: 600;
+	color: #1e293b;
+}
+
+.tonkla-dashboard__value.is-ok {
+	color: #10b981;
+}
+
+.tonkla-dashboard__value.is-warn {
+	color: #f59e0b;
+}
+
+.tonkla-dashboard__value.is-bad {
+	color: #ef4444;
+}
+
+.tonkla-dashboard__links {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.tonkla-dashboard__links a {
+	display: flex;
+	align-items: center;
+	padding: 12px;
+	background: #f8fafc;
+	border-radius: 6px;
+	border: 1px solid #e2e8f0;
+	text-decoration: none;
+	color: #334155;
+}
+
+.tonkla-dashboard__links a:hover,
+.tonkla-dashboard__links a:focus {
+	border-color: #10b981;
+	color: #0f172a;
+}
+
+.tonkla-dashboard__links .dashicons {
+	margin-right: 10px;
+	color: #10b981;
+}
+
+.tonkla-dashboard__plugin-name {
+	color: #1e293b;
+}
+
+.tonkla-dashboard__plugin-download {
+	font-size: 12px;
+	color: #2271b1;
+}
+
+/* Hide Carbon save UI on Dashboard */
+body.toplevel_page_crb_carbon_fields_container_dashboard #postbox-container-1,
+body.toplevel_page_crb_carbon_fields_container_dashboard #side-sortables,
+body.toplevel_page_crb_carbon_fields_container_dashboard .carbon-box-actions,
+body.toplevel_page_crb_carbon_fields_container_dashboard #wpbody-content p.submit,
+body.toplevel_page_crb_carbon_fields_container_dashboard input[name="submit"] {
+	display: none !important;
+}
+
+body.toplevel_page_crb_carbon_fields_container_dashboard #postbox-container-2 {
+	width: 100% !important;
+}
+
+/* Demo import */
+.tonkla-demo-import {
+	background: #fff;
+	padding: 25px;
+	border: 1px solid #e2e8f0;
+	max-width: 800px;
+	border-radius: 8px;
+}
+
+.tonkla-demo-import h3 {
+	margin-top: 0;
+	color: #1e293b;
+	border-bottom: 1px solid #f1f5f9;
+	padding-bottom: 15px;
+	margin-bottom: 20px;
+}
+
+.tonkla-demo-import h3 .dashicons {
+	color: #64748b;
+	margin-right: 8px;
+}
+
+.tonkla-demo-import > p {
+	margin-bottom: 20px;
+	color: #64748b;
+}
+
+.tonkla-demo-import__warn {
+	font-size: 0.9em;
+	color: #996800;
+}
+
+.tonkla-demo-import__actions {
+	margin-bottom: 20px;
+}
+
+.tonkla-demo-import__group {
+	margin-bottom: 25px;
+}
+
+.tonkla-demo-import__group h4 {
+	font-size: 14px;
+	font-weight: 700;
+	color: #334155;
+	margin-bottom: 10px;
+	text-transform: uppercase;
+}
+
+.tonkla-demo-import__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 15px;
+}
+
+.tonkla-demo-import__grid label {
+	display: block;
+	padding: 10px;
+	border: 1px solid #e2e8f0;
+	border-radius: 6px;
+	background: #f8fafc;
+}
+
+.tonkla-demo-import__desc {
+	display: block;
+	font-size: 11px;
+	color: #64748b;
+	margin-top: 2px;
+}
+
+.tonkla-demo-import__submit {
+	width: 100%;
+	justify-content: center;
+	padding: 10px;
+}
+
+.tonkla-color-preview {
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	border: 1px solid #c3c4c7;
+	border-radius: 2px;
+	vertical-align: middle;
+	margin-left: 8px;
+}
