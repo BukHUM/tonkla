@@ -12,6 +12,17 @@
 - ห้ามแก้ไฟล์ใน WordPress core และ plugin ของบุคคลที่สามโดยตรง ให้ใช้ hook / filter / child theme แทน
 - ห้ามติดตั้ง plugin หรือ library เพิ่มโดยไม่ขออนุญาตก่อน
 
+### ลำดับความสำคัญ (non-negotiable)
+เมื่อกฎขัดกัน ให้เลือกข้อที่ลำดับสูงกว่า และถามผู้ใช้ถ้ายังคลุมเครือ:
+
+1. **Security**
+2. **Performance** (PHP / query + front-end assets)
+3. **Database** — ความถูกต้องและความเร็ว
+4. **DRY / maintainability**
+5. **UX/UI** — มืออาชีพ ใช้งานง่าย
+
+ห้ามผ่อนข้อ 1–4 เพื่อความสวยหรือความเร็วในการเขียนโค้ด
+
 ---
 
 ## 1. Performance
@@ -94,29 +105,42 @@
 
 ---
 
-## 5. UX/UI — ต้องไม่ดูเหมือน AI ทำ
-### เส้นขอบ (สำคัญ)
-- **องค์ประกอบหนึ่งใช้เส้นขอบได้แค่เส้นเดียว** เลือกอย่างใดอย่างหนึ่ง: `border` หรือ `outline` หรือ `box-shadow` แบบเส้น
-- ห้ามใช้ `border` + `ring` (Tailwind) + `outline` + `shadow` ซ้อนกันบนองค์ประกอบเดียว
-- ห้ามกล่องซ้อนกล่องที่มีขอบทุกชั้น (card ในการ์ด ในการ์ด)
-- สถานะ focus ให้ **เปลี่ยนสีของเส้นเดิม** แทนการเพิ่ม ring อีกเส้น แต่ต้องยังเห็นชัดตาม accessibility
-- ความหนาเส้น 1px เป็นค่าเริ่มต้น สีเส้นใช้ token เดียวทั้งระบบ
+## 5. UX/UI — มืออาชีพ ใช้งานง่าย
 
-### หลีกเลี่ยงลักษณะ "AI-generated"
-- ห้าม gradient ม่วง-น้ำเงิน, glassmorphism, glow, เงาฟุ้งทุกกล่อง
-- ห้ามใช้ emoji เป็นไอคอน ให้ใช้ชุดไอคอน SVG ชุดเดียวทั้งเว็บ
-- ห้าม layout สำเร็จรูป hero + 3 การ์ดไอคอน + CTA ซ้ำทุกหน้า
-- ห้าม border-radius ใหญ่ทุกอย่าง กำหนด radius ไม่เกิน 2 ค่าทั้งระบบ
-- ห้ามข้อความ placeholder แบบ "Unlock your potential", "Seamless experience" ให้ใช้เนื้อหาจริงหรือถามผู้ใช้
+### เป้าหมาย
+- หน้าบ้านและแอดมินของ custom theme / plugin ต้องรู้สึกเป็น**ผลิตภัณฑ์** (B2B หรือแบรนด์จริง) ไม่ใช่หน้า WordPress ดิบ และไม่ใช่เทมเพลต AI สำเร็จรูป
+- จัดกลุ่มข้อมูลชัด, CTA ชัด, สถานะระบบชัด, ใช้งานได้เร็วบนมือถือ
+- ความสวยต้องไม่แลกกับ performance, security หรือความซับซ้อนของโค้ดโดยไม่จำเป็น
 
-### หลักการออกแบบ
-- ใช้ design token ที่เดียว (สี, spacing, font, radius) ใน `theme.json` หรือ CSS variables
-- Spacing ใช้สเกลคงที่ (4 / 8 / 12 / 16 / 24 / 32 / 48 / 64)
-- สีหลักไม่เกิน 1 สี + สีกลาง (neutral) + สีสถานะ (success/warning/error)
-- แยกลำดับความสำคัญด้วย ขนาดตัวอักษร / น้ำหนัก / ระยะห่าง ก่อนใช้เส้นหรือกล่อง
-- รองรับมือถือก่อน (mobile-first), ภาษาไทยต้องใช้ font ที่รองรับวรรณยุกต์ถูกต้องและ line-height ≥ 1.6
+### อนุญาต (polish ที่ต้องการ)
+- พื้นผิวการ์ด / panel ด้วยพื้นหลัง + เส้นขอบ 1px **หรือ** เงาบางแบบ elevation — เลือกหลักหนึ่งแบบต่อองค์ประกอบ ห้ามซ้อน `border` + `ring` + เงาหนาพร้อมกันจนรก
+- สีสถานะ (success / warning / error) บนตัวเลข, badge, empty state
+- ไอคอน SVG ชุดเดียวทั้งระบบ; spacing สเกลคงที่ (4 / 8 / 12 / 16 / 24 / 32 / 48 / 64)
+- Design token ที่เดียว (สี, spacing, font, radius) ใน `theme.json` หรือ CSS variables
+- แอดมิน: CSS ของปลั๊กอิน/ธีมทับสไตล์ WP ได้ในขอบเขต `.wrap` (หรือ root ของหน้า) — **ไม่ต้องยึดตาราง `widefat` ดิบ** ถ้าทำให้ใช้งานยากหรือดูไม่มืออาชีพ
+- หน้า list แอดมินของปลั๊กอิน IT Warranty Tracker ต้องทำตามมาตรฐานใน `wp-content/plugins/it-warranty-tracker/docs/admin-list-ui.md` (toolbar / คอลัมน์จัดการ / footer / toast)
+- **วันที่ (IT Warranty Tracker):**
+  - **ข้อความอ่านอย่างเดียว:** `01 Nov 2029` — ใช้ `\ITWT\Dates::format()` / `format_datetime()` / `format_range()` เท่านั้น ห้าม echo ค่า `Y-m-d` ดิบ
+  - **ช่องกรอกในฟอร์ม:** แสดง/รับเป็น `dd/mm/yyyy` (วว/ดด/ปปปป) ผ่าน `\ITWT\Dates::render_input()` — **ห้าม** ใช้ `<input type="date">` ตรง ๆ (เบราว์เซอร์ยึด locale ของ OS เช่น mm/dd/yyyy)
+  - **เก็บใน DB / SQL / ค่าที่ submit:** ISO `Y-m-d` เสมอ
+- Micro-interaction เบา (hover / focus transition สั้น) ที่ไม่กระทบ INP
+
+### ยังห้าม (กัน AI-slop ไม่กันความสวย)
+- Gradient ม่วง–อินдиго / glassmorphism / glow เป็นธีมหลัก
+- ใช้ emoji เป็นไอคอน
+- ข้อความ marketing ปลอม เช่น "Unlock your potential", "Seamless experience" — ใช้เนื้อหาจริงหรือถามผู้ใช้
+- Layout สำเร็จรูปซ้ำทุกหน้า (hero + 3 การ์ดไอคอน + CTA)
+- กล่องซ้อนกล่องที่มีขอบทุกชั้นจนรก
+- โหลด framework UI หนัก (React admin shell, Tailwind CDN, chart library ฯลฯ) โดยไม่ขออนุญาตก่อน — สอดคล้องหมวด 0
+- โหลด font เกิน 2 family (ดูหมวด Performance)
+
+### Accessibility และ focus
 - ผ่าน WCAG 2.2 AA: contrast ≥ 4.5:1, ใช้ keyboard ได้ครบ, มี label ทุก input
+- สถานะ focus ต้องเห็นชัด — อนุญาต focus ring หรือเปลี่ยนสีเส้นเดิม; **ห้ามตัด focus ออกเพื่อความสวย**
+- ภาษาไทย: font รองรับวรรณยุกต์ถูกต้อง, line-height ≥ 1.6
 - ทุก action ต้องมีสถานะ loading / empty / error / success
+- แยกลำดับความสำคัญด้วยขนาดตัวอักษร / น้ำหนัก / ระยะห่าง ก่อนพึ่งเส้นหรือกล่อง
+- สีหลักไม่เกิน 1 สี + สีกลาง (neutral) + สีสถานะ; radius ใช้ไม่เกิน 2–3 ค่าทั้งระบบ
 
 ---
 
@@ -133,5 +157,5 @@
 - [ ] SQL ใช้ `$wpdb->prepare()`
 - [ ] ไม่มีโค้ดซ้ำกับของเดิมในโปรเจกต์
 - [ ] ข้อมูลใหม่มี UNIQUE key / ไม่ insert ซ้ำ
-- [ ] UI ใช้เส้นขอบเส้นเดียว ไม่มี border + ring ซ้อน
+- [ ] UI มี hierarchy ชัด, empty/loading/error/success ครบ, contrast ผ่าน AA, ไม่โหลด asset เกินจำเป็น
 - [ ] ผ่าน PHPCS และไม่มี PHP warning/notice

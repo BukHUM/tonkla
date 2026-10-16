@@ -76,7 +76,7 @@ function tonkla_complex_item_title()
  */
 Container::make('theme_options', __('Dashboard', 'tonkla'))
     ->set_page_menu_title('TONKLA - IT')
-    ->set_icon('dashicons-dashboard')
+    ->set_icon('dashicons-admin-site-alt3')
     ->add_fields(array(
         Field::make('html', 'dashboard_stats')
             ->set_html(function () {

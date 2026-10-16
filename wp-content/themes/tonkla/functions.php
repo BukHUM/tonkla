@@ -14,6 +14,16 @@ require_once get_template_directory() . '/inc/admin-performance.php';
 add_action('admin_enqueue_scripts', 'tonkla_admin_styles');
 
 /**
+ * Admin chrome: Google Sans Flex + differentiated bar/sidebar colors
+ */
+require_once get_template_directory() . '/inc/admin-chrome.php';
+
+/**
+ * Editable wp-admin menu grouping / order
+ */
+require_once get_template_directory() . '/inc/admin-menu-order.php';
+
+/**
  * Featured image column on Posts / Pages list screens
  */
 require_once get_template_directory() . '/inc/admin-thumbnails.php';

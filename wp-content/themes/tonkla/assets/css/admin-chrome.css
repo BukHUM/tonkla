@@ -1,0 +1,374 @@
+/*
+ * Tonkla admin chrome — loaded on every wp-admin screen while this theme is active.
+ * Tokens: B2B slate + brand emerald; one border edge between regions.
+ */
+
+:root {
+	--tonkla-admin-font: "Google Sans Flex", "Google Sans", Inter, "Noto Sans Thai", "Segoe UI", sans-serif;
+	--tonkla-admin-bar: #0b1220;
+	--tonkla-admin-menu: #162032;
+	--tonkla-admin-menu-hover: #1c2b40;
+	--tonkla-admin-menu-current: #0f766e;
+	--tonkla-admin-accent: #059669;
+	--tonkla-admin-border: #2a384f;
+	--tonkla-admin-text: #e2e8f0;
+	--tonkla-admin-muted: #94a3b8;
+	/* เส้นขอบโซนเนื้อหา (อ่อนกว่าค่า WP มาตรฐาน) */
+	--tonkla-admin-line: #e5e9ef;
+	--tonkla-admin-line-strong: #d0d7e2;
+	--tonkla-admin-focus: #94a3b8;
+	/* WP default = 160px — กว้างขึ้นเล็กน้อยให้อ่านป้ายไทยได้สบาย */
+	--tonkla-admin-menu-width: 190px;
+	--tonkla-admin-menu-folded: 36px;
+}
+
+/* —— Typography —— */
+body.wp-admin,
+body.wp-admin #wpadminbar,
+body.wp-admin #wpadminbar *,
+body.wp-admin #adminmenu,
+body.wp-admin #adminmenu .wp-submenu a,
+body.wp-admin #wpbody,
+body.wp-admin .wrap,
+body.wp-admin #wpcontent,
+body.wp-admin input,
+body.wp-admin select,
+body.wp-admin textarea,
+body.wp-admin button,
+body.wp-admin .button,
+body.wp-admin .page-title-action {
+	font-family: var(--tonkla-admin-font);
+}
+
+body.wp-admin {
+	font-size: 14px;
+	line-height: 1.55;
+	-webkit-font-smoothing: antialiased;
+}
+
+body.wp-admin h1,
+body.wp-admin h2,
+body.wp-admin h3,
+body.wp-admin .wrap > h1 {
+	font-family: var(--tonkla-admin-font);
+	font-weight: 600;
+	letter-spacing: -0.01em;
+}
+
+/* —— Top admin bar (darker strip) —— */
+#wpadminbar {
+	background: var(--tonkla-admin-bar) !important;
+	border-bottom: 1px solid var(--tonkla-admin-border);
+	box-shadow: none !important;
+	color: var(--tonkla-admin-text);
+}
+
+#wpadminbar .ab-item,
+#wpadminbar a.ab-item,
+#wpadminbar > #wp-toolbar span.ab-label,
+#wpadminbar > #wp-toolbar span.noticon {
+	color: var(--tonkla-admin-text) !important;
+}
+
+#wpadminbar .ab-top-menu > li:hover > .ab-item,
+#wpadminbar .ab-top-menu > li.hover > .ab-item,
+#wpadminbar .ab-top-menu > li > .ab-item:focus,
+#wpadminbar.nojq .quicklinks .ab-top-menu > li > .ab-item:focus {
+	background: var(--tonkla-admin-menu) !important;
+	color: #fff !important;
+}
+
+#wpadminbar .ab-submenu {
+	background: var(--tonkla-admin-menu) !important;
+	border: 1px solid var(--tonkla-admin-border);
+}
+
+#wpadminbar .ab-submenu .ab-item {
+	color: var(--tonkla-admin-text) !important;
+}
+
+#wpadminbar .ab-submenu .ab-item:hover,
+#wpadminbar .ab-submenu .ab-item:focus {
+	background: var(--tonkla-admin-menu-hover) !important;
+	color: #fff !important;
+}
+
+#wpadminbar .ab-top-secondary {
+	background: transparent;
+}
+
+/* —— Left sidebar (lifted slate — separate from top bar) —— */
+#adminmenuback,
+#adminmenuwrap,
+#adminmenu {
+	width: var(--tonkla-admin-menu-width);
+}
+
+#adminmenuback,
+#adminmenuwrap {
+	background: var(--tonkla-admin-menu) !important;
+}
+
+#adminmenuwrap {
+	border-right: 1px solid var(--tonkla-admin-border);
+}
+
+#adminmenu,
+#adminmenu .wp-submenu {
+	background: var(--tonkla-admin-menu) !important;
+	margin: 0;
+}
+
+#adminmenu .wp-submenu {
+	width: var(--tonkla-admin-menu-width);
+	left: var(--tonkla-admin-menu-width);
+}
+
+#adminmenu li.wp-has-current-submenu .wp-submenu,
+#adminmenu li.current .wp-submenu,
+.no-js li.wp-has-current-submenu .wp-submenu {
+	left: auto;
+}
+
+#wpcontent,
+#wpfooter {
+	margin-left: var(--tonkla-admin-menu-width);
+}
+
+#adminmenu a {
+	color: var(--tonkla-admin-text) !important;
+}
+
+#adminmenu div.wp-menu-image:before,
+#adminmenu .wp-menu-image img {
+	color: var(--tonkla-admin-muted) !important;
+	opacity: 1;
+}
+
+#adminmenu li.menu-top:hover,
+#adminmenu li.opensub > a.menu-top,
+#adminmenu li > a.menu-top:focus {
+	background: var(--tonkla-admin-menu-hover) !important;
+	color: #fff !important;
+}
+
+#adminmenu li.menu-top:hover div.wp-menu-image:before,
+#adminmenu li.opensub > a.menu-top div.wp-menu-image:before {
+	color: #fff !important;
+}
+
+#adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
+#adminmenu li.current a.menu-top,
+#adminmenu .wp-submenu li.current,
+#adminmenu .wp-submenu li.current a,
+#adminmenu .wp-submenu li.current a:hover {
+	background: var(--tonkla-admin-menu-current) !important;
+	color: #fff !important;
+}
+
+#adminmenu li.wp-has-current-submenu div.wp-menu-image:before,
+#adminmenu li.current div.wp-menu-image:before {
+	color: #fff !important;
+}
+
+#adminmenu .wp-submenu {
+	background: #121c2c !important;
+	border: 1px solid var(--tonkla-admin-border);
+	border-left: 0;
+}
+
+#adminmenu .wp-submenu a {
+	color: var(--tonkla-admin-muted) !important;
+}
+
+#adminmenu .wp-submenu a:hover,
+#adminmenu .wp-submenu a:focus {
+	background: var(--tonkla-admin-menu-hover) !important;
+	color: #fff !important;
+}
+
+#adminmenu .wp-submenu-head,
+#adminmenu a.menu-top {
+	border: none;
+}
+
+#adminmenu li.wp-menu-separator {
+	margin: 8px 0;
+	height: 0;
+	border-top: 1px solid var(--tonkla-admin-border);
+	background: transparent;
+}
+
+#adminmenu .wp-menu-arrow {
+	display: none;
+}
+
+#collapse-menu {
+	border-top: 1px solid var(--tonkla-admin-border);
+	margin-top: 8px;
+}
+
+#collapse-menu #collapse-button {
+	color: var(--tonkla-admin-muted);
+}
+
+#collapse-menu #collapse-button:hover {
+	color: #fff;
+}
+
+/* —— Content edge: soft separation from chrome —— */
+#wpcontent,
+#wpfooter {
+	background: #f1f5f9;
+}
+
+#wpbody-content {
+	padding-bottom: 48px;
+}
+
+/* Soft borders in content (forms / cards / tables) — keep 1px, lighter ink */
+#wpbody input[type="text"],
+#wpbody input[type="password"],
+#wpbody input[type="email"],
+#wpbody input[type="url"],
+#wpbody input[type="tel"],
+#wpbody input[type="number"],
+#wpbody input[type="search"],
+#wpbody input[type="date"],
+#wpbody input[type="time"],
+#wpbody input[type="datetime-local"],
+#wpbody input[type="file"],
+#wpbody select,
+#wpbody textarea,
+#wpbody .button:not(.button-primary):not(.button-hero),
+#wpbody .page-title-action,
+#wpbody .wp-list-table,
+#wpbody .widefat,
+#wpbody .postbox,
+#wpbody .stuffbox,
+#wpbody .card,
+#wpbody .notice,
+#wpbody .form-table th,
+#wpbody .form-table td,
+#wpbody .tablenav .tablenav-pages a,
+#wpbody .tablenav-pages-navspan {
+	border-color: var(--tonkla-admin-line);
+}
+
+#wpbody input[type="text"]:focus,
+#wpbody input[type="password"]:focus,
+#wpbody input[type="email"]:focus,
+#wpbody input[type="url"]:focus,
+#wpbody input[type="tel"]:focus,
+#wpbody input[type="number"]:focus,
+#wpbody input[type="search"]:focus,
+#wpbody input[type="date"]:focus,
+#wpbody input[type="time"]:focus,
+#wpbody input[type="datetime-local"]:focus,
+#wpbody select:focus,
+#wpbody textarea:focus {
+	border-color: var(--tonkla-admin-focus);
+	box-shadow: 0 0 0 1px var(--tonkla-admin-focus);
+	outline: 2px solid transparent;
+}
+
+#wpbody .button:not(.button-primary):hover,
+#wpbody .button:not(.button-primary):focus {
+	border-color: var(--tonkla-admin-line-strong);
+	color: #0f172a;
+	box-shadow: none;
+}
+
+#wpbody .wp-list-table thead th,
+#wpbody .wp-list-table thead td,
+#wpbody .wp-list-table tbody th,
+#wpbody .wp-list-table tbody td,
+#wpbody .wp-list-table tfoot th,
+#wpbody .wp-list-table tfoot td {
+	border-color: var(--tonkla-admin-line);
+}
+
+#wpbody .postbox,
+#wpbody .stuffbox {
+	border-color: var(--tonkla-admin-line);
+	box-shadow: none;
+}
+
+#wpbody .postbox .postbox-header,
+#wpbody .postbox .hndle {
+	border-bottom-color: var(--tonkla-admin-line);
+}
+
+/* Folded menu keeps the same tokens + default folded width */
+.folded #adminmenuback,
+.folded #adminmenuwrap,
+.folded #adminmenu,
+.folded #adminmenu .wp-submenu {
+	width: var(--tonkla-admin-menu-folded);
+	background: var(--tonkla-admin-menu) !important;
+}
+
+.folded #adminmenu .wp-submenu {
+	left: var(--tonkla-admin-menu-folded);
+}
+
+.folded #wpcontent,
+.folded #wpfooter {
+	margin-left: var(--tonkla-admin-menu-folded);
+}
+
+@media only screen and (max-width: 960px) {
+	.auto-fold #adminmenuback,
+	.auto-fold #adminmenuwrap,
+	.auto-fold #adminmenu,
+	.auto-fold #adminmenu .wp-submenu {
+		width: var(--tonkla-admin-menu-folded);
+	}
+
+	.auto-fold #adminmenu .wp-submenu {
+		left: var(--tonkla-admin-menu-folded);
+	}
+
+	.auto-fold #wpcontent,
+	.auto-fold #wpfooter {
+		margin-left: var(--tonkla-admin-menu-folded);
+	}
+
+	.auto-fold .wp-responsive-open #wpcontent {
+		margin-left: 0;
+	}
+}
+
+@media screen and (max-width: 782px) {
+	.auto-fold #adminmenu .wp-submenu,
+	.auto-fold #adminmenuback,
+	.auto-fold #adminmenuwrap,
+	.auto-fold #adminmenu {
+		width: var(--tonkla-admin-menu-width);
+	}
+
+	.auto-fold #wpcontent,
+	.auto-fold #wpfooter {
+		margin-left: 0;
+	}
+}
+
+/* Accent for primary admin buttons (subtle brand cue) */
+body.wp-admin .wrap .page-title-action,
+body.wp-admin .button-primary {
+	background: var(--tonkla-admin-accent);
+	border-color: #047857;
+	color: #fff;
+	text-shadow: none;
+	box-shadow: none;
+}
+
+body.wp-admin .wrap .page-title-action:hover,
+body.wp-admin .wrap .page-title-action:focus,
+body.wp-admin .button-primary:hover,
+body.wp-admin .button-primary:focus {
+	background: #047857;
+	border-color: #065f46;
+	color: #fff;
+	box-shadow: none;
+}

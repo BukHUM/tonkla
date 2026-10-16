@@ -15,6 +15,7 @@ $tables = array(
 	'itwt_support_requests',
 	'itwt_service_logs',
 	'itwt_contracts',
+	'itwt_asset_components',
 	'itwt_assets',
 	'itwt_customers',
 );

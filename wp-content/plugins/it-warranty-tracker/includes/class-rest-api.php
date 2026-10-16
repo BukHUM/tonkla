@@ -15,6 +15,7 @@ use ITWT\Line\Line_Webhook;
 use ITWT\Line\Tech_Notifier;
 use ITWT\Repositories\Asset_Repo;
 use ITWT\Repositories\Contract_Repo;
+use ITWT\Repositories\Customer_Repo;
 use ITWT\Repositories\Service_Log_Repo;
 use ITWT\Repositories\Support_Request_Repo;
 
@@ -72,6 +73,64 @@ final class Rest_Api {
 				'callback'            => array( new Line_Webhook(), 'handle' ),
 				'permission_callback' => '__return_true',
 			)
+		);
+
+		register_rest_route(
+			'itwt/v1',
+			'/customers',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'search_customers' ),
+				'permission_callback' => static function () {
+					return current_user_can( 'itwt_manage_assets' );
+				},
+				'args'                => array(
+					'search' => array(
+						'required'          => false,
+						'type'              => 'string',
+						'default'           => '',
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * GET /customers?search= — admin customer picker.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 * @return \WP_REST_Response
+	 */
+	public function search_customers( \WP_REST_Request $request ) {
+		$search = (string) $request->get_param( 'search' );
+		$result = ( new Customer_Repo() )->list(
+			array(
+				'search'   => $search,
+				'page'     => 1,
+				'per_page' => 20,
+			)
+		);
+
+		$items = array();
+		foreach ( $result['items'] as $row ) {
+			$code = (string) $row->customer_code;
+			$name = (string) $row->company_name;
+			$items[] = array(
+				'id'    => (int) $row->id,
+				'code'  => $code,
+				'name'  => $name,
+				'label' => $code . ' — ' . $name,
+				'role'  => (string) ( $row->party_role ?? 'customer' ),
+			);
+		}
+
+		return new \WP_REST_Response(
+			array(
+				'items' => $items,
+				'total' => (int) $result['total'],
+			),
+			200
 		);
 	}
 
@@ -179,12 +238,21 @@ final class Rest_Api {
 			return $result;
 		}
 
-		Tech_Notifier::schedule( (int) $result );
+		$request_id = (int) $result;
+		Tech_Notifier::schedule( $request_id );
+
+		$reference = Labels::request_reference( $request_id );
 
 		return new \WP_REST_Response(
 			array(
-				'ok'      => true,
-				'message' => __( 'รับคำขอเรียบร้อยแล้ว ทีมงานจะติดต่อกลับ', 'it-warranty-tracker' ),
+				'ok'        => true,
+				'id'        => $request_id,
+				'reference' => $reference,
+				'message'   => sprintf(
+					/* translators: %s: request reference code */
+					__( 'รับคำขอเรียบร้อยแล้ว รหัสอ้างอิง %s — ทีมงานจะติดต่อกลับ', 'it-warranty-tracker' ),
+					$reference
+				),
 			),
 			201
 		);

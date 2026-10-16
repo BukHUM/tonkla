@@ -17,23 +17,31 @@ if ( ! in_array( $size, array( '50x30', '60x40' ), true ) ) {
 }
 ?>
 <div class="wrap itwt-wrap itwt-print-wrap">
-	<h1><?php esc_html_e( 'พิมพ์สติ๊กเกอร์ QR', 'it-warranty-tracker' ); ?></h1>
+	<header class="itwt-page-header itwt-no-print">
+		<div>
+			<p class="itwt-page-header__eyebrow"><?php esc_html_e( 'IT Warranty Tracker', 'it-warranty-tracker' ); ?></p>
+			<h1 class="itwt-page-header__title"><?php esc_html_e( 'พิมพ์สติ๊กเกอร์ QR', 'it-warranty-tracker' ); ?></h1>
+		</div>
+	</header>
 
-	<form method="get" class="itwt-no-print">
+	<form method="get" class="itwt-no-print itwt-settings-card itwt-print-controls">
 		<input type="hidden" name="page" value="itwt-print-label" />
-		<label>
-			<?php esc_html_e( 'Asset IDs (คั่นด้วยจุลภาค)', 'it-warranty-tracker' ); ?>
-			<input type="text" name="ids" value="<?php echo esc_attr( implode( ',', array_map( static fn( $a ) => (string) (int) $a->id, $assets ) ) ); ?>" class="regular-text" />
-		</label>
-		<label>
-			<?php esc_html_e( 'ขนาด', 'it-warranty-tracker' ); ?>
-			<select name="size">
-				<option value="50x30" <?php selected( $size, '50x30' ); ?>>50×30 มม.</option>
-				<option value="60x40" <?php selected( $size, '60x40' ); ?>>60×40 มม.</option>
-			</select>
-		</label>
-		<?php submit_button( __( 'โหลด', 'it-warranty-tracker' ), 'secondary', '', false ); ?>
-		<button type="button" class="button button-primary" onclick="window.print()"><?php esc_html_e( 'พิมพ์', 'it-warranty-tracker' ); ?></button>
+		<h2><?php esc_html_e( 'ตัวเลือกการพิมพ์', 'it-warranty-tracker' ); ?></h2>
+		<div class="itwt-settings-grid">
+			<label for="itwt-print-ids"><?php esc_html_e( 'Asset IDs (คั่นด้วยจุลภาค)', 'it-warranty-tracker' ); ?></label>
+			<div><input type="text" id="itwt-print-ids" name="ids" value="<?php echo esc_attr( implode( ',', array_map( static fn( $a ) => (string) (int) $a->id, $assets ) ) ); ?>" class="regular-text" /></div>
+			<label for="itwt-print-size"><?php esc_html_e( 'ขนาด', 'it-warranty-tracker' ); ?></label>
+			<div>
+				<select id="itwt-print-size" name="size">
+					<option value="50x30" <?php selected( $size, '50x30' ); ?>>50×30 มม.</option>
+					<option value="60x40" <?php selected( $size, '60x40' ); ?>>60×40 มม.</option>
+				</select>
+			</div>
+		</div>
+		<p>
+			<?php submit_button( __( 'โหลด', 'it-warranty-tracker' ), 'secondary', '', false ); ?>
+			<button type="button" class="button button-primary" onclick="window.print()"><?php esc_html_e( 'พิมพ์', 'it-warranty-tracker' ); ?></button>
+		</p>
 	</form>
 
 	<div class="itwt-labels itwt-labels--<?php echo esc_attr( $size ); ?>" data-itwt-size="<?php echo esc_attr( $size ); ?>">

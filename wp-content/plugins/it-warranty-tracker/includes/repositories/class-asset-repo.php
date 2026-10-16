@@ -35,6 +35,37 @@ final class Asset_Repo {
 	}
 
 	/**
+	 * Find multiple assets by ID (keyed by id).
+	 *
+	 * @param array<int,int> $ids Asset IDs.
+	 * @return array<int,object>
+	 */
+	public function find_many( array $ids ): array {
+		$ids = array_values( array_unique( array_filter( array_map( 'absint', $ids ) ) ) );
+		if ( empty( $ids ) ) {
+			return array();
+		}
+		$ids = array_slice( $ids, 0, 100 );
+
+		global $wpdb;
+		$table       = Installer::table( 'assets' );
+		$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		$rows = $wpdb->get_results(
+			$wpdb->prepare( "SELECT * FROM {$table} WHERE id IN ({$placeholders})", ...$ids )
+		);
+
+		$map = array();
+		if ( is_array( $rows ) ) {
+			foreach ( $rows as $row ) {
+				$map[ (int) $row->id ] = $row;
+			}
+		}
+		return $map;
+	}
+
+	/**
 	 * Find by service tag (normalized).
 	 *
 	 * @param string $tag Service tag.
@@ -122,7 +153,7 @@ final class Asset_Repo {
 		$asset_type = isset( $args['asset_type'] ) ? sanitize_key( (string) $args['asset_type'] ) : '';
 		$coverage   = isset( $args['coverage'] ) ? sanitize_key( (string) $args['coverage'] ) : '';
 		$page       = max( 1, (int) ( $args['page'] ?? 1 ) );
-		$per_page   = min( 50, max( 1, (int) ( $args['per_page'] ?? 20 ) ) );
+		$per_page   = \ITWT\Admin_List::normalize_per_page( (int) ( $args['per_page'] ?? 20 ) );
 		$offset     = ( $page - 1 ) * $per_page;
 		$today      = wp_date( 'Y-m-d' );
 		$settings   = \ITWT\Settings::get();
@@ -233,19 +264,48 @@ final class Asset_Repo {
 			$asset_type = $default_type;
 		}
 
+		$purchase = $this->nullable_date( (string) ( $data['purchase_date'] ?? '' ) );
+		$warranty = $this->nullable_date( (string) ( $data['warranty_end_date'] ?? '' ) );
+		if ( is_wp_error( $purchase ) ) {
+			return $purchase;
+		}
+		if ( is_wp_error( $warranty ) ) {
+			return $warranty;
+		}
+		if ( null !== $purchase && null !== $warranty && $warranty < $purchase ) {
+			return new \WP_Error( 'itwt_invalid', __( 'วันหมดประกันต้องไม่ก่อนวันซื้อ', 'it-warranty-tracker' ) );
+		}
+
+		$years_on  = ! empty( $data['renew_max_years_enabled'] );
+		$times_on  = ! empty( $data['renew_max_times_enabled'] );
+		$years_val = isset( $data['renew_max_years'] ) ? absint( $data['renew_max_years'] ) : 0;
+		$times_val = isset( $data['renew_max_times'] ) ? absint( $data['renew_max_times'] ) : 0;
+		if ( $years_on && ( $years_val < 1 || $years_val > 50 ) ) {
+			return new \WP_Error( 'itwt_invalid', __( 'จำนวนปีที่ต่อได้ต้องอยู่ระหว่าง 1–50', 'it-warranty-tracker' ) );
+		}
+		if ( $times_on && ( $times_val < 1 || $times_val > 50 ) ) {
+			return new \WP_Error( 'itwt_invalid', __( 'จำนวนครั้งที่ต่อได้ต้องอยู่ระหว่าง 1–50', 'it-warranty-tracker' ) );
+		}
+
 		$row = array(
-			'service_tag'      => $service_tag,
-			'brand'            => sanitize_text_field( (string) ( $data['brand'] ?? '' ) ),
-			'serial_number'    => $serial,
-			'asset_type'       => $asset_type,
-			'model_name'       => sanitize_text_field( (string) ( $data['model_name'] ?? '' ) ),
-			'specs_json'       => is_string( $specs ) ? $specs : '[]',
-			'customer_id'      => absint( $data['customer_id'] ?? 0 ),
-			'install_location' => sanitize_text_field( (string) ( $data['install_location'] ?? '' ) ),
-			'status'           => sanitize_key( (string) ( $data['status'] ?? 'active' ) ),
-			'internal_note'    => sanitize_textarea_field( (string) ( $data['internal_note'] ?? '' ) ),
-			'updated_by'       => $user,
-			'updated_at'       => $now,
+			'service_tag'             => $service_tag,
+			'brand'                   => sanitize_text_field( (string) ( $data['brand'] ?? '' ) ),
+			'serial_number'           => $serial,
+			'asset_type'              => $asset_type,
+			'model_name'              => sanitize_text_field( (string) ( $data['model_name'] ?? '' ) ),
+			'specs_json'              => is_string( $specs ) ? $specs : '[]',
+			'customer_id'             => absint( $data['customer_id'] ?? 0 ),
+			'install_location'        => sanitize_text_field( (string) ( $data['install_location'] ?? '' ) ),
+			'status'                  => sanitize_key( (string) ( $data['status'] ?? 'active' ) ),
+			'purchase_date'           => $purchase,
+			'warranty_end_date'       => $warranty,
+			'renew_max_years_enabled' => $years_on ? 1 : 0,
+			'renew_max_years'         => $years_on ? $years_val : null,
+			'renew_max_times_enabled' => $times_on ? 1 : 0,
+			'renew_max_times'         => $times_on ? $times_val : null,
+			'internal_note'           => sanitize_textarea_field( (string) ( $data['internal_note'] ?? '' ) ),
+			'updated_by'              => $user,
+			'updated_at'              => $now,
 		);
 		if ( ! in_array( $row['status'], array( 'active', 'void', 'decommissioned' ), true ) ) {
 			$row['status'] = 'active';
@@ -264,10 +324,32 @@ final class Asset_Repo {
 		$row['created_at'] = $now;
 		$ok                = $wpdb->insert( $table, $row );
 		if ( false === $ok ) {
+			Installer::migrate_asset_columns();
+			$ok = $wpdb->insert( $table, $row );
+		}
+		if ( false === $ok ) {
 			return new \WP_Error( 'itwt_db', __( 'บันทึกทรัพย์สินไม่สำเร็จ', 'it-warranty-tracker' ) );
 		}
 		$this->bust_cache( $service_tag );
 		return (int) $wpdb->insert_id;
+	}
+
+	/**
+	 * Parse Y-m-d or empty → null.
+	 *
+	 * @param string $date Raw date.
+	 * @return string|null|\WP_Error
+	 */
+	private function nullable_date( string $date ) {
+		$date = trim( $date );
+		if ( '' === $date ) {
+			return null;
+		}
+		$iso = \ITWT\Dates::parse_input( $date );
+		if ( null === $iso ) {
+			return new \WP_Error( 'itwt_invalid', __( 'รูปแบบวันที่ไม่ถูกต้อง (ใช้ วว/ดด/ปปปป)', 'it-warranty-tracker' ) );
+		}
+		return $iso;
 	}
 
 	/**

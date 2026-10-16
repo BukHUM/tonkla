@@ -71,9 +71,16 @@ final class Service_Log_Repo {
 			$summary = null;
 		}
 
+		$service_iso = \ITWT\Dates::parse_input(
+			sanitize_text_field( (string) ( $data['service_date'] ?? wp_date( 'Y-m-d' ) ) )
+		);
+		if ( null === $service_iso ) {
+			return new \WP_Error( 'itwt_invalid', __( 'วันที่บริการไม่ถูกต้อง (ใช้ วว/ดด/ปปปป)', 'it-warranty-tracker' ) );
+		}
+
 		$row = array(
 			'asset_id'       => absint( $data['asset_id'] ?? 0 ),
-			'service_date'   => sanitize_text_field( (string) ( $data['service_date'] ?? wp_date( 'Y-m-d' ) ) ),
+			'service_date'   => $service_iso,
 			'service_type'   => sanitize_key( (string) ( $data['service_type'] ?? 'claim' ) ),
 			'symptom'        => sanitize_textarea_field( (string) ( $data['symptom'] ?? '' ) ),
 			'resolution'     => sanitize_textarea_field( (string) ( $data['resolution'] ?? '' ) ),

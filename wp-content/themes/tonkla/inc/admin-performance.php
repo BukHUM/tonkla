@@ -50,10 +50,11 @@ function tonkla_is_tonkla_admin_screen()
         || str_contains($screen_id, 'crb_carbon_fields')
         || str_contains($screen_id, 'tonkla');
 
+    $is_menu_order = ('tonkla-admin-menu-order' === $page);
     $is_page_editor = in_array($screen_base, array('post', 'page'), true) && 'page' === $post_type;
     $is_nav_menus = ('nav-menus' === $screen_base);
 
-    return $is_carbon_page || $is_page_editor || $is_nav_menus;
+    return $is_carbon_page || $is_menu_order || $is_page_editor || $is_nav_menus;
 }
 
 /**

@@ -21,6 +21,8 @@ final class Installer {
 	 */
 	public static function activate(): void {
 		self::create_tables();
+		self::migrate_customer_columns();
+		self::migrate_asset_columns();
 		self::seed_options();
 		self::register_caps_and_role();
 		self::schedule_crons();
@@ -44,13 +46,122 @@ final class Installer {
 	public static function maybe_upgrade(): void {
 		$current = get_option( 'itwt_db_version', '' );
 		if ( ITWT_DB_VERSION === $current ) {
+			// Still ensure additive columns exist (dbDelta may skip them).
+			self::migrate_customer_columns();
+			self::migrate_asset_columns();
 			return;
 		}
 		self::create_tables();
+		self::migrate_customer_columns();
+		self::migrate_asset_columns();
 		self::seed_options();
 		self::register_caps_and_role();
 		self::schedule_crons();
 		update_option( 'itwt_db_version', ITWT_DB_VERSION, false );
+	}
+
+	/**
+	 * Add missing customer columns (dbDelta is unreliable for additive mid-table columns).
+	 */
+	public static function migrate_customer_columns(): void {
+		global $wpdb;
+		$table = self::table( 'customers' );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$cols = $wpdb->get_col( "DESCRIBE {$table}", 0 );
+		if ( ! is_array( $cols ) ) {
+			return;
+		}
+
+		$additions = array(
+			'customer_type'     => "ADD COLUMN customer_type VARCHAR(30) NOT NULL DEFAULT 'juristic'",
+			'tax_id'            => "ADD COLUMN tax_id VARCHAR(20) NOT NULL DEFAULT ''",
+			'party_role'        => "ADD COLUMN party_role VARCHAR(20) NOT NULL DEFAULT 'customer'",
+			'external_code'     => "ADD COLUMN external_code VARCHAR(50) NOT NULL DEFAULT ''",
+			'business_location' => "ADD COLUMN business_location VARCHAR(20) NOT NULL DEFAULT 'thai'",
+			'address'           => 'ADD COLUMN address TEXT NULL',
+			'address_2'         => "ADD COLUMN address_2 VARCHAR(255) NOT NULL DEFAULT ''",
+			'address_3'         => "ADD COLUMN address_3 VARCHAR(255) NOT NULL DEFAULT ''",
+			'postal_code'       => "ADD COLUMN postal_code VARCHAR(20) NOT NULL DEFAULT ''",
+			'branch_code'       => "ADD COLUMN branch_code VARCHAR(50) NOT NULL DEFAULT ''",
+			'branch_name'       => "ADD COLUMN branch_name VARCHAR(100) NOT NULL DEFAULT ''",
+			'mobile'            => "ADD COLUMN mobile VARCHAR(50) NOT NULL DEFAULT ''",
+			'office_phone'      => "ADD COLUMN office_phone VARCHAR(50) NOT NULL DEFAULT ''",
+			'fax'               => "ADD COLUMN fax VARCHAR(50) NOT NULL DEFAULT ''",
+			'credit_days'       => 'ADD COLUMN credit_days SMALLINT NOT NULL DEFAULT 0',
+			'bank_name'         => "ADD COLUMN bank_name VARCHAR(100) NOT NULL DEFAULT ''",
+			'bank_account'      => "ADD COLUMN bank_account VARCHAR(50) NOT NULL DEFAULT ''",
+			'bank_account_name' => "ADD COLUMN bank_account_name VARCHAR(150) NOT NULL DEFAULT ''",
+			'bank_account_type' => "ADD COLUMN bank_account_type VARCHAR(50) NOT NULL DEFAULT ''",
+			'bank_branch'       => "ADD COLUMN bank_branch VARCHAR(100) NOT NULL DEFAULT ''",
+			'bank_branch_code'  => "ADD COLUMN bank_branch_code VARCHAR(50) NOT NULL DEFAULT ''",
+		);
+
+		foreach ( $additions as $column => $ddl ) {
+			if ( in_array( $column, $cols, true ) ) {
+				continue;
+			}
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( "ALTER TABLE {$table} {$ddl}" );
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$indexes = $wpdb->get_results( "SHOW INDEX FROM {$table}", ARRAY_A );
+		$index_names = array();
+		if ( is_array( $indexes ) ) {
+			foreach ( $indexes as $idx ) {
+				$index_names[ (string) ( $idx['Key_name'] ?? '' ) ] = true;
+			}
+		}
+		foreach ( array( 'customer_type', 'tax_id', 'party_role', 'external_code' ) as $key ) {
+			if ( isset( $index_names[ $key ] ) ) {
+				continue;
+			}
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( "ALTER TABLE {$table} ADD KEY {$key} ({$key})" );
+		}
+	}
+
+	/**
+	 * Add missing asset warranty / renew columns (dbDelta is unreliable for mid-table ADD).
+	 */
+	public static function migrate_asset_columns(): void {
+		global $wpdb;
+		$table = self::table( 'assets' );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$cols = $wpdb->get_col( "DESCRIBE {$table}", 0 );
+		if ( ! is_array( $cols ) ) {
+			return;
+		}
+
+		$additions = array(
+			'purchase_date'           => 'ADD COLUMN purchase_date DATE NULL',
+			'warranty_end_date'       => 'ADD COLUMN warranty_end_date DATE NULL',
+			'renew_max_years_enabled' => 'ADD COLUMN renew_max_years_enabled TINYINT(1) NOT NULL DEFAULT 0',
+			'renew_max_years'         => 'ADD COLUMN renew_max_years SMALLINT UNSIGNED NULL',
+			'renew_max_times_enabled' => 'ADD COLUMN renew_max_times_enabled TINYINT(1) NOT NULL DEFAULT 0',
+			'renew_max_times'         => 'ADD COLUMN renew_max_times SMALLINT UNSIGNED NULL',
+		);
+
+		foreach ( $additions as $column => $ddl ) {
+			if ( in_array( $column, $cols, true ) ) {
+				continue;
+			}
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( "ALTER TABLE {$table} {$ddl}" );
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$indexes = $wpdb->get_results( "SHOW INDEX FROM {$table}", ARRAY_A );
+		$index_names = array();
+		if ( is_array( $indexes ) ) {
+			foreach ( $indexes as $idx ) {
+				$index_names[ (string) ( $idx['Key_name'] ?? '' ) ] = true;
+			}
+		}
+		if ( ! isset( $index_names['warranty_end_date'] ) ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( "ALTER TABLE {$table} ADD KEY warranty_end_date (warranty_end_date)" );
+		}
 	}
 
 	/**
@@ -86,14 +197,39 @@ final class Installer {
 			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 			customer_code VARCHAR(50) NOT NULL,
 			company_name VARCHAR(255) NOT NULL,
+			customer_type VARCHAR(30) NOT NULL DEFAULT 'juristic',
+			tax_id VARCHAR(20) NOT NULL DEFAULT '',
+			party_role VARCHAR(20) NOT NULL DEFAULT 'customer',
+			external_code VARCHAR(50) NOT NULL DEFAULT '',
+			business_location VARCHAR(20) NOT NULL DEFAULT 'thai',
+			address TEXT NULL,
+			address_2 VARCHAR(255) NOT NULL DEFAULT '',
+			address_3 VARCHAR(255) NOT NULL DEFAULT '',
+			postal_code VARCHAR(20) NOT NULL DEFAULT '',
+			branch_code VARCHAR(50) NOT NULL DEFAULT '',
+			branch_name VARCHAR(100) NOT NULL DEFAULT '',
 			contact_name VARCHAR(150) NOT NULL DEFAULT '',
 			phone VARCHAR(50) NOT NULL DEFAULT '',
+			mobile VARCHAR(50) NOT NULL DEFAULT '',
+			office_phone VARCHAR(50) NOT NULL DEFAULT '',
+			fax VARCHAR(50) NOT NULL DEFAULT '',
 			email VARCHAR(150) NOT NULL DEFAULT '',
+			credit_days SMALLINT NOT NULL DEFAULT 0,
+			bank_name VARCHAR(100) NOT NULL DEFAULT '',
+			bank_account VARCHAR(50) NOT NULL DEFAULT '',
+			bank_account_name VARCHAR(150) NOT NULL DEFAULT '',
+			bank_account_type VARCHAR(50) NOT NULL DEFAULT '',
+			bank_branch VARCHAR(100) NOT NULL DEFAULT '',
+			bank_branch_code VARCHAR(50) NOT NULL DEFAULT '',
 			created_at DATETIME NOT NULL,
 			updated_at DATETIME NOT NULL,
 			PRIMARY KEY  (id),
 			UNIQUE KEY customer_code (customer_code),
-			KEY company_name (company_name)
+			KEY company_name (company_name),
+			KEY customer_type (customer_type),
+			KEY tax_id (tax_id),
+			KEY party_role (party_role),
+			KEY external_code (external_code)
 		) {$charset};";
 
 		$sql[] = "CREATE TABLE {$prefix}assets (
@@ -107,6 +243,12 @@ final class Installer {
 			customer_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
 			install_location VARCHAR(255) NOT NULL DEFAULT '',
 			status VARCHAR(20) NOT NULL DEFAULT 'active',
+			purchase_date DATE NULL,
+			warranty_end_date DATE NULL,
+			renew_max_years_enabled TINYINT(1) NOT NULL DEFAULT 0,
+			renew_max_years SMALLINT UNSIGNED NULL,
+			renew_max_times_enabled TINYINT(1) NOT NULL DEFAULT 0,
+			renew_max_times SMALLINT UNSIGNED NULL,
 			internal_note TEXT NULL,
 			created_by BIGINT UNSIGNED NOT NULL DEFAULT 0,
 			updated_by BIGINT UNSIGNED NOT NULL DEFAULT 0,
@@ -117,7 +259,22 @@ final class Installer {
 			UNIQUE KEY brand_serial (brand, serial_number),
 			KEY serial_number (serial_number),
 			KEY status_asset_type (status, asset_type),
-			KEY customer_id (customer_id)
+			KEY customer_id (customer_id),
+			KEY warranty_end_date (warranty_end_date)
+		) {$charset};";
+
+		$sql[] = "CREATE TABLE {$prefix}asset_components (
+			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+			asset_id BIGINT UNSIGNED NOT NULL,
+			item_name VARCHAR(255) NOT NULL DEFAULT '',
+			source VARCHAR(255) NOT NULL DEFAULT '',
+			warranty_end DATE NULL,
+			note VARCHAR(500) NOT NULL DEFAULT '',
+			sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+			created_at DATETIME NOT NULL,
+			updated_at DATETIME NOT NULL,
+			PRIMARY KEY  (id),
+			KEY asset_sort (asset_id, sort_order)
 		) {$charset};";
 
 		$sql[] = "CREATE TABLE {$prefix}contracts (

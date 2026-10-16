@@ -43,8 +43,9 @@ final class Support_Request_Repo {
 		global $wpdb;
 		$table    = Installer::table( 'support_requests' );
 		$status   = isset( $args['status'] ) ? sanitize_key( (string) $args['status'] ) : '';
+		$search   = isset( $args['search'] ) ? sanitize_text_field( (string) $args['search'] ) : '';
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
-		$per_page = min( 50, max( 1, (int) ( $args['per_page'] ?? 20 ) ) );
+		$per_page = \ITWT\Admin_List::normalize_per_page( (int) ( $args['per_page'] ?? 20 ) );
 		$offset   = ( $page - 1 ) * $per_page;
 
 		$where  = '1=1';
@@ -52,6 +53,13 @@ final class Support_Request_Repo {
 		if ( '' !== $status ) {
 			$where   .= ' AND status = %s';
 			$params[] = $status;
+		}
+		if ( '' !== $search ) {
+			$like     = '%' . $wpdb->esc_like( $search ) . '%';
+			$where   .= ' AND ( contact_name LIKE %s OR phone LIKE %s OR detail LIKE %s )';
+			$params[] = $like;
+			$params[] = $like;
+			$params[] = $like;
 		}
 
 		if ( ! empty( $params ) ) {

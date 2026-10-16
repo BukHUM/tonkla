@@ -18,7 +18,11 @@ $email_id = isset($args['email_id']) ? $args['email_id'] : 'tonkla-blog-newslett
 $hp_id = isset($args['hp_id']) ? $args['hp_id'] : 'tonkla-blog-hp';
 ?>
 <section class="py-20 bg-slate-900 text-white relative overflow-hidden">
-    <div class="absolute inset-0 bg-[url('assets/images/grid-pattern.png')] opacity-10"></div>
+    <div
+        class="absolute inset-0 opacity-10"
+        style="background-image: url('<?php echo esc_url( get_template_directory_uri() . '/assets/images/grid-pattern.png' ); ?>');"
+        aria-hidden="true"
+    ></div>
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <i class="fa-regular fa-envelope-open text-5xl mb-6 text-slate-400"></i>
         <h2 class="text-3xl md:text-4xl font-heading font-bold text-white mb-4">

@@ -23,7 +23,7 @@
 | :--- | :--- |
 | Theme | `wp-content/themes/tonkla/` |
 | IT Warranty Tracker | `wp-content/plugins/it-warranty-tracker/` |
-| สเปก / เอกสาร | `docs/` (เช่น `warranty-checker-plugin.md`) |
+| สเปก / เอกสาร | `docs/` (เช่น `warranty-checker-plugin.md`, `sonarqube-setup.md`) |
 
 ## ติดตั้งบนเซิร์ฟเวอร์ / เครื่องใหม่
 

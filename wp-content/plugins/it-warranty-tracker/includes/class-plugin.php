@@ -46,6 +46,7 @@ final class Plugin {
 	public function init(): void {
 		add_action( 'rest_api_init', array( new Rest_Api(), 'register_routes' ) );
 		( new Shortcode() )->register();
+		( new Page_Template() )->register();
 
 		add_action( 'itwt_daily_expiry_notify', array( new Expiry_Notifier(), 'run' ) );
 		add_action( 'itwt_daily_retention_cleanup', array( $this, 'retention_cleanup' ) );

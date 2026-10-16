@@ -68,6 +68,86 @@ final class Contract_Repo {
 	}
 
 	/**
+	 * Active contract of a given type for an asset.
+	 *
+	 * @param int    $asset_id Asset ID.
+	 * @param string $type     Contract type.
+	 */
+	public function find_active_by_type( int $asset_id, string $type ): ?object {
+		global $wpdb;
+		$table = Installer::table( 'contracts' );
+		$row   = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT * FROM {$table}
+				WHERE asset_id = %d AND contract_type = %s AND status = 'active'
+				ORDER BY end_date DESC LIMIT 1", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$asset_id,
+				sanitize_key( $type )
+			)
+		);
+		return $row ?: null;
+	}
+
+	/**
+	 * Count contracts of a type (any status).
+	 *
+	 * @param int    $asset_id Asset ID.
+	 * @param string $type     Contract type.
+	 */
+	public function count_by_type( int $asset_id, string $type ): int {
+		global $wpdb;
+		$table = Installer::table( 'contracts' );
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM {$table} WHERE asset_id = %d AND contract_type = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$asset_id,
+				sanitize_key( $type )
+			)
+		);
+	}
+
+	/**
+	 * Upsert company warranty contract from asset purchase / warranty end dates.
+	 *
+	 * @param int         $asset_id Asset ID.
+	 * @param string|null $start    Purchase date Y-m-d or null to cancel.
+	 * @param string|null $end      Warranty end Y-m-d or null to cancel.
+	 * @return int|true|\WP_Error Contract id, true when cancelled, or error.
+	 */
+	public function sync_company_warranty( int $asset_id, ?string $start, ?string $end ) {
+		$existing = $this->find_active_by_type( $asset_id, 'warranty' );
+
+		if ( null === $start || null === $end || '' === $start || '' === $end ) {
+			if ( $existing ) {
+				$this->cancel( (int) $existing->id );
+			}
+			return true;
+		}
+
+		if ( ! $this->valid_date( $start ) || ! $this->valid_date( $end ) ) {
+			return new \WP_Error( 'itwt_invalid', __( 'วันซื้อ / วันหมดประกันไม่ถูกต้อง', 'it-warranty-tracker' ) );
+		}
+		if ( $end < $start ) {
+			return new \WP_Error( 'itwt_invalid', __( 'วันหมดประกันต้องไม่ก่อนวันซื้อ', 'it-warranty-tracker' ) );
+		}
+
+		$data = array(
+			'asset_id'      => $asset_id,
+			'contract_type' => 'warranty',
+			'contract_no'   => $existing ? (string) $existing->contract_no : '',
+			'start_date'    => $start,
+			'end_date'      => $end,
+			'sla_tier'      => $existing ? (string) $existing->sla_tier : '',
+			'status'        => 'active',
+		);
+
+		if ( $existing ) {
+			return $this->save( $data, (int) $existing->id );
+		}
+		return $this->save( $data, 0 );
+	}
+
+	/**
 	 * Save contract with overlap validation.
 	 *
 	 * @param array<string,mixed> $data Contract fields.
@@ -79,12 +159,15 @@ final class Contract_Repo {
 		$table = Installer::table( 'contracts' );
 		$now   = current_time( 'mysql' );
 
+		$start_iso = \ITWT\Dates::parse_input( sanitize_text_field( (string) ( $data['start_date'] ?? '' ) ) );
+		$end_iso   = \ITWT\Dates::parse_input( sanitize_text_field( (string) ( $data['end_date'] ?? '' ) ) );
+
 		$row = array(
 			'asset_id'      => absint( $data['asset_id'] ?? 0 ),
 			'contract_type' => sanitize_key( (string) ( $data['contract_type'] ?? 'warranty' ) ),
 			'contract_no'   => sanitize_text_field( (string) ( $data['contract_no'] ?? '' ) ),
-			'start_date'    => sanitize_text_field( (string) ( $data['start_date'] ?? '' ) ),
-			'end_date'      => sanitize_text_field( (string) ( $data['end_date'] ?? '' ) ),
+			'start_date'    => $start_iso ?? '',
+			'end_date'      => $end_iso ?? '',
 			'sla_tier'      => sanitize_text_field( (string) ( $data['sla_tier'] ?? '' ) ),
 			'status'        => sanitize_key( (string) ( $data['status'] ?? 'active' ) ),
 			'updated_at'    => $now,
@@ -101,6 +184,13 @@ final class Contract_Repo {
 		}
 		if ( $row['end_date'] < $row['start_date'] ) {
 			return new \WP_Error( 'itwt_invalid', __( 'วันสิ้นสุดต้องไม่ก่อนวันเริ่ม', 'it-warranty-tracker' ) );
+		}
+
+		if ( 'ma' === $row['contract_type'] && 'active' === $row['status'] && 0 === $id ) {
+			$cap = $this->validate_ma_renewal_caps( $row['asset_id'], $row['end_date'] );
+			if ( is_wp_error( $cap ) ) {
+				return $cap;
+			}
 		}
 
 		if ( 'active' === $row['status'] && $this->has_overlap( $row['asset_id'], $row['contract_type'], $row['start_date'], $row['end_date'], $id ) ) {
@@ -124,6 +214,66 @@ final class Contract_Repo {
 	}
 
 	/**
+	 * Enforce asset renew caps when inserting MA.
+	 *
+	 * @param int    $asset_id Asset ID.
+	 * @param string $end_date Proposed MA end date.
+	 * @return true|\WP_Error
+	 */
+	public function validate_ma_renewal_caps( int $asset_id, string $end_date ) {
+		$asset = ( new Asset_Repo() )->find( $asset_id );
+		if ( ! $asset ) {
+			return new \WP_Error( 'itwt_missing', __( 'ไม่พบทรัพย์สิน', 'it-warranty-tracker' ) );
+		}
+
+		if ( ! empty( $asset->renew_max_times_enabled ) ) {
+			$max   = (int) ( $asset->renew_max_times ?? 0 );
+			$count = $this->count_by_type( $asset_id, 'ma' );
+			if ( $max > 0 && $count >= $max ) {
+				return new \WP_Error(
+					'itwt_renew_times',
+					sprintf(
+						/* translators: 1: used count, 2: max times */
+						__( 'ต่อ MA ได้สูงสุด %2$d ครั้ง (ใช้ไปแล้ว %1$d)', 'it-warranty-tracker' ),
+						$count,
+						$max
+					)
+				);
+			}
+		}
+
+		if ( ! empty( $asset->renew_max_years_enabled ) ) {
+			$max_years = (int) ( $asset->renew_max_years ?? 0 );
+			$purchase  = (string) ( $asset->purchase_date ?? '' );
+			if ( $max_years < 1 ) {
+				return new \WP_Error( 'itwt_renew_years', __( 'ยังไม่ได้ตั้งจำนวนปีสูงสุดในการต่อ MA', 'it-warranty-tracker' ) );
+			}
+			if ( '' === $purchase || ! $this->valid_date( $purchase ) ) {
+				return new \WP_Error( 'itwt_renew_years', __( 'ต้องระบุวันซื้อก่อน จึงจะจำกัดปีที่ต่อ MA ได้', 'it-warranty-tracker' ) );
+			}
+			$tz    = wp_timezone();
+			$start = \DateTimeImmutable::createFromFormat( '!Y-m-d', $purchase, $tz );
+			if ( ! $start ) {
+				return new \WP_Error( 'itwt_renew_years', __( 'วันซื้อไม่ถูกต้อง', 'it-warranty-tracker' ) );
+			}
+			$limit = $start->modify( '+' . $max_years . ' years' )->format( 'Y-m-d' );
+			if ( $end_date > $limit ) {
+				return new \WP_Error(
+					'itwt_renew_years',
+					sprintf(
+						/* translators: 1: max years, 2: limit date */
+						__( 'ต่อ MA รวมแล้วได้ไม่เกิน %1$d ปีจากวันซื้อ (ถึง %2$s)', 'it-warranty-tracker' ),
+						$max_years,
+						\ITWT\Dates::format( $limit )
+					)
+				);
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Cancel a contract.
 	 *
 	 * @param int $id Contract ID.
@@ -142,6 +292,26 @@ final class Contract_Repo {
 			),
 			array( 'id' => $id )
 		);
+		$this->bust_asset_cache( (int) $contract->asset_id );
+		return true;
+	}
+
+	/**
+	 * Permanently delete a contract row.
+	 *
+	 * @param int $id Contract ID.
+	 * @return true|\WP_Error
+	 */
+	public function delete( int $id ) {
+		$contract = $this->find( $id );
+		if ( ! $contract ) {
+			return new \WP_Error( 'itwt_missing', __( 'ไม่พบสัญญา', 'it-warranty-tracker' ) );
+		}
+		global $wpdb;
+		$ok = $wpdb->delete( Installer::table( 'contracts' ), array( 'id' => $id ), array( '%d' ) );
+		if ( false === $ok ) {
+			return new \WP_Error( 'itwt_db', __( 'ลบสัญญาไม่สำเร็จ', 'it-warranty-tracker' ) );
+		}
 		$this->bust_asset_cache( (int) $contract->asset_id );
 		return true;
 	}
@@ -213,13 +383,12 @@ final class Contract_Repo {
 	}
 
 	/**
-	 * Validate Y-m-d date.
+	 * Validate date (ISO Y-m-d or dd/mm/yyyy).
 	 *
 	 * @param string $date Date string.
 	 */
 	private function valid_date( string $date ): bool {
-		$d = \DateTimeImmutable::createFromFormat( 'Y-m-d', $date );
-		return $d && $d->format( 'Y-m-d' ) === $date;
+		return null !== \ITWT\Dates::parse_input( $date );
 	}
 
 	/**
