@@ -1,12 +1,13 @@
 <?php
 /**
  * Plugin Name:       IT Warranty Tracker
- * Plugin URI:        https://tonkla.local/
+ * Plugin URI:        https://tonkla.co
  * Description:       IT asset tracking and warranty / MA lookup with LINE notifications.
  * Version:           1.0.0
  * Requires at least: 6.0
  * Requires PHP:      8.1
- * Author:            Tonkla
+ * Author:            ต้นกล้า ไอที
+ * Author URI:        https://tonkla.co
  * License:           GPL-2.0-or-later
  * Text Domain:       it-warranty-tracker
  * Domain Path:       /languages
