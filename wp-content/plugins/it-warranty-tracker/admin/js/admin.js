@@ -461,11 +461,39 @@
 		}
 	}
 
+	function setSlaChecks(root, raw) {
+		if (!root) {
+			return;
+		}
+		var parts = String(raw || '')
+			.split(/[\/,|]/)
+			.map(function (s) {
+				return s.trim();
+			})
+			.filter(Boolean);
+		var knownLower = {};
+		root.querySelectorAll('input[type="checkbox"]').forEach(function (cb) {
+			var val = String(cb.value || '').trim();
+			var key = val.toLowerCase();
+			knownLower[key] = true;
+			cb.checked = parts.some(function (p) {
+				return p.toLowerCase() === key;
+			});
+		});
+		var custom = parts.filter(function (p) {
+			return !knownLower[p.toLowerCase()];
+		});
+		var other = root.querySelector('.itwt-sla-checks__other-input');
+		if (other) {
+			other.value = custom.join(' / ');
+		}
+	}
+
 	function fillContractForm(data) {
 		var idEl = document.getElementById('contract_id');
 		var typeEl = document.getElementById('contract_type');
 		var noEl = document.getElementById('contract_no');
-		var slaEl = document.getElementById('contract_sla');
+		var slaRoot = document.getElementById('contract_sla');
 		var statusEl = document.getElementById('contract_status');
 		var title = document.getElementById('itwt-contract-modal-title');
 		var hints = document.getElementById('itwt-contract-renew-hints');
@@ -483,9 +511,7 @@
 		}
 		setDateIso('contract_start', data.start || '');
 		setDateIso('contract_end', data.end || '');
-		if (slaEl) {
-			slaEl.value = data.sla || '';
-		}
+		setSlaChecks(slaRoot, data.sla || '');
 		if (statusEl) {
 			statusEl.value = data.status || 'active';
 		}

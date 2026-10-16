@@ -51,6 +51,10 @@
 				'M4 7h16v10H4V7zm2 2v6h2V9H6zm4 0v6h2V9h-2zm4 0v6h2V9h-2zm4 0v6h2V9h-2zM7 5h2v2H7V5zm4 0h2v2h-2V5zm4 0h2v2h-2V5zM7 17h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z',
 			storage:
 				'M4 6h16a1 1 0 0 1 1 1v4H3V7a1 1 0 0 1 1-1zm-1 7h18v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4zm3 1.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z',
+			mainboard:
+				'M3 4h18v16H3V4zm2 2v3h4V6H5zm6 0v3h8V6h-8zM5 11v3h5v-3H5zm7 0v7h7v-7h-7zM5 16v2h5v-2H5z',
+			chassis:
+				'M8 2h8a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm2 3v2h4V5h-4zm0 4v8h4V9h-4zm1.5 10.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2z',
 			power: 'M13 2 4 14h7l-1 8 10-14h-7l0-6z',
 			network:
 				'M12 3a3 3 0 0 1 3 3v1h2a2 2 0 0 1 2 2v2h1a1 1 0 1 1 0 2h-1v2a2 2 0 0 1-2 2h-2v1a3 3 0 1 1-6 0v-1H8a2 2 0 0 1-2-2v-2H5a1 1 0 1 1 0-2h1V9a2 2 0 0 1 2-2h2V6a3 3 0 0 1 3-3zm-1 14v1a1 1 0 1 0 2 0v-1h-2zM8 9v6h8V9H8z',
@@ -237,6 +241,10 @@
 		}
 		if (asset.serial_masked) {
 			meta += metaItem(i18n.serial || 'S/N', asset.serial_masked);
+		}
+		var slaValue = (cov.sla_tier || asset.sla_tier || '').trim();
+		if (flags.showSla && slaValue) {
+			meta += metaItem(i18n.slaService || i18n.sla || 'เงื่อนไขบริการ', slaValue);
 		}
 		if (meta) {
 			html += '<div class="itwt-card__meta">' + meta + '</div>';

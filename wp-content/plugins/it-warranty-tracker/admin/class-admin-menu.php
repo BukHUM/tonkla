@@ -22,6 +22,7 @@ use ITWT\Repositories\Service_Log_Repo;
 use ITWT\Repositories\Support_Request_Repo;
 use ITWT\Service_Tag;
 use ITWT\Settings;
+use ITWT\Sla_Options;
 use ITWT\Spec_Icons;
 
 /**
@@ -481,7 +482,10 @@ final class Admin_Menu {
 					'contract_no'   => isset( $_POST['new_contract_no'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['new_contract_no'] ) ) : '',
 					'start_date'    => sanitize_text_field( wp_unslash( (string) $_POST['new_start_date'] ) ),
 					'end_date'      => sanitize_text_field( wp_unslash( (string) $_POST['new_end_date'] ) ),
-					'sla_tier'      => isset( $_POST['new_sla_tier'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['new_sla_tier'] ) ) : '',
+					'sla_tier'      => Sla_Options::from_request(
+						isset( $_POST['new_sla_tier'] ) ? wp_unslash( $_POST['new_sla_tier'] ) : array(), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sla_Options::from_request
+						isset( $_POST['new_sla_tier_other'] ) ? wp_unslash( (string) $_POST['new_sla_tier_other'] ) : ''
+					),
 					'status'        => 'active',
 				)
 			);
@@ -728,7 +732,10 @@ final class Admin_Menu {
 				'contract_no'   => isset( $_POST['contract_no'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['contract_no'] ) ) : '',
 				'start_date'    => $start,
 				'end_date'      => $end,
-				'sla_tier'      => isset( $_POST['sla_tier'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['sla_tier'] ) ) : '',
+				'sla_tier'      => Sla_Options::from_request(
+					isset( $_POST['sla_tier'] ) ? wp_unslash( $_POST['sla_tier'] ) : array(), // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sla_Options::from_request
+					isset( $_POST['sla_tier_other'] ) ? wp_unslash( (string) $_POST['sla_tier_other'] ) : ''
+				),
 				'status'        => $status,
 			),
 			$contract_id

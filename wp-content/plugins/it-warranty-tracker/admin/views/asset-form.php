@@ -18,6 +18,7 @@ defined( 'ABSPATH' ) || exit;
 use ITWT\Coverage;
 use ITWT\Dates;
 use ITWT\Labels;
+use ITWT\Sla_Options;
 use ITWT\Spec_Icons;
 
 $is_new     = ! $asset;
@@ -492,9 +493,9 @@ $model_line = $asset
 							<button type="button" class="itwt-action itwt-years" data-years="3"><?php esc_html_e( '+3 ปี', 'it-warranty-tracker' ); ?></button>
 						</div>
 
-						<label for="new_sla_tier"><?php esc_html_e( 'SLA', 'it-warranty-tracker' ); ?></label>
+						<span class="itwt-modal__label"><?php esc_html_e( 'SLA / เงื่อนไขบริการ', 'it-warranty-tracker' ); ?></span>
 						<div class="itwt-field">
-							<input type="text" name="new_sla_tier" id="new_sla_tier" placeholder="On-Site 24x7 / NBD / Carry-in" />
+							<?php Sla_Options::render_checkboxes( 'new_sla_tier', '', 'new-sla' ); ?>
 						</div>
 					</div>
 				</div>
@@ -802,8 +803,10 @@ $model_line = $asset
 										<button type="button" class="itwt-action itwt-contract-years" data-years="3"><?php esc_html_e( '3 ปี', 'it-warranty-tracker' ); ?></button>
 									</div>
 
-									<label for="contract_sla"><?php esc_html_e( 'SLA', 'it-warranty-tracker' ); ?></label>
-									<input type="text" id="contract_sla" name="sla_tier" placeholder="On-Site 24x7 / NBD / Carry-in" />
+									<span class="itwt-modal__label"><?php esc_html_e( 'SLA / เงื่อนไขบริการ', 'it-warranty-tracker' ); ?></span>
+									<div id="contract_sla" data-itwt-sla-checks>
+										<?php Sla_Options::render_checkboxes( 'sla_tier', '', 'contract-sla' ); ?>
+									</div>
 
 									<label for="contract_status" class="itwt-contract-status-field" hidden><?php esc_html_e( 'สถานะ', 'it-warranty-tracker' ); ?></label>
 									<select id="contract_status" name="status" class="itwt-contract-status-field" hidden disabled>

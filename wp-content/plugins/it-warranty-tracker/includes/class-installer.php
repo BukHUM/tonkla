@@ -284,7 +284,7 @@ final class Installer {
 			contract_no VARCHAR(50) NOT NULL DEFAULT '',
 			start_date DATE NOT NULL,
 			end_date DATE NOT NULL,
-			sla_tier VARCHAR(100) NOT NULL DEFAULT '',
+			sla_tier VARCHAR(255) NOT NULL DEFAULT '',
 			status VARCHAR(20) NOT NULL DEFAULT 'active',
 			created_by BIGINT UNSIGNED NOT NULL DEFAULT 0,
 			created_at DATETIME NOT NULL,

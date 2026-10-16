@@ -23,14 +23,16 @@ final class Spec_Icons {
 	 */
 	public static function options(): array {
 		return array(
-			''        => __( '— ไม่มีไอคอน —', 'it-warranty-tracker' ),
-			'cpu'     => __( 'CPU', 'it-warranty-tracker' ),
-			'memory'  => __( 'Memory / RAM', 'it-warranty-tracker' ),
-			'storage' => __( 'Storage', 'it-warranty-tracker' ),
-			'power'   => __( 'Power', 'it-warranty-tracker' ),
-			'network' => __( 'Network', 'it-warranty-tracker' ),
-			'os'      => __( 'OS / Software', 'it-warranty-tracker' ),
-			'other'   => __( 'อื่น ๆ', 'it-warranty-tracker' ),
+			''          => __( '— ไม่มีไอคอน —', 'it-warranty-tracker' ),
+			'cpu'       => __( 'CPU', 'it-warranty-tracker' ),
+			'memory'    => __( 'Memory / RAM', 'it-warranty-tracker' ),
+			'storage'   => __( 'Storage', 'it-warranty-tracker' ),
+			'mainboard' => __( 'Mainboard (Motherboard)', 'it-warranty-tracker' ),
+			'chassis'   => __( 'Chassis (Case)', 'it-warranty-tracker' ),
+			'power'     => __( 'Power', 'it-warranty-tracker' ),
+			'network'   => __( 'Network', 'it-warranty-tracker' ),
+			'os'        => __( 'OS / Software', 'it-warranty-tracker' ),
+			'other'     => __( 'อื่น ๆ', 'it-warranty-tracker' ),
 		);
 	}
 
@@ -60,6 +62,12 @@ final class Spec_Icons {
 		}
 		if ( str_contains( $k, 'ssd' ) || str_contains( $k, 'hdd' ) || str_contains( $k, 'nvme' ) || str_contains( $k, 'storage' ) || str_contains( $k, 'disk' ) || str_contains( $k, 'ดิสก์' ) ) {
 			return 'storage';
+		}
+		if ( str_contains( $k, 'mainboard' ) || str_contains( $k, 'motherboard' ) || str_contains( $k, 'เมนบอร์ด' ) || preg_match( '/\bmb\b/', $k ) ) {
+			return 'mainboard';
+		}
+		if ( str_contains( $k, 'chassis' ) || str_contains( $k, 'case' ) || str_contains( $k, 'เคส' ) || str_contains( $k, 'ตู้' ) ) {
+			return 'chassis';
 		}
 		if ( str_contains( $k, 'psu' ) || str_contains( $k, 'power' ) || str_contains( $k, 'watt' ) || str_contains( $k, 'ไฟ' ) ) {
 			return 'power';

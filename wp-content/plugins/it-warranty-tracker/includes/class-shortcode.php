@@ -142,6 +142,7 @@ final class Shortcode {
 					'daysLeft'          => __( 'วันคงเหลือ', 'it-warranty-tracker' ),
 					'serial'            => __( 'S/N', 'it-warranty-tracker' ),
 					'sla'               => __( 'SLA', 'it-warranty-tracker' ),
+					'slaService'        => __( 'เงื่อนไขบริการ', 'it-warranty-tracker' ),
 					'renewHint'         => __( 'สามารถต่อประกันได้เมื่อหมดระยะประกัน', 'it-warranty-tracker' ),
 					'renewHintBlocked'  => __( 'ไม่สามารถต่อประกันได้', 'it-warranty-tracker' ),
 				),

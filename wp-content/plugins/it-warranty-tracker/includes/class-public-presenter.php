@@ -121,6 +121,7 @@ final class Public_Presenter {
 			}
 		}
 		$renewable = Coverage::is_renewable( $asset, $ma_count );
+		$sla_tier  = $show_sla ? self::resolve_sla( $coverage, $contracts ) : '';
 
 		return array(
 			'service_tag'      => (string) $asset->service_tag,
@@ -132,6 +133,7 @@ final class Public_Presenter {
 			'asset_status'     => (string) $asset->status,
 			'purchase_date'    => $purchase_fmt,
 			'warranty_end'     => $warranty_fmt,
+			'sla_tier'         => '' !== $sla_tier ? $sla_tier : null,
 			'coverage'         => array(
 				'status'         => $status,
 				'label'          => Coverage::label( $status, $coverage['days_remaining'], $next_start ?: null ),
@@ -140,6 +142,7 @@ final class Public_Presenter {
 				'next_start'     => '' !== $next_start ? Dates::format( $next_start ) : null,
 				'can_renew'      => $renewable && ! empty( $coverage['can_renew'] ),
 				'renewable'      => $renewable,
+				'sla_tier'       => '' !== $sla_tier ? $sla_tier : null,
 			),
 			'specs'            => $public_specs,
 			'contracts'        => $ma_contracts,
@@ -168,5 +171,47 @@ final class Public_Presenter {
 			'brand'       => (string) $asset->brand,
 			'model_name'  => (string) $asset->model_name,
 		);
+	}
+
+	/**
+	 * Pick SLA from covering contracts, then any active warranty/MA.
+	 *
+	 * @param array<string,mixed> $coverage  Coverage::compute result.
+	 * @param array<int,object>   $contracts All contracts.
+	 */
+	private static function resolve_sla( array $coverage, array $contracts ): string {
+		$covering = $coverage['covering_contracts'] ?? array();
+		if ( is_array( $covering ) ) {
+			foreach ( $covering as $c ) {
+				if ( ! is_object( $c ) ) {
+					continue;
+				}
+				$tier = trim( (string) ( $c->sla_tier ?? '' ) );
+				if ( '' !== $tier ) {
+					return sanitize_text_field( $tier );
+				}
+			}
+		}
+
+		// Prefer company warranty, then MA, among active rows.
+		$fallback = '';
+		foreach ( $contracts as $c ) {
+			if ( 'active' !== (string) ( $c->status ?? '' ) ) {
+				continue;
+			}
+			$tier = trim( (string) ( $c->sla_tier ?? '' ) );
+			if ( '' === $tier ) {
+				continue;
+			}
+			$type = (string) ( $c->contract_type ?? '' );
+			if ( 'warranty' === $type || 'manufacturer' === $type ) {
+				return sanitize_text_field( $tier );
+			}
+			if ( '' === $fallback ) {
+				$fallback = sanitize_text_field( $tier );
+			}
+		}
+
+		return $fallback;
 	}
 }
