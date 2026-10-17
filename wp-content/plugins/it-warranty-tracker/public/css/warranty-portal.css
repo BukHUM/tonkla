@@ -351,6 +351,27 @@ body.itwt-theme-dense {
 	outline-offset: 2px;
 }
 
+.itwt-portal__footer .itwt-developer-credit {
+	margin: 12px 0 0;
+	padding: 0;
+	font-size: 0.85rem;
+	color: var(--itwt-muted);
+	text-align: center;
+}
+
+.itwt-portal__footer .itwt-developer-credit__link {
+	color: var(--itwt-muted);
+	font-weight: 600;
+	text-decoration: none;
+	border-bottom: 1px solid color-mix(in srgb, var(--itwt-muted) 40%, transparent);
+}
+
+.itwt-portal__footer .itwt-developer-credit__link:hover,
+.itwt-portal__footer .itwt-developer-credit__link:focus-visible {
+	color: var(--itwt-accent);
+	border-bottom-color: var(--itwt-accent);
+}
+
 .itwt-search {
 	padding: var(--itwt-space);
 	border: 1px solid var(--itwt-border);

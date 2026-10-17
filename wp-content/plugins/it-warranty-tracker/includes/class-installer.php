@@ -390,6 +390,9 @@ final class Installer {
 					'label' => 'Software',
 				),
 			),
+			'company_name_th'        => 'ต้นกล้า ไอที',
+			'company_name_en'        => 'TONKLA IT',
+			'show_developer_credit'  => true,
 		);
 
 		$existing = get_option( 'itwt_settings', false );

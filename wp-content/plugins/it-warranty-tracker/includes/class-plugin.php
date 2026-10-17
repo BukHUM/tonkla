@@ -53,12 +53,61 @@ final class Plugin {
 		add_action( 'itwt_notify_tech_group', array( new Tech_Notifier(), 'notify' ) );
 		add_action( 'itwt_csv_import_batch', array( new Csv_Importer(), 'process_batch' ) );
 
+		add_filter( 'plugin_action_links_' . ITWT_PLUGIN_BASENAME, array( $this, 'plugin_action_links' ) );
+		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
+
 		if ( is_admin() ) {
 			( new Admin_Menu() )->register();
 			add_action( 'admin_notices', array( $this, 'quota_admin_notice' ) );
 		}
 
 		Installer::schedule_crons();
+	}
+
+	/**
+	 * Plugins list action links (Settings).
+	 *
+	 * @param array<int,string> $links Existing links.
+	 * @return array<int,string>
+	 */
+	public function plugin_action_links( array $links ): array {
+		if ( current_user_can( 'itwt_manage_settings' ) ) {
+			array_unshift(
+				$links,
+				sprintf(
+					'<a href="%s">%s</a>',
+					esc_url( admin_url( 'admin.php?page=itwt-settings' ) ),
+					esc_html__( 'ตั้งค่า', 'it-warranty-tracker' )
+				)
+			);
+		}
+		return $links;
+	}
+
+	/**
+	 * Plugins list row meta (developer site).
+	 *
+	 * @param array<int,string> $links       Existing meta.
+	 * @param string            $plugin_file Plugin basename.
+	 * @return array<int,string>
+	 */
+	public function plugin_row_meta( array $links, string $plugin_file ): array {
+		if ( ITWT_PLUGIN_BASENAME !== $plugin_file ) {
+			return $links;
+		}
+		$links[] = sprintf(
+			'<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
+			esc_url( Settings::developer_credit_url( 'plugins' ) ),
+			esc_html__( 'เว็บไซต์ผู้พัฒนา', 'it-warranty-tracker' )
+		);
+		if ( current_user_can( 'itwt_log_service' ) ) {
+			$links[] = sprintf(
+				'<a href="%s">%s</a>',
+				esc_url( admin_url( 'admin.php?page=itwt-help' ) ),
+				esc_html__( 'คู่มือ', 'it-warranty-tracker' )
+			);
+		}
+		return $links;
 	}
 
 	/**

@@ -1501,6 +1501,11 @@
 				']" value="1" ' +
 				(item.public === false ? '' : 'checked') +
 				' /> <span>แสดงหน้าเว็บ</span></label>' +
+				'<label class="itwt-spec-row__public"><input type="checkbox" name="spec_on_label[' +
+				idx +
+				']" value="1" ' +
+				(item.on_label ? 'checked' : '') +
+				' /> <span>บนสติ๊กเกอร์</span></label>' +
 				'<button type="button" class="itwt-spec-row__remove" aria-label="ลบแถวสเปก">&times;</button>';
 			return row;
 		}
@@ -1512,7 +1517,8 @@
 			var head = document.createElement('div');
 			head.className = 'itwt-spec-builder__head';
 			head.setAttribute('aria-hidden', 'true');
-			head.innerHTML = '<span>คีย์</span><span>ค่า</span><span>ไอคอน</span><span>สาธารณะ</span><span></span>';
+			head.innerHTML =
+				'<span>คีย์</span><span>ค่า</span><span>ไอคอน</span><span>สาธารณะ</span><span>สติ๊กเกอร์</span><span></span>';
 			builder.insertBefore(head, builder.firstChild);
 		}
 
@@ -1529,7 +1535,9 @@
 				row.remove();
 				if (!builder.querySelector('.itwt-spec-row')) {
 					ensureSpecHead();
-					builder.appendChild(buildSpecRow(0, { key: '', value: '', icon: '', public: true }));
+					builder.appendChild(
+						buildSpecRow(0, { key: '', value: '', icon: '', public: true, on_label: false })
+					);
 				}
 			});
 		}
@@ -1538,7 +1546,9 @@
 			addSpec.addEventListener('click', function () {
 				ensureSpecHead();
 				var idx = builder.querySelectorAll('.itwt-spec-row').length;
-				builder.appendChild(buildSpecRow(idx, { key: '', value: '', icon: '', public: true }));
+				builder.appendChild(
+					buildSpecRow(idx, { key: '', value: '', icon: '', public: true, on_label: false })
+				);
 			});
 		}
 
@@ -1551,7 +1561,9 @@
 				builder.innerHTML = '';
 				ensureSpecHead();
 				if (!tpl.length) {
-					builder.appendChild(buildSpecRow(0, { key: '', value: '', icon: '', public: true }));
+					builder.appendChild(
+						buildSpecRow(0, { key: '', value: '', icon: '', public: true, on_label: false })
+					);
 					return;
 				}
 				tpl.forEach(function (item, idx) {
@@ -1561,6 +1573,7 @@
 							value: item.value || '',
 							icon: item.icon || '',
 							public: item.public !== false,
+							on_label: !!item.on_label,
 						})
 					);
 				});

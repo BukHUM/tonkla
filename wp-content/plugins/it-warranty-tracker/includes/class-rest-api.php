@@ -94,6 +94,26 @@ final class Rest_Api {
 				),
 			)
 		);
+
+		register_rest_route(
+			'itwt/v1',
+			'/assets',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'search_assets' ),
+				'permission_callback' => static function () {
+					return current_user_can( 'itwt_manage_assets' );
+				},
+				'args'                => array(
+					'search' => array(
+						'required'          => false,
+						'type'              => 'string',
+						'default'           => '',
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -122,6 +142,48 @@ final class Rest_Api {
 				'name'  => $name,
 				'label' => $code . ' — ' . $name,
 				'role'  => (string) ( $row->party_role ?? 'customer' ),
+			);
+		}
+
+		return new \WP_REST_Response(
+			array(
+				'items' => $items,
+				'total' => (int) $result['total'],
+			),
+			200
+		);
+	}
+
+	/**
+	 * GET /assets?search= — admin print-label asset picker.
+	 *
+	 * @param \WP_REST_Request $request Request.
+	 * @return \WP_REST_Response
+	 */
+	public function search_assets( \WP_REST_Request $request ) {
+		$search = (string) $request->get_param( 'search' );
+		$result = ( new Asset_Repo() )->list(
+			array(
+				'search'   => $search,
+				'page'     => 1,
+				'per_page' => 20,
+			)
+		);
+
+		$items = array();
+		foreach ( $result['items'] as $row ) {
+			$tag   = (string) ( $row->service_tag ?? '' );
+			$brand = (string) ( $row->brand ?? '' );
+			$model = (string) ( $row->model_name ?? '' );
+			$parts = array_filter( array( $brand, $model ) );
+			$desc  = implode( ' ', $parts );
+			$items[] = array(
+				'id'    => (int) $row->id,
+				'tag'   => $tag,
+				'brand' => $brand,
+				'model' => $model,
+				'type'  => Asset_Types::label( (string) ( $row->asset_type ?? '' ) ),
+				'label' => '' !== $desc ? $tag . ' — ' . $desc : $tag,
 			);
 		}
 

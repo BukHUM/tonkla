@@ -51,6 +51,42 @@ final class Contract_Repo {
 	}
 
 	/**
+	 * Batch-load contracts for many assets (avoid N+1 on print).
+	 *
+	 * @param array<int,int> $asset_ids Asset IDs.
+	 * @return array<int,array<int,object>> Map of asset_id => contracts.
+	 */
+	public function for_assets( array $asset_ids ): array {
+		$asset_ids = array_values( array_unique( array_filter( array_map( 'absint', $asset_ids ) ) ) );
+		$map       = array();
+		foreach ( $asset_ids as $id ) {
+			$map[ $id ] = array();
+		}
+		if ( empty( $asset_ids ) ) {
+			return $map;
+		}
+
+		global $wpdb;
+		$table  = Installer::table( 'contracts' );
+		$limit  = min( 2000, max( 200, count( $asset_ids ) * 20 ) );
+		$place  = implode( ',', array_fill( 0, count( $asset_ids ), '%d' ) );
+		$params = $asset_ids;
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		$sql  = "SELECT * FROM {$table} WHERE asset_id IN ({$place}) ORDER BY asset_id ASC, start_date ASC LIMIT {$limit}";
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $params ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		if ( ! is_array( $rows ) ) {
+			return $map;
+		}
+		foreach ( $rows as $row ) {
+			$aid = (int) ( $row->asset_id ?? 0 );
+			if ( isset( $map[ $aid ] ) ) {
+				$map[ $aid ][] = $row;
+			}
+		}
+		return $map;
+	}
+
+	/**
 	 * Latest active contract end date per asset (for expiry notifier).
 	 *
 	 * @param int $asset_id Asset ID.

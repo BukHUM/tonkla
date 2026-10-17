@@ -77,7 +77,10 @@ $show_brand = 'page' !== $portal_layout && ( $portal_logo_url || $portal_title |
 	</div>
 	<div class="itwt-result" id="itwt-result" hidden></div>
 
-	<?php if ( $portal_phone || $portal_privacy ) : ?>
+	<?php
+	$show_credit = \ITWT\Settings::show_developer_credit();
+	if ( $portal_phone || $portal_privacy || $show_credit ) :
+		?>
 		<footer class="itwt-portal__footer">
 			<?php if ( $portal_phone ) : ?>
 				<p><?php esc_html_e( 'ศูนย์บริการ', 'it-warranty-tracker' ); ?>: <a href="tel:<?php echo esc_attr( preg_replace( '/\s+/', '', $portal_phone ) ?? '' ); ?>"><?php echo esc_html( $portal_phone ); ?></a></p>
@@ -85,6 +88,7 @@ $show_brand = 'page' !== $portal_layout && ( $portal_logo_url || $portal_title |
 			<?php if ( $portal_privacy ) : ?>
 				<p><a href="<?php echo esc_url( $portal_privacy ); ?>"><?php esc_html_e( 'นโยบายความเป็นส่วนตัว', 'it-warranty-tracker' ); ?></a></p>
 			<?php endif; ?>
+			<?php \ITWT\Settings::render_developer_credit( 'portal' ); ?>
 		</footer>
 	<?php endif; ?>
 

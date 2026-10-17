@@ -59,6 +59,105 @@ final class Settings {
 	}
 
 	/**
+	 * Media library attachment ID for the configured logo (0 if unset/invalid).
+	 */
+	public static function logo_attachment_id(): int {
+		$id = (int) ( self::get()['logo_attachment_id'] ?? 0 );
+		if ( $id > 0 && wp_attachment_is_image( $id ) ) {
+			return $id;
+		}
+		return 0;
+	}
+
+	/**
+	 * Logo image URL for sticker / portal.
+	 * Fallback order: plugin setting → WP custom logo → theme Carbon main_logo → theme landscape file.
+	 *
+	 * @param string $size Attachment size when using media library.
+	 */
+	public static function logo_url( string $size = 'medium' ): string {
+		$id = self::logo_attachment_id();
+		if ( $id > 0 ) {
+			$url = wp_get_attachment_image_url( $id, $size );
+			if ( is_string( $url ) && '' !== $url ) {
+				return $url;
+			}
+		}
+
+		$custom = (int) get_theme_mod( 'custom_logo' );
+		if ( $custom > 0 ) {
+			$url = wp_get_attachment_image_url( $custom, $size );
+			if ( is_string( $url ) && '' !== $url ) {
+				return $url;
+			}
+		}
+
+		if ( function_exists( 'carbon_get_theme_option' ) ) {
+			$carbon = carbon_get_theme_option( 'main_logo' );
+			if ( is_string( $carbon ) && '' !== $carbon ) {
+				return esc_url_raw( $carbon );
+			}
+		}
+
+		$path = get_theme_file_path( 'assets/images/logo-tonkla-landscape.png' );
+		if ( is_string( $path ) && is_readable( $path ) ) {
+			return get_theme_file_uri( 'assets/images/logo-tonkla-landscape.png' );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Whether to show developer credit / backlink (default on).
+	 */
+	public static function show_developer_credit(): bool {
+		return ! empty( self::get()['show_developer_credit'] );
+	}
+
+	/**
+	 * Developer display name for credit links.
+	 */
+	public static function developer_name(): string {
+		return 'ต้นกล้า ไอที';
+	}
+
+	/**
+	 * Developer site URL with campaign UTM.
+	 *
+	 * @param string $context One of: admin, portal, plugins, help.
+	 */
+	public static function developer_credit_url( string $context = 'admin' ): string {
+		$allowed = array( 'admin', 'portal', 'plugins', 'help' );
+		$context = sanitize_key( $context );
+		if ( ! in_array( $context, $allowed, true ) ) {
+			$context = 'admin';
+		}
+
+		return add_query_arg(
+			array(
+				'utm_source'   => 'itwt',
+				'utm_medium'   => 'credit',
+				'utm_campaign' => 'free_plugin',
+				'utm_content'  => $context,
+			),
+			'https://tonkla.co'
+		);
+	}
+
+	/**
+	 * Render developer credit markup when enabled.
+	 *
+	 * @param string $context One of: admin, portal, help.
+	 */
+	public static function render_developer_credit( string $context = 'admin' ): void {
+		if ( ! self::show_developer_credit() ) {
+			return;
+		}
+		$credit_context = sanitize_key( $context );
+		include ITWT_PLUGIN_DIR . 'admin/views/partials/developer-credit.php';
+	}
+
+	/**
 	 * Public lookup URL for a service tag.
 	 *
 	 * @param string $service_tag Tag.
@@ -84,6 +183,8 @@ final class Settings {
 	private static function defaults(): array {
 		return array(
 			'logo_attachment_id'       => 0,
+			'company_name_th'          => 'ต้นกล้า ไอที',
+			'company_name_en'          => 'TONKLA IT',
 			'support_phone'            => '',
 			'lookup_page_id'           => 0,
 			'expiring_days'            => 30,
@@ -112,6 +213,7 @@ final class Settings {
 			'show_warranty_end'        => true,
 			'show_sla'                 => true,
 			'show_coverage_bar'        => true,
+			'show_developer_credit'    => true,
 		);
 	}
 }

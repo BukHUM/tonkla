@@ -376,6 +376,7 @@ $model_line = $asset
 							<span><?php esc_html_e( 'ค่า', 'it-warranty-tracker' ); ?></span>
 							<span><?php esc_html_e( 'ไอคอน', 'it-warranty-tracker' ); ?></span>
 							<span><?php esc_html_e( 'สาธารณะ', 'it-warranty-tracker' ); ?></span>
+							<span><?php esc_html_e( 'สติ๊กเกอร์', 'it-warranty-tracker' ); ?></span>
 							<span></span>
 						</div>
 						<?php foreach ( $specs as $i => $spec ) : ?>
@@ -391,6 +392,10 @@ $model_line = $asset
 								<label class="itwt-spec-row__public">
 									<input type="checkbox" name="spec_public[<?php echo esc_attr( (string) $i ); ?>]" value="1" <?php checked( ! empty( $spec['public'] ) ); ?> />
 									<span><?php esc_html_e( 'แสดงหน้าเว็บ', 'it-warranty-tracker' ); ?></span>
+								</label>
+								<label class="itwt-spec-row__public">
+									<input type="checkbox" name="spec_on_label[<?php echo esc_attr( (string) $i ); ?>]" value="1" <?php checked( ! empty( $spec['on_label'] ) ); ?> />
+									<span><?php esc_html_e( 'บนสติ๊กเกอร์', 'it-warranty-tracker' ); ?></span>
 								</label>
 								<button type="button" class="itwt-spec-row__remove" aria-label="<?php esc_attr_e( 'ลบแถวสเปก', 'it-warranty-tracker' ); ?>">&times;</button>
 							</div>

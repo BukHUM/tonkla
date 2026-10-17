@@ -14,6 +14,7 @@ defined( 'ABSPATH' ) || exit;
 use ITWT\Asset_Types;
 use ITWT\Csv_Importer;
 use ITWT\Installer;
+use ITWT\Label_Presenter;
 use ITWT\Repositories\Asset_Repo;
 use ITWT\Repositories\Component_Repo;
 use ITWT\Repositories\Contract_Repo;
@@ -38,6 +39,18 @@ final class Admin_Menu {
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
 		add_action( 'admin_init', array( $this, 'handle_actions' ) );
 		add_action( 'admin_post_itwt_export_csv', array( $this, 'handle_export' ) );
+		add_action( 'admin_footer', array( $this, 'render_developer_credit' ) );
+	}
+
+	/**
+	 * Developer credit footer on every ITWT admin screen (print-safe / toggleable).
+	 */
+	public function render_developer_credit(): void {
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( (string) $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( '' === $page || 0 !== strpos( $page, 'itwt-' ) ) {
+			return;
+		}
+		Settings::render_developer_credit( 'admin' );
 	}
 
 	/**
@@ -122,7 +135,7 @@ final class Admin_Menu {
 			wp_enqueue_script(
 				'itwt-print-label',
 				ITWT_PLUGIN_URL . 'admin/js/print-label.js',
-				array( 'itwt-qrcode' ),
+				array( 'itwt-admin', 'itwt-qrcode' ),
 				ITWT_VERSION,
 				array( 'strategy' => 'defer', 'in_footer' => true )
 			);
@@ -149,6 +162,7 @@ final class Admin_Menu {
 				'specTemplates'   => $templates,
 				'specIcons'       => Spec_Icons::options(),
 				'customersRest'   => esc_url_raw( rest_url( 'itwt/v1/customers' ) ),
+				'assetsRest'      => esc_url_raw( rest_url( 'itwt/v1/assets' ) ),
 				'restNonce'       => wp_create_nonce( 'wp_rest' ),
 				'i18n'            => array(
 					'confirmDelete'      => __( 'ยืนยันการลบรายการนี้? การกระทำนี้อาจไม่สามารถย้อนกลับได้', 'it-warranty-tracker' ),
@@ -166,6 +180,9 @@ final class Admin_Menu {
 					'customerNone'       => __( 'ไม่พบรายชื่อ', 'it-warranty-tracker' ),
 					'customerClear'      => __( 'ไม่ระบุลูกค้า', 'it-warranty-tracker' ),
 					'customerSaved'      => __( 'บันทึกรายชื่อแล้ว — เลือกให้อัตโนมัติ', 'it-warranty-tracker' ),
+					'assetNone'          => __( 'ไม่พบสินทรัพย์', 'it-warranty-tracker' ),
+					'assetRemove'        => __( 'ลบออก', 'it-warranty-tracker' ),
+					'assetMax'           => __( 'เลือกได้สูงสุด 50 รายการ', 'it-warranty-tracker' ),
 				),
 			)
 		);
@@ -338,15 +355,27 @@ final class Admin_Menu {
 			$raw = sanitize_text_field( wp_unslash( (string) $_GET['ids'] ) );
 			$ids = array_filter( array_map( 'absint', explode( ',', $raw ) ) );
 		}
-		$assets   = array();
-		$repo     = new Asset_Repo();
-		foreach ( array_slice( $ids, 0, 50 ) as $id ) {
-			$a = $repo->find( $id );
-			if ( $a ) {
-				$assets[] = $a;
+		$repo    = new Asset_Repo();
+		$id_list = array_slice( $ids, 0, 50 );
+		$map     = $repo->find_many( $id_list );
+		$assets  = array();
+		foreach ( $id_list as $id ) {
+			if ( isset( $map[ $id ] ) ) {
+				$assets[] = $map[ $id ];
 			}
 		}
-		$settings = Settings::get();
+		$asset_ids      = array_map( static fn( $a ) => (int) $a->id, $assets );
+		$contracts_map  = ( new Contract_Repo() )->for_assets( $asset_ids );
+		$settings       = Settings::get();
+		$label_payloads = array();
+		foreach ( $assets as $asset ) {
+			$aid              = (int) $asset->id;
+			$label_payloads[] = Label_Presenter::present(
+				$asset,
+				$contracts_map[ $aid ] ?? array(),
+				$settings
+			);
+		}
 		include ITWT_PLUGIN_DIR . 'admin/views/print-label.php';
 	}
 
@@ -378,19 +407,21 @@ final class Admin_Menu {
 
 		$specs = array();
 		if ( ! empty( $_POST['spec_key'] ) && is_array( $_POST['spec_key'] ) ) {
-			$keys   = array_map( 'sanitize_text_field', wp_unslash( $_POST['spec_key'] ) );
-			$vals   = isset( $_POST['spec_value'] ) && is_array( $_POST['spec_value'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['spec_value'] ) ) : array();
-			$icons  = isset( $_POST['spec_icon'] ) && is_array( $_POST['spec_icon'] ) ? array_map( 'sanitize_key', wp_unslash( $_POST['spec_icon'] ) ) : array();
-			$public = isset( $_POST['spec_public'] ) && is_array( $_POST['spec_public'] ) ? wp_unslash( $_POST['spec_public'] ) : array();
+			$keys     = array_map( 'sanitize_text_field', wp_unslash( $_POST['spec_key'] ) );
+			$vals     = isset( $_POST['spec_value'] ) && is_array( $_POST['spec_value'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['spec_value'] ) ) : array();
+			$icons    = isset( $_POST['spec_icon'] ) && is_array( $_POST['spec_icon'] ) ? array_map( 'sanitize_key', wp_unslash( $_POST['spec_icon'] ) ) : array();
+			$public   = isset( $_POST['spec_public'] ) && is_array( $_POST['spec_public'] ) ? wp_unslash( $_POST['spec_public'] ) : array();
+			$on_label = isset( $_POST['spec_on_label'] ) && is_array( $_POST['spec_on_label'] ) ? wp_unslash( $_POST['spec_on_label'] ) : array();
 			foreach ( $keys as $i => $key ) {
 				if ( '' === $key ) {
 					continue;
 				}
 				$specs[] = array(
-					'key'    => $key,
-					'value'  => $vals[ $i ] ?? '',
-					'icon'   => Spec_Icons::sanitize( (string) ( $icons[ $i ] ?? '' ) ),
-					'public' => ! empty( $public[ $i ] ),
+					'key'      => $key,
+					'value'    => $vals[ $i ] ?? '',
+					'icon'     => Spec_Icons::sanitize( (string) ( $icons[ $i ] ?? '' ) ),
+					'public'   => ! empty( $public[ $i ] ),
+					'on_label' => ! empty( $on_label[ $i ] ),
 				);
 			}
 		}
@@ -950,6 +981,8 @@ final class Admin_Menu {
 		Settings::update(
 			array(
 				'logo_attachment_id'       => isset( $_POST['logo_attachment_id'] ) ? absint( $_POST['logo_attachment_id'] ) : 0,
+				'company_name_th'          => isset( $_POST['company_name_th'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['company_name_th'] ) ) : '',
+				'company_name_en'          => isset( $_POST['company_name_en'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['company_name_en'] ) ) : '',
 				'support_phone'            => isset( $_POST['support_phone'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['support_phone'] ) ) : '',
 				'lookup_page_id'           => isset( $_POST['lookup_page_id'] ) ? absint( $_POST['lookup_page_id'] ) : 0,
 				'expiring_days'            => isset( $_POST['expiring_days'] ) ? absint( $_POST['expiring_days'] ) : 30,
@@ -976,6 +1009,7 @@ final class Admin_Menu {
 				'show_warranty_end'        => ! empty( $_POST['show_warranty_end'] ),
 				'show_sla'                 => ! empty( $_POST['show_sla'] ),
 				'show_coverage_bar'        => ! empty( $_POST['show_coverage_bar'] ),
+				'show_developer_credit'    => ! empty( $_POST['show_developer_credit'] ),
 			)
 		);
 		wp_safe_redirect( admin_url( 'admin.php?page=itwt-settings&updated=1' ) );

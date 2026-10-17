@@ -97,6 +97,50 @@ final class Asset_Types {
 	}
 
 	/**
+	 * Icon kind for sticker / UI (print-safe SVG key).
+	 *
+	 * @param string $slug Type slug.
+	 * @return string One of: server, laptop, software, network, printer, device.
+	 */
+	public static function icon_kind( string $slug ): string {
+		$slug  = sanitize_key( $slug );
+		$hay   = strtolower( $slug . ' ' . self::label( $slug ) );
+		$rules = array(
+			'server'   => array( 'server', 'hardware', 'rack', 'เซิร์ฟเวอร์' ),
+			'laptop'   => array( 'notebook', 'laptop', 'pc', 'computer', 'desktop', 'โน้ตบุ๊ก', 'คอมพิวเตอร์' ),
+			'software' => array( 'software', 'license', 'app', 'ซอฟต์แวร์' ),
+			'network'  => array( 'network', 'switch', 'router', 'firewall', 'เครือข่าย' ),
+			'printer'  => array( 'printer', 'print', 'เครื่องพิมพ์' ),
+		);
+		foreach ( $rules as $kind => $needles ) {
+			foreach ( $needles as $needle ) {
+				if ( false !== strpos( $hay, $needle ) ) {
+					return $kind;
+				}
+			}
+		}
+		return 'device';
+	}
+
+	/**
+	 * Inline SVG for sticker type badge (print-friendly).
+	 *
+	 * @param string $slug Type slug.
+	 */
+	public static function icon_svg( string $slug ): string {
+		$kind = self::icon_kind( $slug );
+		$svgs = array(
+			'server'   => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 3h16a1 1 0 0 1 1 1v5H3V4a1 1 0 0 1 1-1zm0 8h17v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5zm1 1.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm0-8a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM3 19h18v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-1z"/></svg>',
+			'laptop'   => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9H4V5zm-2 11h20v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1z"/></svg>',
+			'software' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8.7 7.3 4 12l4.7 4.7 1.4-1.4L6.8 12l3.3-3.3-1.4-1.4zm6.6 0-1.4 1.4L17.2 12l-3.3 3.3 1.4 1.4L20 12l-4.7-4.7z"/></svg>',
+			'network'  => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2a3 3 0 0 1 1 5.83V10h3a3 3 0 1 1 0 2h-3v2.17A3 3 0 1 1 11 17v-2.17A3.001 3.001 0 0 1 9 10h3V7.83A3 3 0 0 1 12 2z"/></svg>',
+			'printer'  => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false"><path fill="currentColor" d="M7 3h10v4H7V3zm-3 6h16a2 2 0 0 1 2 2v5h-4v5H7v-5H3v-5a2 2 0 0 1 2-2zm4 7v3h8v-3H8z"/></svg>',
+			'device'   => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6 3h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3l1 2H8l1-2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm0 2v10h12V5H6z"/></svg>',
+		);
+		return $svgs[ $kind ] ?? $svgs['device'];
+	}
+
+	/**
 	 * Whether slug is allowed.
 	 *
 	 * @param string $slug Type slug.

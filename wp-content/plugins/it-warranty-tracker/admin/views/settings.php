@@ -88,6 +88,12 @@ $first_tab = 'general';
 				<div class="itwt-settings-panel">
 					<p class="itwt-settings-panel__hint"><?php esc_html_e( 'ข้อมูลติดต่อ โลโก้ และหน้าที่ใช้ใน QR / หน้าเช็คประกัน', 'it-warranty-tracker' ); ?></p>
 					<div class="itwt-settings-grid">
+						<label for="company_name_th"><?php esc_html_e( 'ชื่อบริษัท (ไทย) บนสติ๊กเกอร์', 'it-warranty-tracker' ); ?></label>
+						<div><input type="text" id="company_name_th" name="company_name_th" class="regular-text" value="<?php echo esc_attr( (string) ( $settings['company_name_th'] ?? '' ) ); ?>" /></div>
+
+						<label for="company_name_en"><?php esc_html_e( 'ชื่อบริษัท (อังกฤษ) บนสติ๊กเกอร์', 'it-warranty-tracker' ); ?></label>
+						<div><input type="text" id="company_name_en" name="company_name_en" class="regular-text" value="<?php echo esc_attr( (string) ( $settings['company_name_en'] ?? '' ) ); ?>" /></div>
+
 						<label for="support_phone"><?php esc_html_e( 'เบอร์ศูนย์บริการ', 'it-warranty-tracker' ); ?></label>
 						<div><input type="text" id="support_phone" name="support_phone" class="regular-text" value="<?php echo esc_attr( (string) ( $settings['support_phone'] ?? '' ) ); ?>" /></div>
 
@@ -113,6 +119,21 @@ $first_tab = 'general';
 								<?php endforeach; ?>
 							</select>
 							<p class="description"><?php esc_html_e( 'เลือกหน้าแล้วตั้ง Template เป็น «Warranty (IT Warranty Tracker)» — shortcode ไม่บังคับ ใช้ใน QR ห้ามเปลี่ยน URL ภายหลัง', 'it-warranty-tracker' ); ?></p>
+						</div>
+
+						<span id="itwt-credit-label"><?php esc_html_e( 'เครดิตผู้พัฒนา', 'it-warranty-tracker' ); ?></span>
+						<div class="itwt-field" role="group" aria-labelledby="itwt-credit-label">
+							<label class="itwt-check" for="show_developer_credit">
+								<input
+									type="checkbox"
+									id="show_developer_credit"
+									name="show_developer_credit"
+									value="1"
+									<?php checked( ! empty( $settings['show_developer_credit'] ) ); ?>
+								/>
+								<?php esc_html_e( 'แสดงเครดิตผู้พัฒนา (ต้นกล้า ไอที) บนแอดมินและหน้าเช็คประกัน', 'it-warranty-tracker' ); ?>
+							</label>
+							<p class="description"><?php esc_html_e( 'ค่าเริ่มต้นเปิด — ปิดได้หากไม่ต้องการ backlink (ไม่แสดงบนสติ๊กเกอร์พิมพ์)', 'it-warranty-tracker' ); ?></p>
 						</div>
 					</div>
 				</div>

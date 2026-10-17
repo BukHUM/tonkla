@@ -1435,7 +1435,7 @@ body.itwt-modal-open {
 .itwt-spec-builder__head,
 .itwt-spec-row {
 	display: grid;
-	grid-template-columns: minmax(7rem, 0.85fr) minmax(8rem, 1.2fr) minmax(7rem, 0.85fr) auto 2rem;
+	grid-template-columns: minmax(7rem, 0.85fr) minmax(8rem, 1.2fr) minmax(7rem, 0.85fr) auto auto 2rem;
 	gap: 12px;
 	align-items: center;
 	padding: 10px 14px;
@@ -1531,7 +1531,7 @@ body.itwt-modal-open {
 	}
 
 	.itwt-spec-row__public {
-		grid-column: 1 / 2;
+		grid-column: span 1;
 	}
 
 	.itwt-spec-row__remove {
@@ -3073,103 +3073,631 @@ body.itwt-modal-open {
 	color: var(--itwt-accent, #2271b1);
 }
 
-/* Print labels */
-.itwt-labels {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
+/* Developer credit (admin footer / help) */
+.itwt-developer-credit {
+	margin: 24px 0 8px;
+	padding: 0;
+	color: var(--itwt-muted);
+	font-size: 12px;
+	line-height: 1.5;
+	text-align: center;
+}
+
+.itwt-developer-credit__link {
+	color: var(--itwt-muted);
+	font-weight: 600;
+	text-decoration: none;
+	border-bottom: 1px solid color-mix(in srgb, var(--itwt-muted) 35%, transparent);
+}
+
+.itwt-developer-credit__link:hover,
+.itwt-developer-credit__link:focus-visible {
+	color: var(--itwt-accent);
+	border-bottom-color: var(--itwt-accent);
+	outline: none;
+}
+
+.itwt-developer-credit--help {
+	margin: 0;
+	text-align: left;
+}
+
+.itwt-help__about {
 	margin-top: 24px;
 }
 
-.itwt-label {
-	border: 1px solid #000;
-	box-sizing: border-box;
-	padding: 4px 6px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: space-between;
-	background: #fff;
-	page-break-inside: avoid;
+/* Print labels — warranty card (sample 90×55 mm) */
+/* Allow asset combobox to escape the card (settings-card uses overflow:hidden) */
+.itwt-print-controls.itwt-settings-card {
+	overflow: visible;
 }
 
-.itwt-labels--50x30 .itwt-label {
-	width: 50mm;
-	height: 30mm;
+.itwt-print-controls > h2 {
+	border-radius: var(--itwt-radius-lg) var(--itwt-radius-lg) 0 0;
+}
+
+.itwt-print-controls .description {
+	margin: 0;
+}
+
+.itwt-print-controls__body {
+	padding: 16px 18px 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	overflow: visible;
+}
+
+.itwt-print-controls .itwt-combobox__list {
+	z-index: 100;
+}
+
+.itwt-print-controls__row {
+	display: grid;
+	grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+	gap: 0 20px;
+	align-items: end;
+}
+
+@media (max-width: 782px) {
+	.itwt-print-controls__row {
+		grid-template-columns: 1fr;
+		gap: 14px;
+	}
+}
+
+.itwt-print-field {
+	min-width: 0;
+	display: grid;
+	grid-template-rows: auto 38px;
+	gap: 8px;
+	align-content: start;
+}
+
+.itwt-print-field > label {
+	margin: 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--itwt-text);
+	line-height: 1.3;
+}
+
+.itwt-print-field .itwt-combobox {
+	position: relative;
+	width: 100%;
+	max-width: none;
+	height: 38px;
+}
+
+.itwt-print-controls .itwt-combobox__input,
+.itwt-print-controls .itwt-print-field select {
+	display: block;
+	width: 100%;
+	max-width: none;
+	height: 38px;
+	min-height: 38px;
+	margin: 0;
+	padding: 0 12px;
+	box-sizing: border-box;
+	border: 1px solid color-mix(in srgb, var(--itwt-border) 55%, #94a3b8);
+	border-radius: var(--itwt-radius);
+	background: #fff;
+	color: var(--itwt-text);
+	font-size: 13px;
+	line-height: 36px;
+	vertical-align: middle;
+	box-shadow: none;
+	appearance: none;
+	-webkit-appearance: none;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.itwt-print-controls .itwt-print-field select {
+	padding-right: 32px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235b6472' d='M1.4.6 6 5.2 10.6.6 12 2 6 8 0 2z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 12px center;
+	background-size: 12px 8px;
+}
+
+.itwt-print-controls .itwt-combobox__input:hover,
+.itwt-print-controls .itwt-print-field select:hover {
+	border-color: color-mix(in srgb, var(--itwt-accent) 35%, var(--itwt-border));
+}
+
+.itwt-print-controls .itwt-combobox__input:focus,
+.itwt-print-controls .itwt-print-field select:focus {
+	border-color: var(--itwt-accent);
+	box-shadow: 0 0 0 1px var(--itwt-accent);
+	outline: none;
+}
+
+.itwt-print-picker__chips {
+	display: none;
+	flex-wrap: wrap;
+	gap: 6px;
+	min-height: 0;
+}
+
+.itwt-print-picker__chips:not(:empty) {
+	display: flex;
+}
+
+.itwt-print-picker__chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	max-width: 100%;
+	padding: 5px 6px 5px 10px;
+	border: 1px solid color-mix(in srgb, var(--itwt-border) 55%, #94a3b8);
+	border-radius: var(--itwt-radius);
+	background: var(--itwt-surface);
+	font-size: 12px;
+	line-height: 1.3;
+}
+
+.itwt-print-picker__chip code {
+	font-size: 12px;
+	font-weight: 700;
+	padding: 0;
+	background: transparent;
+	color: var(--itwt-text);
+}
+
+.itwt-print-picker__chip-desc {
+	color: var(--itwt-muted);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 12rem;
+}
+
+.itwt-print-picker__chip-remove {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 2px;
+	background: transparent;
+	color: var(--itwt-muted);
+	font-size: 16px;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.itwt-print-picker__chip-remove:hover,
+.itwt-print-picker__chip-remove:focus-visible {
+	color: var(--itwt-bad);
+	background: var(--itwt-bad-bg);
+	outline: none;
+}
+
+.itwt-print-controls__actions {
+	margin: 0;
+	padding-top: 2px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+.itwt-print-footnote {
+	margin-top: 40px;
+}
+
+.itwt-labels {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10mm 8mm;
+	margin: 24px 0 8px;
+	align-content: flex-start;
+}
+
+.itwt-label {
+	--itwt-label-accent: #0f766e;
+	--itwt-label-ink: #0f172a;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 2mm;
+	padding: 3mm 3.5mm;
+	border: 1px dashed #94a3b8;
+	border-radius: 0;
+	background: #fff;
+	color: var(--itwt-label-ink);
+	page-break-inside: avoid;
+	break-inside: avoid;
+	overflow: hidden;
+}
+
+.itwt-labels--90x55 .itwt-label {
+	width: 90mm;
+	height: 55mm;
 }
 
 .itwt-labels--60x40 .itwt-label {
 	width: 60mm;
 	height: 40mm;
+	padding: 2mm 2.5mm;
+	gap: 1.5mm;
+}
+
+.itwt-labels--50x30 .itwt-label {
+	width: 50mm;
+	height: 30mm;
+	padding: 1.5mm 2mm;
+	gap: 1mm;
+}
+
+.itwt-label__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 2mm;
+	padding-bottom: 1.5mm;
+	border-bottom: 1.5px solid var(--itwt-label-accent);
 }
 
 .itwt-label__brand {
 	display: flex;
-	width: 100%;
-	justify-content: space-between;
 	align-items: center;
-	font-size: 8px;
-	gap: 4px;
+	gap: 1.5mm;
+	min-width: 0;
+	flex: 1 1 auto;
 }
 
 .itwt-label__logo {
+	display: block;
 	max-height: 10mm;
+	max-width: 42mm;
 	width: auto;
+	height: auto;
+	object-fit: contain;
+	flex-shrink: 0;
 }
 
-.itwt-label__qr {
-	width: 16mm;
-	height: 16mm;
+.itwt-labels--60x40 .itwt-label__logo {
+	max-height: 8mm;
+	max-width: 28mm;
 }
 
-.itwt-labels--60x40 .itwt-label__qr {
-	width: 22mm;
-	height: 22mm;
+.itwt-labels--50x30 .itwt-label__logo {
+	max-height: 6mm;
+	max-width: 22mm;
 }
 
-.itwt-label__qr canvas,
-.itwt-label__qr img {
+.itwt-label__company {
+	display: flex;
+	flex-direction: column;
+	line-height: 1.15;
+	min-width: 0;
+}
+
+.itwt-label__company-th {
+	color: var(--itwt-label-accent);
+	font-size: 8.5pt;
+	font-weight: 700;
+}
+
+.itwt-label__company-en {
+	color: var(--itwt-label-ink);
+	font-size: 6.5pt;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+}
+
+.itwt-label__meta {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 1.5mm;
+	flex-shrink: 0;
+}
+
+.itwt-label__tag {
+	font-family: ui-monospace, Consolas, monospace;
+	font-size: 8pt;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	line-height: 1;
+	white-space: nowrap;
+}
+
+.itwt-label__type {
+	display: inline-flex;
+	align-items: center;
+	gap: 1mm;
+	padding: 0.7mm 1.8mm;
+	border-radius: 1mm;
+	background: #0f172a;
+	color: #fff;
+	font-size: 6pt;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	line-height: 1.2;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.itwt-label__type-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 3mm;
+	height: 3mm;
+	flex-shrink: 0;
+}
+
+.itwt-label__type-icon svg {
+	display: block;
 	width: 100%;
 	height: 100%;
 }
 
-.itwt-label__tag {
-	font-family: ui-monospace, monospace;
-	font-size: 11px;
+.itwt-label__type-text {
+	line-height: 1;
+}
+
+.itwt-label__body {
+	display: flex;
+	flex: 1 1 auto;
+	gap: 3mm;
+	min-height: 0;
+}
+
+.itwt-label__main {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 1mm;
+}
+
+.itwt-label__heading {
+	margin: 0;
+	padding: 0;
+	color: var(--itwt-label-accent);
+	font-size: 10.5pt;
 	font-weight: 700;
-	letter-spacing: 0.05em;
+	line-height: 1.2;
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+
+.itwt-label__dates {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 2mm;
+	margin-top: 0.5mm;
+}
+
+.itwt-label__date {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3mm;
+}
+
+.itwt-label__date-label {
+	color: #64748b;
+	font-size: 6pt;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+}
+
+.itwt-label__date-value {
+	font-size: 9pt;
+	font-weight: 700;
+	line-height: 1.1;
+}
+
+.itwt-label__lines {
+	list-style: none;
+	margin: 1mm 0 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.6mm;
+}
+
+.itwt-label__lines li {
+	display: flex;
+	flex-direction: column;
+	gap: 0.2mm;
+	min-width: 0;
+}
+
+.itwt-label__line-key {
+	color: #64748b;
+	font-size: 6pt;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+}
+
+.itwt-label__line-value {
+	font-size: 7.5pt;
+	font-weight: 600;
+	line-height: 1.2;
+	word-break: break-all;
+}
+
+.itwt-label__qr-wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: flex-start;
+	gap: 1mm;
+	flex: 0 0 auto;
+	width: 28mm;
+	overflow: visible;
+}
+
+.itwt-label__qr {
+	width: 20mm;
+	height: 20mm;
+	margin: 0 auto;
+}
+
+.itwt-labels--60x40 .itwt-label__qr-wrap {
+	width: 18mm;
+}
+
+.itwt-labels--60x40 .itwt-label__qr {
+	width: 14mm;
+	height: 14mm;
+}
+
+.itwt-labels--50x30 .itwt-label__qr-wrap {
+	width: 13mm;
+}
+
+.itwt-labels--50x30 .itwt-label__qr {
+	width: 11mm;
+	height: 11mm;
+}
+
+.itwt-label__qr canvas,
+.itwt-label__qr img {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.itwt-label__qr-caption {
+	color: #64748b;
+	font-size: 5.5pt;
+	font-weight: 600;
+	line-height: 1.1;
+	text-align: center;
+}
+
+/* Hostname under QR — extend left for long names; type matches other label fields */
+.itwt-label__host {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3mm;
+	align-self: stretch;
+	box-sizing: border-box;
+	width: calc(100% + 14mm);
+	max-width: none;
+	margin: 0.5mm 0 0 -14mm;
+	padding-top: 1mm;
+	border-top: 1px solid #e2e8f0;
+	text-align: left;
+}
+
+.itwt-label__host-key {
+	color: #64748b;
+	font-size: 6pt;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	line-height: 1.15;
+	text-transform: uppercase;
+}
+
+.itwt-label__host-value {
+	color: var(--itwt-label-ink);
+	font-size: 7.5pt;
+	font-weight: 600;
+	line-height: 1.2;
+	text-align: left;
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+
+.itwt-labels--50x30 .itwt-label__company-th,
+.itwt-labels--50x30 .itwt-label__heading {
+	font-size: 8pt;
+}
+
+.itwt-labels--50x30 .itwt-label__date-value,
+.itwt-labels--50x30 .itwt-label__line-value {
+	font-size: 6pt;
+}
+
+.itwt-labels--50x30 .itwt-label__lines,
+.itwt-labels--50x30 .itwt-label__qr-caption,
+.itwt-labels--50x30 .itwt-label__host {
+	display: none;
+}
+
+.itwt-labels--60x40 .itwt-label__heading {
+	font-size: 9pt;
+}
+
+.itwt-labels--60x40 .itwt-label__host {
+	width: calc(100% + 10mm);
+	margin-left: -10mm;
 }
 
 @media print {
 	.itwt-no-print,
 	#wpadminbar,
 	#adminmenumain,
+	#adminmenuback,
+	#adminmenuwrap,
 	#wpfooter,
 	.notice,
-	h1 {
+	.itwt-page-header,
+	.itwt-print-controls {
 		display: none !important;
 	}
 
-	.itwt-print-wrap {
-		margin: 0;
-		padding: 0;
+	html.wp-toolbar {
+		padding-top: 0 !important;
+	}
+
+	#wpcontent,
+	#wpbody,
+	#wpbody-content,
+	.itwt-print-wrap,
+	.itwt-wrap {
+		margin: 0 !important;
+		padding: 0 !important;
+		width: auto !important;
+		float: none !important;
+		background: #fff !important;
 	}
 
 	body {
-		background: #fff;
+		background: #fff !important;
+		margin: 0;
 	}
 
 	@page {
-		margin: 4mm;
+		margin: 8mm;
+		size: auto;
 	}
 
-	.itwt-labels--50x30 .itwt-label {
-		width: 50mm;
-		height: 30mm;
+	.itwt-labels {
+		margin: 0;
+		gap: 8mm 6mm;
+	}
+
+	.itwt-label {
+		border-color: #cbd5e1;
+	}
+
+	.itwt-labels--90x55 .itwt-label {
+		width: 90mm;
+		height: 55mm;
 	}
 
 	.itwt-labels--60x40 .itwt-label {
 		width: 60mm;
 		height: 40mm;
+	}
+
+	.itwt-labels--50x30 .itwt-label {
+		width: 50mm;
+		height: 30mm;
 	}
 }

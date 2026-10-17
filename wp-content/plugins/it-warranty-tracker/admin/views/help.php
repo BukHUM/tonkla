@@ -69,4 +69,18 @@ $lookup = \ITWT\Settings::lookup_url();
 		<h2><?php esc_html_e( '5. PDPA / ข้อมูลที่แสดงสาธารณะ', 'it-warranty-tracker' ); ?></h2>
 		<p><?php esc_html_e( 'หน้าบ้านไม่แสดงชื่อลูกค้าหรือที่ติดตั้ง — เปิด/ปิดได้เฉพาะ S/N ปิดบัง, สเปกสาธารณะ, ประวัติสัญญา, ประวัติบริการ และปุ่มต่าง ๆ ใน ตั้งค่า → แสดงผลหน้าบ้าน', 'it-warranty-tracker' ); ?></p>
 	</section>
+
+	<?php if ( \ITWT\Settings::show_developer_credit() ) : ?>
+		<section class="itwt-settings-card itwt-help__about">
+			<h2><?php esc_html_e( 'เกี่ยวกับผู้พัฒนา', 'it-warranty-tracker' ); ?></h2>
+			<div class="itwt-settings-panel">
+				<p><?php esc_html_e( 'IT Warranty Tracker พัฒนาโดยต้นกล้า ไอที สำหรับธุรกิจจำหน่ายอุปกรณ์ไอที พัฒนาซอฟต์แวร์ และวางระบบ', 'it-warranty-tracker' ); ?></p>
+				<p>
+					<a class="itwt-action" href="<?php echo esc_url( \ITWT\Settings::developer_credit_url( 'help' ) ); ?>" target="_blank" rel="noopener noreferrer">
+						<?php esc_html_e( 'เยี่ยมชมเว็บไซต์ต้นกล้า ไอที', 'it-warranty-tracker' ); ?>
+					</a>
+				</p>
+			</div>
+		</section>
+	<?php endif; ?>
 </div>
