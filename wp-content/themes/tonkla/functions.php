@@ -8,33 +8,179 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Admin performance (update checks, conditional assets)
+ * Composer autoload (svg-sanitize for front icon SVG + admin upload).
  */
-require_once get_template_directory() . '/inc/admin-performance.php';
-add_action('admin_enqueue_scripts', 'tonkla_admin_styles');
+$tonkla_autoload = get_template_directory() . '/vendor/autoload.php';
+if ( is_readable( $tonkla_autoload ) ) {
+	require_once $tonkla_autoload;
+}
 
 /**
- * Admin chrome: Google Sans Flex + differentiated bar/sidebar colors
+ * Front-end security headers (XFO, nosniff, Referrer-Policy, Permissions-Policy)
  */
-require_once get_template_directory() . '/inc/admin-chrome.php';
-
-/**
- * Editable wp-admin menu grouping / order
- */
-require_once get_template_directory() . '/inc/admin-menu-order.php';
-
-/**
- * Featured image column on Posts / Pages list screens
- */
-require_once get_template_directory() . '/inc/admin-thumbnails.php';
+require_once get_template_directory() . '/inc/security-headers.php';
 
 /**
  * Large theme options: keep out of autoload
  */
 require_once get_template_directory() . '/inc/options-autoload.php';
 
+/**
+ * Front-end icon helper (page builder templates).
+ */
+require_once get_template_directory() . '/inc/builder/icons.php';
+
+/**
+ * Page Builder field helpers (needed when Carbon registers page_modules on the front).
+ */
+require_once get_template_directory() . '/inc/builder/modules.php';
+require_once get_template_directory() . '/inc/builder/fields.php';
+
+/**
+ * Admin-only bootstrapping — skip on front to cut TTFB.
+ */
+if ( is_admin() ) {
+	require_once get_template_directory() . '/inc/builder/svg-upload.php';
+	require_once get_template_directory() . '/inc/builder/admin-assets.php';
+	require_once get_template_directory() . '/inc/admin-performance.php';
+	require_once get_template_directory() . '/inc/admin-chrome.php';
+	require_once get_template_directory() . '/inc/admin-menu-order.php';
+	require_once get_template_directory() . '/inc/admin-thumbnails.php';
+
+	add_action( 'admin_enqueue_scripts', 'tonkla_admin_styles' );
+}
+
 if (!defined('TONKLA_DEFAULT_LOGO')) {
     define('TONKLA_DEFAULT_LOGO', get_template_directory_uri() . '/assets/images/logo-tonkla-landscape.png');
+}
+
+/** Intrinsic size of assets/images/logo-tonkla-landscape.png */
+if (!defined('TONKLA_DEFAULT_LOGO_WIDTH')) {
+    define('TONKLA_DEFAULT_LOGO_WIDTH', 190);
+}
+if (!defined('TONKLA_DEFAULT_LOGO_HEIGHT')) {
+    define('TONKLA_DEFAULT_LOGO_HEIGHT', 62);
+}
+
+/**
+ * Resolve Carbon image field value to an attachment ID when possible.
+ *
+ * @param mixed $value Attachment ID or image URL.
+ * @return int Attachment ID or 0.
+ */
+function tonkla_resolve_image_id($value)
+{
+    if (is_numeric($value)) {
+        return absint($value);
+    }
+
+    if (is_string($value) && $value !== '') {
+        return (int) attachment_url_to_postid($value);
+    }
+
+    return 0;
+}
+
+/**
+ * Print theme logo with explicit width/height (avoids CLS / unsized-images).
+ *
+ * @param string $context 'header' or 'footer'.
+ * @param string $class   CSS classes for the img.
+ */
+function tonkla_the_logo($context = 'header', $class = '')
+{
+    $option_key = ('footer' === $context) ? 'footer_logo' : 'main_logo';
+    $logo       = function_exists('carbon_get_theme_option') ? carbon_get_theme_option($option_key) : '';
+
+    if ('footer' === $context && empty($logo) && function_exists('carbon_get_theme_option')) {
+        $logo = carbon_get_theme_option('main_logo');
+    }
+
+    $alt     = get_bloginfo('name');
+    $attrs   = array(
+        'class'    => $class,
+        'alt'      => $alt,
+        'decoding' => 'async',
+    );
+
+    if ('header' === $context) {
+        $attrs['fetchpriority'] = 'high';
+    } else {
+        $attrs['loading'] = 'lazy';
+    }
+
+    $attachment_id = tonkla_resolve_image_id($logo);
+    if ($attachment_id) {
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_get_attachment_image escapes.
+        echo wp_get_attachment_image($attachment_id, 'full', false, $attrs);
+        return;
+    }
+
+    $src = (!empty($logo) && is_string($logo)) ? $logo : TONKLA_DEFAULT_LOGO;
+
+    printf(
+        '<img src="%1$s" alt="%2$s" class="%3$s" width="%4$d" height="%5$d" decoding="async"%6$s>',
+        esc_url($src),
+        esc_attr($alt),
+        esc_attr($class),
+        (int) TONKLA_DEFAULT_LOGO_WIDTH,
+        (int) TONKLA_DEFAULT_LOGO_HEIGHT,
+        ('header' === $context) ? ' fetchpriority="high"' : ' loading="lazy"'
+    );
+}
+
+/**
+ * Whether the current view renders a newsletter subscribe form.
+ *
+ * @return bool
+ */
+function tonkla_needs_newsletter_assets()
+{
+    return is_home()
+        || is_singular('post')
+        || is_category()
+        || is_tag()
+        || is_author()
+        || is_date();
+}
+
+/**
+ * Whether the current view needs @tailwindcss/typography (prose) styles.
+ *
+ * @return bool
+ */
+function tonkla_needs_prose_assets()
+{
+    if (is_singular('post')) {
+        return true;
+    }
+
+    if (!is_page()) {
+        return false;
+    }
+
+    $template = get_page_template_slug();
+    if ('page-flexible.php' !== $template) {
+        // Default page template uses prose around the_content().
+        return true;
+    }
+
+    if (!function_exists('carbon_get_post_meta')) {
+        return false;
+    }
+
+    $modules = carbon_get_post_meta(get_queried_object_id(), 'page_modules');
+    if (empty($modules) || !is_array($modules)) {
+        return false;
+    }
+
+    foreach ($modules as $module) {
+        if (!empty($module['_type']) && 'content_block' === $module['_type']) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /**
@@ -54,17 +200,41 @@ add_action('pre_get_posts', 'tonkla_verify_post_type');
 
 
 /**
- * Preconnect to Google Fonts
+ * Whether the current front-end view needs Contact Form 7 assets.
+ *
+ * @return bool
  */
-function tonkla_resource_hints($urls, $relation_type)
+function tonkla_needs_cf7_assets()
 {
-    if ('preconnect' === $relation_type) {
-        $urls[] = 'https://fonts.googleapis.com';
-        $urls[] = 'https://fonts.gstatic.com';
+    if (!function_exists('wpcf7_enqueue_scripts')) {
+        return false;
     }
-    return $urls;
+
+    if (is_singular()) {
+        $post = get_post();
+        if ($post instanceof WP_Post) {
+            if (has_shortcode($post->post_content, 'contact-form-7')
+                || false !== strpos($post->post_content, '[contact-form-7')
+            ) {
+                return true;
+            }
+
+            if (function_exists('carbon_get_post_meta')) {
+                $modules = carbon_get_post_meta($post->ID, 'page_modules');
+                if (!empty($modules) && is_array($modules)) {
+                    $encoded = wp_json_encode($modules);
+                    if (is_string($encoded)
+                        && (false !== strpos($encoded, 'contact-form-7') || false !== strpos($encoded, 'wpcf7'))
+                    ) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
 }
-add_filter('wp_resource_hints', 'tonkla_resource_hints', 10, 2);
 
 /**
  * Theme Setup
@@ -96,27 +266,38 @@ require_once get_template_directory() . '/inc/newsletter.php';
 
 function tonkla_scripts()
 {
-    // Main stylesheet (from style.css)
-    wp_enqueue_style('tonkla-style', get_stylesheet_uri(), array(), wp_get_theme()->get('Version'));
-
-    // Tailwind (main.css)
-    wp_enqueue_style('tonkla-output', get_template_directory_uri() . '/assets/css/main.css', array(), filemtime(get_template_directory() . '/assets/css/main.css'));
-
-    // FontAwesome
-    wp_enqueue_style('fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css', array(), '6.4.0');
-
-    // Google Fonts
-    wp_enqueue_style('tonkla-fonts', 'https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&family=Sarabun:wght@300;400;500;600&display=swap', array(), null);
-
-    $defer = array(
+    $theme_uri = get_template_directory_uri();
+    $theme_dir = get_template_directory();
+    $defer     = array(
         'in_footer' => true,
         'strategy'  => 'defer',
     );
-    $theme_uri = get_template_directory_uri();
-    $theme_dir = get_template_directory();
 
-    // SweetAlert2
-    wp_enqueue_script('sweetalert2', 'https://cdn.jsdelivr.net/npm/sweetalert2@11.14.0/dist/sweetalert2.all.min.js', array(), '11.14.0', $defer);
+    // Self-hosted Prompt + Sarabun (no fonts.googleapis.com round-trip).
+    wp_enqueue_style(
+        'tonkla-fonts',
+        $theme_uri . '/assets/css/fonts.css',
+        array(),
+        (string) filemtime($theme_dir . '/assets/css/fonts.css')
+    );
+
+    // Tailwind (render-blocking — required for layout; async caused blank/FOUC with .tk-reveal).
+    wp_enqueue_style(
+        'tonkla-output',
+        $theme_uri . '/assets/css/main.css',
+        array('tonkla-fonts'),
+        (string) filemtime($theme_dir . '/assets/css/main.css')
+    );
+
+    // Typography plugin CSS only on content pages (keeps homepage main.css lean).
+    if (tonkla_needs_prose_assets()) {
+        wp_enqueue_style(
+            'tonkla-prose',
+            $theme_uri . '/assets/css/prose.css',
+            array('tonkla-output'),
+            (string) filemtime($theme_dir . '/assets/css/prose.css')
+        );
+    }
 
     // Alpine.js Plugins (Collapse) - Must load before Alpine Core
     wp_enqueue_script('alpine-collapse', 'https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.13.3/dist/cdn.min.js', array(), '3.13.3', $defer);
@@ -126,15 +307,82 @@ function tonkla_scripts()
 
     wp_enqueue_script('tonkla-script', $theme_uri . '/assets/js/main.js', array(), (string) filemtime($theme_dir . '/assets/js/main.js'), $defer);
 
-    // Newsletter Script (Global - form appears in sidebar too)
-    wp_enqueue_script('tonkla-newsletter', $theme_uri . '/assets/js/newsletter.js', array('sweetalert2'), (string) filemtime($theme_dir . '/assets/js/newsletter.js'), $defer);
-    wp_localize_script('tonkla-newsletter', 'tonkla_ajax', array(
-        'ajax_url'  => admin_url('admin-ajax.php'),
-        'nonce'     => wp_create_nonce('tonkla_newsletter_nonce'),
-        'activated' => tonkla_newsletter_activation_status(),
-    ));
+    // Font Awesome CSS+fonts after first paint — avoid ~250KiB competing with LCP.
+    wp_localize_script(
+        'tonkla-script',
+        'tonklaPerf',
+        array(
+            'faCss' => $theme_uri . '/assets/vendor/fontawesome/css/all.min.css?ver=6.4.0',
+        )
+    );
+
+    // Newsletter + SweetAlert only where the subscribe form is rendered.
+    if (tonkla_needs_newsletter_assets()) {
+        wp_enqueue_script('sweetalert2', 'https://cdn.jsdelivr.net/npm/sweetalert2@11.14.0/dist/sweetalert2.all.min.js', array(), '11.14.0', $defer);
+        wp_enqueue_script('tonkla-newsletter', $theme_uri . '/assets/js/newsletter.js', array('sweetalert2'), (string) filemtime($theme_dir . '/assets/js/newsletter.js'), $defer);
+        wp_localize_script('tonkla-newsletter', 'tonkla_ajax', array(
+            'ajax_url'  => admin_url('admin-ajax.php'),
+            'nonce'     => wp_create_nonce('tonkla_newsletter_nonce'),
+            'activated' => tonkla_newsletter_activation_status(),
+        ));
+    }
 }
 add_action('wp_enqueue_scripts', 'tonkla_scripts');
+
+/**
+ * Preload critical stylesheets early (fonts still load via @font-face when needed).
+ */
+function tonkla_preload_critical_assets()
+{
+    $theme_uri = get_template_directory_uri();
+    $theme_dir = get_template_directory();
+
+    $main_ver  = (string) filemtime($theme_dir . '/assets/css/main.css');
+    $fonts_ver = (string) filemtime($theme_dir . '/assets/css/fonts.css');
+
+    printf(
+        '<link rel="preload" href="%s" as="style" />' . "\n",
+        esc_url($theme_uri . '/assets/css/fonts.css?ver=' . rawurlencode($fonts_ver))
+    );
+    printf(
+        '<link rel="preload" href="%s" as="style" />' . "\n",
+        esc_url($theme_uri . '/assets/css/main.css?ver=' . rawurlencode($main_ver))
+    );
+}
+add_action('wp_head', 'tonkla_preload_critical_assets', 1);
+
+/**
+ * Skip Contact Form 7 CSS/JS on pages without a form (homepage often loads them unused).
+ */
+function tonkla_maybe_disable_cf7_assets()
+{
+    if (is_admin() || tonkla_needs_cf7_assets()) {
+        return;
+    }
+
+    add_filter('wpcf7_load_css', '__return_false');
+    add_filter('wpcf7_load_js', '__return_false');
+}
+add_action('wp_enqueue_scripts', 'tonkla_maybe_disable_cf7_assets', 1);
+
+/**
+ * Drop emoji detection assets on the front end (unused; saves a late script request).
+ */
+function tonkla_disable_front_emojis()
+{
+    if (is_admin()) {
+        return;
+    }
+
+    remove_action('wp_head', 'print_emoji_detection_script', 7);
+    remove_action('wp_print_styles', 'print_emoji_styles');
+    remove_action('wp_print_scripts', 'print_emoji_detection_script');
+    remove_filter('the_content_feed', 'wp_staticize_emoji');
+    remove_filter('comment_text_rss', 'wp_staticize_emoji');
+    remove_filter('wp_mail', 'wp_staticize_emoji_for_email');
+    add_filter('emoji_svg_url', '__return_false');
+}
+add_action('init', 'tonkla_disable_front_emojis');
 
 /**
  * Print admin-controlled header scripts (Theme Options → Custom Scripts).
@@ -173,6 +421,10 @@ use Carbon_Fields\Container;
 use Carbon_Fields\Field;
 
 add_action('carbon_fields_register_fields', 'tonkla_register_custom_fields');
+/**
+ * Register Carbon containers on every request.
+ * Complex fields (page_modules) must be registered for carbon_get_* to unpack on the front end.
+ */
 function tonkla_register_custom_fields()
 {
     require_once get_template_directory() . '/inc/carbon-fields.php';
@@ -188,9 +440,11 @@ function tonkla_crb_load()
 }
 
 /**
- * Import Demo Script
+ * Import Demo Script (admin only)
  */
-require_once get_template_directory() . '/inc/import-demo.php';
+if (is_admin()) {
+    require_once get_template_directory() . '/inc/import-demo.php';
+}
 
 /**
  * Custom Login Page

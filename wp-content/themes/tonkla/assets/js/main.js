@@ -4,6 +4,38 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollReveal();
 });
 
+loadFontAwesomeWhenIdle();
+
+/**
+ * Load Font Awesome after first paint so ~250KiB of webfonts do not contend with LCP.
+ */
+function loadFontAwesomeWhenIdle() {
+    const href = (window.tonklaPerf && window.tonklaPerf.faCss) || '';
+    if (!href || document.getElementById('fontawesome-css')) {
+        return;
+    }
+
+    const inject = () => {
+        if (document.getElementById('fontawesome-css')) {
+            return;
+        }
+        const link = document.createElement('link');
+        link.id = 'fontawesome-css';
+        link.rel = 'stylesheet';
+        link.href = href;
+        document.head.appendChild(link);
+    };
+
+    if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(inject, { timeout: 2500 });
+        return;
+    }
+
+    window.addEventListener('load', () => {
+        setTimeout(inject, 200);
+    });
+}
+
 function prefersReducedMotion() {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
@@ -175,8 +207,8 @@ function initScrollReveal() {
     let delayIndex = 0;
 
     targets.forEach((el) => {
-        // Transform breaks position:sticky — skip those sections.
-        if (el.classList.contains('sticky') || window.getComputedStyle(el).position === 'sticky') {
+        // Transform breaks position:sticky — skip sticky sections (class only; avoid forced reflow).
+        if (el.classList.contains('sticky') || el.closest('.sticky')) {
             return;
         }
 

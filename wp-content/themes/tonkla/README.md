@@ -35,17 +35,31 @@ This theme uses Tailwind CSS for styling. To make changes to the design, you nee
 
 ## Theme Structure
 
--   `assets/` - Static assets (CSS, JS, Images).
--   `inc/` - PHP includes (Carbon Fields definitions, helper classes).
+-   `assets/` - Static assets (CSS, JS, Images, builder wireframes, FA icon catalog).
+-   `inc/` - PHP includes (Carbon Fields, Page Builder helpers, SVG upload).
+-   `inc/builder/` - Page Builder factories, module registry, icon helper, admin assets.
 -   `parts/` - Template parts for different modules (Hero, Features, FAQ, etc.).
 -   `page-flexible.php` - The main template for the Page Builder.
 -   `functions.php` - Theme bootstrapping and configuration.
+-   `vendor/` - Composer deps (`enshrined/svg-sanitize` for SVG icon uploads).
+
+## Page Builder (UX)
+
+Admin editor enhancements (template **Tonkla Page Builder**):
+
+-   **Module picker** with wireframe previews (`assets/img/builder/*.svg`).
+-   **Icon browser** — browse/search FontAwesome instead of typing class names.
+-   **Custom icon upload** — PNG / WebP / SVG (SVG sanitized; admins with `manage_options` only).
+-   Module tabs show content titles via header templates.
+
+Registry / factories live in `inc/builder/`. Front-end icons render via `tonkla_render_icon()`.
 
 ## Page Builder Modules
 
-The theme includes a powerful Flexible Page Builder with the following modules:
 -   **Hero Section**: Main landing banners (Home, Service, Alt).
 -   **Service Grid**: Grid layout for features/services with tech stack icons.
+-   **Tech Stack**: Technology / logo grid.
+-   **Portfolio**: Project / case-study grid with image, category, client, link.
 -   **Pricing Table**: Comparative pricing plans.
 -   **Feature Split**: Left/Right content split (great for software showcases).
 -   **Content Block**: Flexible text and media block (Image or Code).
@@ -55,3 +69,5 @@ The theme includes a powerful Flexible Page Builder with the following modules:
 -   **Process Timeline**: Step-by-step workflow guide.
 -   **FAQ**: Accordion style questions.
 -   **Testimonials**: Customer reviews grid.
+-   **Contact Section**: Form + company info.
+-   **Map & FAQ**: Google Map embed + FAQ.

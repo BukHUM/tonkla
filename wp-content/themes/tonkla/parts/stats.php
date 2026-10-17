@@ -62,7 +62,14 @@ if (empty($items)) {
                 <div class="text-center group <?php echo $index > 0 ? 'md:pl-8' : ''; ?>">
                     <div
                         class="text-4xl <?php echo esc_attr($icon_class); ?> mb-4 transform group-hover:scale-110 transition-transform duration-300 inline-block drop-shadow-sm">
-                        <i class="<?php echo esc_attr($icon); ?>"></i>
+                        <?php
+                        tonkla_render_icon(
+                            $item,
+                            array(
+                                'fallback' => 'fa-solid fa-chart-simple',
+                            )
+                        );
+                        ?>
                     </div>
                     <div
                         class="text-3xl md:text-4xl font-heading font-bold <?php echo esc_attr($text_color); ?> mb-2 tracking-tight">

@@ -1,13 +1,13 @@
 <?php
 /**
- * Template Name: Flexible Page Builder
+ * Template Name: Tonkla Page Builder
  */
 
 defined( 'ABSPATH' ) || exit;
 
 get_header(); ?>
 
-<div id="content" class="site-content">
+<main id="content" class="site-content">
     <?php
     $modules = carbon_get_the_post_meta('page_modules');
 
@@ -57,6 +57,9 @@ get_header(); ?>
             elseif ($type === 'tech_stack_grid'):
                 get_template_part('parts/grid/grid-tech-stack');
 
+            elseif ($type === 'portfolio_module'):
+                get_template_part('parts/grid/grid-portfolio');
+
             elseif ($type === 'contact_section'):
                 get_template_part('parts/contact/contact-section');
 
@@ -68,7 +71,7 @@ get_header(); ?>
         endforeach;
     endif;
     ?>
-</div>
+</main>
 
 <?php
 get_footer();

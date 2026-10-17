@@ -136,7 +136,14 @@ $form_shortcode = isset($module['form_shortcode']) ? $module['form_shortcode'] :
                             <?php foreach ($module['socials'] as $social): ?>
                                 <a href="<?php echo esc_url($social['link']); ?>" target="_blank"
                                     class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand transition text-white">
-                                    <i class="<?php echo esc_attr($social['icon_class']); ?>"></i>
+                                    <?php
+                                    tonkla_render_icon(
+                                        $social,
+                                        array(
+                                            'fallback' => 'fa-solid fa-link',
+                                        )
+                                    );
+                                    ?>
                                 </a>
                             <?php endforeach; ?>
                         </div>

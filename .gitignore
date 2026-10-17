@@ -104,6 +104,11 @@ sonar-reports/
 # ------------------------------------------------------------
 node_modules/
 vendor/
+# Self-hosted Font Awesome lives under theme assets/vendor (needed on production)
+!wp-content/themes/tonkla/assets/vendor/
+!wp-content/themes/tonkla/assets/vendor/**
+# Composer deps for the theme stay local / installed on deploy
+wp-content/themes/tonkla/vendor/
 bower_components/
 npm-debug.log*
 yarn-debug.log*

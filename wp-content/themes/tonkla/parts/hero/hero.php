@@ -72,13 +72,22 @@ if ($bg_type === 'image' && $bg_image) {
                     </span>
                 <?php endif; ?>
 
+                <?php
+                // Dark surfaces (pattern hero-bg, service_alt) need light text.
+                $tonkla_hero_dark = ( 'service_alt' === $hero_type )
+                    || ( 'pattern' === $bg_type )
+                    || ( false !== strpos( (string) $bg_class, 'bg-slate-900' ) )
+                    || ( false !== strpos( (string) $bg_class, 'hero-bg' ) );
+                $tonkla_hero_heading = $tonkla_hero_dark ? 'text-white' : 'text-slate-900';
+                $tonkla_hero_desc    = $tonkla_hero_dark ? 'text-slate-300' : 'text-slate-600';
+                ?>
                 <h1
-                    class="text-4xl md:text-6xl font-heading font-bold <?php echo $hero_type === 'service_alt' ? 'text-white' : 'text-slate-900'; ?> mb-6 leading-tight hero-headline">
+                    class="text-4xl md:text-6xl font-heading font-bold <?php echo esc_attr( $tonkla_hero_heading ); ?> mb-6 leading-tight hero-headline">
                     <?php echo wp_kses_post($headline); ?>
                 </h1>
 
                 <p
-                    class="text-lg md:text-xl <?php echo $hero_type === 'service_alt' ? 'text-slate-300' : 'text-slate-600'; ?> mb-8 max-w-3xl <?php echo $hero_type === 'home' ? 'mx-auto' : ''; ?> font-light leading-relaxed">
+                    class="text-lg md:text-xl <?php echo esc_attr( $tonkla_hero_desc ); ?> mb-8 max-w-3xl <?php echo $hero_type === 'home' ? 'mx-auto' : ''; ?> font-light leading-relaxed">
                     <?php echo esc_html($description); ?>
                 </p>
 
@@ -96,7 +105,7 @@ if ($bg_type === 'image' && $bg_image) {
                                 placeholder="ค้นหาชื่อโดเมนของคุณ (เช่น tonklait.com)">
                         </div>
                         <button
-                            class="w-full sm:w-auto px-8 py-3 bg-brand hover:bg-brand-dark text-white font-heading font-bold rounded-lg transition shadow-md whitespace-nowrap flex items-center justify-center gap-2">
+                            class="w-full sm:w-auto px-8 py-3 bg-brand-dark hover:bg-brand text-white font-heading font-bold rounded-lg transition shadow-md whitespace-nowrap flex items-center justify-center gap-2">
                             <i class="fa-solid fa-magnifying-glass"></i> ค้นหา
                         </button>
                     </div>
@@ -106,7 +115,8 @@ if ($bg_type === 'image' && $bg_image) {
                     <div class="flex flex-wrap gap-4 <?php echo $hero_type === 'home' ? 'justify-center' : ''; ?>">
                         <?php foreach ($buttons as $btn): ?>
                             <?php
-                            $btn_style_class = 'bg-brand hover:bg-brand-dark text-white shadow-lg shadow-green-500/30'; // Default Primary
+                            // brand-dark (#047857) meets WCAG AA with white text; brand (#10b981) does not.
+                            $btn_style_class = 'bg-brand-dark hover:bg-brand text-white shadow-lg shadow-green-500/30';
                     
                             if ($btn['style'] === 'secondary') {
                                 $btn_style_class = 'bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-sm';
@@ -123,22 +133,27 @@ if ($bg_type === 'image' && $bg_image) {
                             ?>
                             <a href="<?php echo esc_url($btn_link); ?>"
                                 class="px-8 py-3 rounded-lg font-heading font-bold transition flex items-center justify-center gap-2 <?php echo $btn_style_class; ?> group">
-                                <?php if (!empty($btn['icon'])): ?>
+                                <?php if ( tonkla_icon_class_from_item( $btn ) || ! empty( $btn['icon_image'] ) ) : ?>
                                     <?php
-                                    $icon_color_key = !empty($btn['icon_color']) ? $btn['icon_color'] : '';
-                                    $icon_class = '';
-                                    if ($icon_color_key) {
-                                        if (strpos($icon_color_key, 'text-') === 0) {
-                                            $icon_class = $icon_color_key;
-                                        } elseif ($icon_color_key === 'brand') {
-                                            $icon_class = 'text-brand-light';
+                                    $icon_color_key = ! empty( $btn['icon_color'] ) ? $btn['icon_color'] : '';
+                                    $icon_extra     = 'transition group-hover:scale-110';
+                                    if ( $icon_color_key ) {
+                                        if ( str_starts_with( (string) $icon_color_key, 'text-' ) ) {
+                                            $icon_extra .= ' ' . $icon_color_key;
+                                        } elseif ( 'brand' === $icon_color_key ) {
+                                            $icon_extra .= ' text-brand-light';
                                         } else {
-                                            $icon_class = 'text-' . $icon_color_key . '-300';
+                                            $icon_extra .= ' text-' . $icon_color_key . '-300';
                                         }
                                     }
+                                    tonkla_render_icon(
+                                        $btn,
+                                        array(
+                                            'class'    => $icon_extra,
+                                            'fallback' => '',
+                                        )
+                                    );
                                     ?>
-                                    <i
-                                        class="<?php echo esc_attr($btn['icon']); ?> <?php echo esc_attr($icon_class); ?> transition group-hover:scale-110"></i>
                                 <?php endif; ?>
                                 <?php echo esc_html($btn['text']); ?>
                             </a>

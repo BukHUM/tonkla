@@ -56,7 +56,14 @@ $bg_class = 'bg-' . $bg_color;
                             class="bg-white rounded-xl p-6 shadow-lg text-center border-b-4 <?php echo esc_attr($border_class); ?>">
                             <div
                                 class="w-12 h-12 bg-slate-50 text-slate-700 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-                                <i class="<?php echo esc_attr($node['icon']); ?>"></i>
+                                <?php
+                                tonkla_render_icon(
+                                    $node,
+                                    array(
+                                        'fallback' => 'fa-solid fa-circle',
+                                    )
+                                );
+                                ?>
                             </div>
                             <h3 class="font-bold text-slate-800"><?php echo esc_html($node['title']); ?></h3>
                             <p class="text-xs text-slate-500 mt-2"><?php echo esc_html($node['description']); ?></p>

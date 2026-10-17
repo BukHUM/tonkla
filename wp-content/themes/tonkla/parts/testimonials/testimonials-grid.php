@@ -52,7 +52,7 @@ $bg_class = 'bg-' . $bg_color;
                             <?php endif; ?>
 
                             <div>
-                                <h4 class="font-bold text-slate-900 text-sm"><?php echo esc_html($item['name']); ?></h4>
+                                <p class="font-bold text-slate-900 text-sm"><?php echo esc_html($item['name']); ?></p>
                                 <p class="text-xs text-brand font-medium"><?php echo esc_html($item['role']); ?></p>
                             </div>
                         </div>

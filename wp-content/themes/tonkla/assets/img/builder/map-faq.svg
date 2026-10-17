@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 140" fill="none">
+  <rect width="280" height="140" rx="4" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+  <rect x="16" y="24" width="118" height="92" rx="3" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1"/>
+  <path d="M40 48 L56 36 L72 52 L88 44 L104 60" stroke="#94a3b8" stroke-width="1" fill="none" stroke-linejoin="round"/>
+  <circle cx="72" cy="68" r="6" fill="#10b981" fill-opacity="0.3" stroke="#10b981" stroke-width="1"/>
+  <path d="M72 74 L72 82" stroke="#10b981" stroke-width="1"/>
+  <circle cx="72" cy="84" r="3" fill="#10b981" fill-opacity="0.5"/>
+  <rect x="146" y="24" width="118" height="22" rx="2" fill="#fff" stroke="#94a3b8" stroke-width="1"/>
+  <rect x="154" y="32" width="72" height="4" rx="1" fill="#e2e8f0"/>
+  <path d="M248 30 L254 36 L248 42" stroke="#94a3b8" stroke-width="1" stroke-linecap="round" fill="none"/>
+  <rect x="146" y="52" width="118" height="22" rx="2" fill="#fff" stroke="#10b981" stroke-width="1"/>
+  <rect x="154" y="60" width="64" height="4" rx="1" fill="#e2e8f0"/>
+  <path d="M248 58 L242 64 L248 70" stroke="#10b981" stroke-width="1" stroke-linecap="round" fill="none"/>
+  <rect x="154" y="78" width="98" height="3" rx="1" fill="#e2e8f0"/>
+  <rect x="146" y="82" width="118" height="22" rx="2" fill="#fff" stroke="#94a3b8" stroke-width="1"/>
+  <rect x="154" y="90" width="68" height="4" rx="1" fill="#e2e8f0"/>
+  <path d="M248 88 L254 94 L248 100" stroke="#94a3b8" stroke-width="1" stroke-linecap="round" fill="none"/>
+  <rect x="146" y="110" width="118" height="22" rx="2" fill="#fff" stroke="#94a3b8" stroke-width="1"/>
+  <rect x="154" y="118" width="70" height="4" rx="1" fill="#e2e8f0"/>
+  <path d="M248 116 L254 122 L248 128" stroke="#94a3b8" stroke-width="1" stroke-linecap="round" fill="none"/>
+</svg>

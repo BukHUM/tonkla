@@ -88,10 +88,18 @@ if ($content_align === 'center') {
                     ?>
                     <div
                         class="bg-slate-50 p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition group flex flex-col <?php echo esc_attr($align_class); ?>">
-                        <?php if ($item['icon']): ?>
+                        <?php if ( tonkla_icon_class_from_item( $item ) || ! empty( $item['icon_image'] ) ) : ?>
                             <div
                                 class="w-14 h-14 <?php echo esc_attr($color_classes); ?> rounded-xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
-                                <i class="<?php echo esc_attr($item['icon']); ?>"></i>
+                                <?php
+                                tonkla_render_icon(
+                                    $item,
+                                    array(
+                                        'fallback' => '',
+                                        'class'    => '',
+                                    )
+                                );
+                                ?>
                             </div>
                         <?php endif; ?>
 
@@ -108,19 +116,21 @@ if ($content_align === 'center') {
                         if (!empty($stack_icons)):
                             ?>
                             <div class="flex gap-3 text-2xl pt-4 border-t border-slate-200/60 mt-auto">
-                                <?php foreach ($stack_icons as $stack_icon):
-                                    $icon_class = isset($stack_icon['icon_class']) ? $stack_icon['icon_class'] : '';
-                                    $stack_color_key = isset($stack_icon['icon_color']) ? $stack_icon['icon_color'] : 'blue'; // Changed default to simple 'blue'
-                    
-                                    // Normalize color key to suffix (e.g. 'blue' -> 'blue-500')
-                                    $color_suffix = $stack_color_key;
-                                    if ($stack_color_key !== 'brand' && strpos($stack_color_key, '-') === false) {
-                                        $color_suffix .= '-500';
-                                    }
-                                    $stack_title = isset($stack_icon['title']) ? $stack_icon['title'] : '';
+                                <?php foreach ( $stack_icons as $stack_icon ) :
+                                    $stack_title = isset( $stack_icon['title'] ) ? $stack_icon['title'] : '';
+                                    $color_cls   = tonkla_icon_color_classes( isset( $stack_icon['icon_color'] ) ? (string) $stack_icon['icon_color'] : 'blue', 'text' );
                                     ?>
-                                    <i class="<?php echo esc_attr($icon_class); ?> text-<?php echo esc_attr($color_suffix); ?> hover:scale-110 transition-transform"
-                                        title="<?php echo esc_attr($stack_title); ?>"></i>
+                                    <span class="<?php echo esc_attr( $color_cls ); ?> hover:scale-110 transition-transform inline-flex" title="<?php echo esc_attr( $stack_title ); ?>">
+                                        <?php
+                                        tonkla_render_icon(
+                                            $stack_icon,
+                                            array(
+                                                'fallback' => 'fa-solid fa-code',
+                                                'class'    => '',
+                                            )
+                                        );
+                                        ?>
+                                    </span>
                                 <?php endforeach; ?>
                             </div>
                         <?php endif; ?>

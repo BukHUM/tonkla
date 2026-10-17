@@ -1,0 +1,551 @@
+/* Tonkla Page Builder — admin UX */
+
+.cf-field.tonkla-icon-field .cf-field__body,
+.tonkla-icon-field .cf-field__body {
+	max-width: 100%;
+}
+
+.tonkla-icon-wrap {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+}
+
+.tonkla-icon-wrap__preview {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border: 1px solid #d0d5dd;
+	border-radius: 8px;
+	background: #f8fafc;
+	font-size: 18px;
+	color: #334155;
+	flex: 0 0 auto;
+}
+
+.tonkla-icon-wrap__preview.is-empty {
+	color: #94a3b8;
+}
+
+.tonkla-icon-wrap input[type="text"] {
+	flex: 1 1 12rem;
+	min-width: 10rem;
+}
+
+.tonkla-icon-wrap__actions {
+	display: flex;
+	gap: 6px;
+	flex: 0 0 auto;
+}
+
+.tonkla-icon-wrap__actions .button {
+	margin: 0;
+}
+
+.tonkla-color-swatch {
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	margin-left: 8px;
+	vertical-align: middle;
+	border: 2px solid #ddd;
+	border-radius: 6px;
+	background: #e2e8f0;
+}
+
+/* Module info card */
+.tonkla-module-info {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	align-items: flex-start;
+	padding: 12px 14px;
+	margin: 0 0 8px;
+	border: 1px solid #e2e8f0;
+	border-radius: 10px;
+	background: #f8fafc;
+}
+
+.tonkla-module-info__preview img {
+	display: block;
+	width: 200px;
+	max-width: 100%;
+	height: auto;
+	border-radius: 8px;
+	border: 1px solid #e2e8f0;
+	background: #fff;
+}
+
+.tonkla-module-info__title {
+	display: block;
+	margin: 0 0 4px;
+	font-size: 14px;
+	color: #0f172a;
+}
+
+.tonkla-module-info__desc {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.5;
+	color: #64748b;
+}
+
+/* Modal shell */
+.tonkla-modal {
+	position: fixed;
+	inset: 0;
+	z-index: 100100;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+}
+
+.tonkla-modal.is-open {
+	display: flex;
+}
+
+.tonkla-modal__backdrop {
+	position: absolute;
+	inset: 0;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	background: rgb(15 23 42 / 0.45);
+	cursor: pointer;
+}
+
+.tonkla-modal__panel {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	width: min(44rem, 100%);
+	max-height: min(86vh, 40rem);
+	background: #fff;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	box-shadow: 0 20px 50px rgb(15 23 42 / 0.2);
+	overflow: hidden;
+}
+
+.tonkla-modal__panel--wide {
+	width: min(56rem, 100%);
+}
+
+.tonkla-modal__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 14px 18px;
+	border-bottom: 1px solid #e2e8f0;
+}
+
+.tonkla-modal__header h2 {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+	color: #0f172a;
+}
+
+.tonkla-modal__close {
+	border: 0;
+	background: transparent;
+	font-size: 22px;
+	line-height: 1;
+	cursor: pointer;
+	color: #64748b;
+	padding: 4px 8px;
+	border-radius: 6px;
+}
+
+.tonkla-modal__close:hover,
+.tonkla-modal__close:focus-visible {
+	background: #f1f5f9;
+	color: #0f172a;
+	outline: 2px solid #10b981;
+	outline-offset: 1px;
+}
+
+.tonkla-modal__toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	padding: 12px 18px;
+	border-bottom: 1px solid #e2e8f0;
+	background: #f8fafc;
+}
+
+.tonkla-modal__toolbar input[type="search"] {
+	flex: 1 1 14rem;
+	min-height: 34px;
+	padding: 6px 10px;
+	border: 1px solid #d0d5dd;
+	border-radius: 6px;
+}
+
+.tonkla-modal__filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.tonkla-modal__filters button {
+	border: 1px solid #d0d5dd;
+	background: #fff;
+	border-radius: 999px;
+	padding: 4px 12px;
+	font-size: 12px;
+	cursor: pointer;
+	color: #334155;
+}
+
+.tonkla-modal__filters button.is-active {
+	background: #10b981;
+	border-color: #10b981;
+	color: #fff;
+}
+
+.tonkla-modal__body {
+	flex: 1 1 auto;
+	overflow: auto;
+	padding: 16px 18px;
+	min-height: 0;
+}
+
+.tonkla-modal__footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	padding: 12px 18px;
+	border-top: 1px solid #e2e8f0;
+	background: #f8fafc;
+}
+
+/* Icon grid */
+.tonkla-icon-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+	gap: 8px;
+}
+
+.tonkla-icon-grid__item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	padding: 10px 6px;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	background: #fff;
+	cursor: pointer;
+	color: #334155;
+	font-size: 11px;
+	line-height: 1.2;
+	text-align: center;
+	word-break: break-word;
+}
+
+.tonkla-icon-grid__item i {
+	font-size: 20px;
+}
+
+.tonkla-icon-grid__item:hover,
+.tonkla-icon-grid__item:focus-visible {
+	border-color: #10b981;
+	background: #ecfdf5;
+	outline: none;
+}
+
+.tonkla-icon-grid__item.is-selected {
+	border-color: #10b981;
+	box-shadow: 0 0 0 2px rgb(16 185 129 / 0.25);
+}
+
+.tonkla-modal__empty,
+.tonkla-modal__loading {
+	padding: 32px 12px;
+	text-align: center;
+	color: #64748b;
+	font-size: 13px;
+}
+
+/* Module picker cards */
+.tonkla-module-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+	gap: 12px;
+}
+
+.tonkla-module-card {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 10px;
+	border: 1px solid #e2e8f0;
+	border-radius: 10px;
+	background: #fff;
+	cursor: pointer;
+	text-align: left;
+	color: inherit;
+}
+
+.tonkla-module-card:hover,
+.tonkla-module-card:focus-visible {
+	border-color: #10b981;
+	background: #ecfdf5;
+	outline: none;
+}
+
+.tonkla-module-card img {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: 6px;
+	border: 1px solid #e2e8f0;
+	background: #f8fafc;
+}
+
+.tonkla-module-card__title {
+	margin: 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: #0f172a;
+}
+
+.tonkla-module-card__desc {
+	margin: 0;
+	font-size: 12px;
+	line-height: 1.4;
+	color: #64748b;
+}
+
+/* Page modules accordion — top-level groups only (not nested tabbed complexes) */
+.cf-field.tonkla-page-modules > .cf-field__body,
+.tonkla-page-modules > .cf-field__body {
+	max-width: 100%;
+	overflow: visible;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	overflow: visible;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group {
+	position: relative;
+	margin: 0;
+	border: 1px solid #e2e8f0;
+	border-radius: 10px;
+	background: #fff;
+	overflow: visible;
+	box-shadow: none;
+	outline: none;
+	transition: border-color 0.15s ease;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group:hover {
+	border-color: #94a3b8;
+	box-shadow: none;
+	outline: none;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group:focus,
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group:focus-within,
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group .cf-complex__group-head:focus,
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group .cf-complex__group-head:focus-visible {
+	outline: none;
+	box-shadow: none;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group > .cf-complex__group-head {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 14px;
+	padding-right: 7rem;
+	margin: 0;
+	background: #f8fafc;
+	cursor: pointer;
+	user-select: none;
+	border: none;
+	border-radius: 10px 10px 0 0;
+	border-bottom: 1px solid transparent;
+	outline: none;
+	box-shadow: none;
+	transition: background 0.15s ease;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group.cf-complex__group--collapsed > .cf-complex__group-head {
+	border-radius: 10px;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group > .cf-complex__group-head::after {
+	content: "";
+	position: absolute;
+	right: 12px;
+	top: 16px;
+	width: 0;
+	height: 0;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-top: 6px solid #64748b;
+	pointer-events: none;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group.cf-complex__group--collapsed > .cf-complex__group-head::after {
+	border-top: none;
+	border-bottom: 6px solid #64748b;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group > .cf-complex__group-head:hover {
+	background: #f1f5f9;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group:not(.cf-complex__group--collapsed) > .cf-complex__group-head {
+	background: #ecfdf5;
+	border-bottom-color: #d1fae5;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group .cf-complex__group-title {
+	font-size: 13px;
+	font-weight: 600;
+	color: #0f172a;
+	line-height: 1.35;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group > .cf-complex__group-head .cf-complex__group-index {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 1.5rem;
+	height: 1.5rem;
+	padding: 0 6px;
+	border-radius: 999px;
+	background: #e2e8f0;
+	color: #475569;
+	font-size: 11px;
+	font-weight: 700;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group:not(.cf-complex__group--collapsed) > .cf-complex__group-head .cf-complex__group-index {
+	background: #10b981;
+	color: #fff;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group > .cf-complex__group-body {
+	padding: 12px 14px 16px;
+	background: #fff;
+	border: none;
+	border-radius: 0 0 10px 10px;
+	overflow: visible;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group.cf-complex__group--collapsed > .cf-complex__group-body {
+	display: none;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group > .cf-complex__group-head .cf-complex__group-actions {
+	opacity: 0.7;
+}
+
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__groups > .cf-complex__group > .cf-complex__group-head:hover .cf-complex__group-actions {
+	opacity: 1;
+}
+
+.tonkla-page-modules > .cf-field__body > .cf-complex__actions,
+.tonkla-page-modules.cf-complex--grid > .cf-field__body > .cf-complex__actions {
+	margin-top: 12px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+/*
+ * Nested tabbed complexes (รายการผลงาน / การ์ด ฯลฯ):
+ * Carbon Fields sits tabs on the border (margin-bottom: -5px) — pull them apart.
+ */
+.tonkla-page-modules .cf-complex--tabbed-horizontal > .cf-field__body {
+	overflow: visible;
+}
+
+.tonkla-page-modules .cf-complex--tabbed-horizontal > .cf-field__body > .cf-complex__tabs--tabbed-horizontal {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	margin: 0 0 10px;
+	position: relative;
+	z-index: 1;
+}
+
+.tonkla-page-modules .cf-complex--tabbed-horizontal > .cf-field__body > .cf-complex__tabs--tabbed-horizontal .cf-complex__tabs-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.tonkla-page-modules .cf-complex--tabbed-horizontal .cf-complex__tabs-item {
+	border: 1px solid #e2e8f0;
+	border-radius: 6px;
+	background: #f8fafc;
+	margin: 0;
+}
+
+.tonkla-page-modules .cf-complex--tabbed-horizontal .cf-complex__tabs-item--current {
+	border-color: #94a3b8;
+	background: #fff;
+}
+
+.tonkla-page-modules .cf-complex--tabbed-horizontal > .cf-field__body > .cf-complex__tabs--tabbed-horizontal .cf-complex__inserter {
+	margin: 0;
+	align-self: center;
+}
+
+.tonkla-page-modules .cf-complex--tabbed-horizontal > .cf-field__body > .cf-complex__groups > .cf-complex__group {
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+	outline: none;
+	overflow: visible;
+	background: transparent;
+}
+
+.tonkla-page-modules .cf-complex--tabbed-horizontal > .cf-field__body > .cf-complex__groups > .cf-complex__group:hover,
+.tonkla-page-modules .cf-complex--tabbed-horizontal > .cf-field__body > .cf-complex__groups > .cf-complex__group:focus-within {
+	border: none;
+	box-shadow: none;
+	outline: none;
+}
+
+.tonkla-page-modules .cf-complex--tabbed-horizontal > .cf-field__body > .cf-complex__groups > .cf-complex__group > .cf-complex__group-body {
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	background: #fff;
+	overflow: visible;
+	margin: 0;
+	box-shadow: none;
+}
+
+.carbon-container .tonkla-builder-empty {
+	padding: 24px 16px;
+	margin: 8px 0 16px;
+	border: 1px dashed #cbd5e1;
+	border-radius: 10px;
+	text-align: center;
+	color: #64748b;
+	font-size: 13px;
+	background: #f8fafc;
+}
+
+body.tonkla-modal-open {
+	overflow: hidden;
+}

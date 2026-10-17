@@ -4,7 +4,7 @@
     "description": "Tailwind CSS setup for Tonkla IT theme",
     "main": "index.js",
     "scripts": {
-        "build": "tailwindcss -i ./assets/css/input.css -o ./assets/css/main.css --minify",
+        "build": "tailwindcss -i ./assets/css/input.css -o ./assets/css/main.css --minify && tailwindcss -i ./assets/css/input-prose.css -o ./assets/css/prose.css --minify -c ./tailwind.prose.config.js",
         "watch": "tailwindcss -i ./assets/css/input.css -o ./assets/css/main.css --watch"
     },
     "devDependencies": {

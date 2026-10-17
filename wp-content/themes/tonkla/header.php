@@ -17,14 +17,7 @@
 
                 <!-- Logo -->
                 <a href="<?php echo esc_url(home_url('/')); ?>" class="flex-shrink-0 flex items-center group">
-                    <?php
-                    $logo_url = carbon_get_theme_option('main_logo');
-                    if ($logo_url): ?>
-                        <img src="<?php echo esc_url($logo_url); ?>" alt="<?php bloginfo('name'); ?>" class="h-10 w-auto">
-                    <?php else: ?>
-                        <img src="<?php echo esc_url(TONKLA_DEFAULT_LOGO); ?>"
-                            alt="<?php echo esc_attr('Tonkla IT'); ?>" class="h-10 w-auto">
-                    <?php endif; ?>
+                    <?php tonkla_the_logo('header', 'h-10 w-auto'); ?>
                 </a>
 
                 <!-- Desktop Menu -->
@@ -57,7 +50,9 @@
                     <button id="mobile-menu-btn" type="button"
                         class="text-slate-600 hover:text-brand border border-transparent focus-visible:border-brand p-2 rounded-lg"
                         aria-label="<?php echo esc_attr__('Open menu', 'tonkla'); ?>">
-                        <i class="fa-solid fa-bars text-2xl" aria-hidden="true"></i>
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
+                        </svg>
                     </button>
                 </div>
             </div>

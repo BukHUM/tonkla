@@ -113,10 +113,17 @@ $bg_class = 'bg-' . $bg_color;
                                     class="flex items-center gap-4 p-4 bg-white rounded-xl border <?php echo esc_attr($hover_border); ?> hover:shadow-md transition group cursor-pointer">
                                     <div
                                         class="w-12 h-12 <?php echo esc_attr($icon_bg); ?> rounded-full flex items-center justify-center text-xl <?php echo esc_attr($hover_icon_bg); ?> group-hover:text-white transition">
-                                        <i class="<?php echo esc_attr($item['icon']); ?>"></i>
+                                        <?php
+                                        tonkla_render_icon(
+                                            $item,
+                                            array(
+                                                'fallback' => 'fa-solid fa-circle',
+                                            )
+                                        );
+                                        ?>
                                     </div>
                                     <div class="flex-grow">
-                                        <h4 class="font-bold text-slate-800"><?php echo esc_html($item['title']); ?></h4>
+                                        <h3 class="font-bold text-slate-800 text-base"><?php echo esc_html($item['title']); ?></h3>
                                         <p class="text-xs text-slate-500"><?php echo esc_html($item['description']); ?></p>
                                     </div>
                                     <div class="ml-auto text-slate-300 <?php echo esc_attr($hover_text); ?>">

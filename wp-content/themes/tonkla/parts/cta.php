@@ -42,7 +42,7 @@ $card_bg_class = $is_dark_bg ? 'bg-white/5 border border-white/10' : 'bg-slate-5
                             }
                             ?>
                             <a href="<?php echo esc_url($btn_link); ?>"
-                                class="px-8 py-4 <?php echo $btn['style'] === 'primary' ? 'bg-brand hover:bg-brand-dark text-white' : 'bg-slate-700 hover:bg-slate-600 text-white'; ?> font-heading font-bold rounded-xl transition flex items-center justify-center gap-2 shadow-lg">
+                                class="px-8 py-4 <?php echo $btn['style'] === 'primary' ? 'bg-brand-dark hover:bg-brand text-white' : 'bg-slate-700 hover:bg-slate-600 text-white'; ?> font-heading font-bold rounded-xl transition flex items-center justify-center gap-2 shadow-lg">
                                 <?php echo esc_html($btn['text']); ?>
                             </a>
                         <?php endforeach; ?>

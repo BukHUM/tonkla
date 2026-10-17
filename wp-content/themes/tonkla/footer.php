@@ -14,19 +14,9 @@ $tonkla_footer_list_class = 'space-y-2 text-sm';
 		<div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
 			<div class="col-span-2 md:col-span-1">
 				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="flex items-center gap-2 mb-4">
-					<?php
-					$footer_logo_url = carbon_get_theme_option( 'footer_logo' ) ?: carbon_get_theme_option( 'main_logo' );
-					if ( $footer_logo_url ) :
-						?>
-						<img src="<?php echo esc_url( $footer_logo_url ); ?>" alt="<?php bloginfo( 'name' ); ?>"
-							class="h-8 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition">
-					<?php else : ?>
-						<img src="<?php echo esc_url( TONKLA_DEFAULT_LOGO ); ?>"
-							alt="<?php echo esc_attr( 'Tonkla IT' ); ?>"
-							class="h-8 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition">
-					<?php endif; ?>
+					<?php tonkla_the_logo( 'footer', 'h-8 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition' ); ?>
 				</a>
-				<p class="text-xs text-slate-500">
+				<p class="text-xs text-slate-400">
 					<?php
 					echo esc_html(
 						carbon_get_theme_option( 'footer_description' ) ?: 'ผู้ให้บริการ Cloud Hosting และ Digital Solutions ครบวงจร มุ่งเน้นความเสถียร ปลอดภัย และบริการที่จริงใจ'
@@ -36,7 +26,7 @@ $tonkla_footer_list_class = 'space-y-2 text-sm';
 			</div>
 
 			<div>
-				<h4 class="text-white font-heading font-bold mb-4">บริการ</h4>
+				<p class="text-white font-heading font-bold mb-4">บริการ</p>
 				<?php if ( has_nav_menu( 'footer_services' ) ) : ?>
 					<?php
 					wp_nav_menu(
@@ -60,7 +50,7 @@ $tonkla_footer_list_class = 'space-y-2 text-sm';
 			</div>
 
 			<div>
-				<h4 class="text-white font-heading font-bold mb-4">โซลูชัน</h4>
+				<p class="text-white font-heading font-bold mb-4">โซลูชัน</p>
 				<?php if ( has_nav_menu( 'footer_solutions' ) ) : ?>
 					<?php
 					wp_nav_menu(
@@ -84,7 +74,7 @@ $tonkla_footer_list_class = 'space-y-2 text-sm';
 			</div>
 
 			<div>
-				<h4 class="text-white font-heading font-bold mb-4">สำหรับลูกค้า</h4>
+				<p class="text-white font-heading font-bold mb-4">สำหรับลูกค้า</p>
 				<?php if ( has_nav_menu( 'footer_customers' ) ) : ?>
 					<?php
 					wp_nav_menu(
@@ -169,6 +159,10 @@ if ( carbon_get_theme_option( 'pdpa_enable' ) ) :
 	$accept_text   = carbon_get_theme_option( 'pdpa_accept_text' ) ?: 'ยอมรับทั้งหมด';
 	$reject_text   = carbon_get_theme_option( 'pdpa_reject_text' ) ?: 'ปฏิเสธ';
 	$pdpa_scripts  = carbon_get_theme_option( 'pdpa_scripts' );
+	// Skip placeholder Analytics ID from theme defaults — loads ~180KiB of dead gtag.
+	if ( is_string( $pdpa_scripts ) && false !== strpos( $pdpa_scripts, 'UA-XXXXX-Y' ) ) {
+		$pdpa_scripts = '';
+	}
 	$policy_link   = '#';
 	$policy_assoc  = carbon_get_theme_option( 'pdpa_policy_page' );
 

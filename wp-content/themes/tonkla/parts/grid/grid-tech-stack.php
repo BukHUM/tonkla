@@ -65,36 +65,30 @@ $item_desc_class = $is_dark_bg ? 'text-slate-400' : 'text-slate-500';
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <?php if ($items):
                         foreach ($items as $item):
-                            $icon_type = isset($item['icon_type']) ? $item['icon_type'] : 'icon';
                             ?>
                             <div
                                 class="<?php echo esc_attr($item_bg_class); ?> border rounded-2xl p-6 flex flex-col items-center justify-center text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300 aspect-square group">
 
                                 <!-- Icon/Image Area -->
                                 <div class="h-12 flex items-center justify-center mb-4">
-                                    <?php if ($icon_type === 'image' && !empty($item['icon_image'])): ?>
-                                        <?php
-                                        // Use wp_get_attachment_image logic for responsive loading
-                                        echo wp_get_attachment_image($item['icon_image'], 'thumbnail', false, array(
-                                            'class' => 'max-h-12 w-auto object-contain transition group-hover:scale-110'
-                                        ));
-                                        ?>
-                                    <?php elseif (!empty($item['icon_class'])):
-                                        $icon_color_key = isset($item['icon_color']) ? $item['icon_color'] : 'brand';
-
-                                        // Handle legacy values (text-...) vs new simple keys
-                                        if (strpos($icon_color_key, 'text-') === 0) {
-                                            $icon_color_class = $icon_color_key;
-                                        } else {
-                                            $icon_color_class = ($icon_color_key === 'brand') ? 'text-brand' : 'text-' . $icon_color_key . '-500';
-                                        }
-                                        ?>
-                                        <i
-                                            class="<?php echo esc_attr($item['icon_class'] . ' ' . $icon_color_class); ?> text-5xl mb-4 group-hover:scale-110 transition-transform"></i>
-                                    <?php else: ?>
-                                        <!-- Fallback -->
-                                        <i class="fa-solid fa-code text-4xl text-slate-500"></i>
-                                    <?php endif; ?>
+                                    <?php
+                                    $icon_color_key = isset( $item['icon_color'] ) ? $item['icon_color'] : 'brand';
+                                    if ( str_starts_with( (string) $icon_color_key, 'text-' ) ) {
+                                        $icon_color_class = $icon_color_key;
+                                    } else {
+                                        $icon_color_class = ( 'brand' === $icon_color_key ) ? 'text-brand' : 'text-' . $icon_color_key . '-500';
+                                    }
+                                    tonkla_render_icon(
+                                        $item,
+                                        array(
+                                            'class'      => ( 'image' === tonkla_icon_type_from_item( $item ) )
+                                                ? 'max-h-12 w-auto object-contain transition group-hover:scale-110'
+                                                : $icon_color_class . ' text-5xl mb-4 group-hover:scale-110 transition-transform',
+                                            'fallback'   => 'fa-solid fa-code text-4xl text-slate-500',
+                                            'image_size' => 'thumbnail',
+                                        )
+                                    );
+                                    ?>
                                 </div>
 
                                 <!-- Text -->

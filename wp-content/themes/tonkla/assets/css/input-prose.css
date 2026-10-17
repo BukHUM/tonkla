@@ -1,0 +1,6 @@
+/**
+ * Typography only — do NOT include @tailwind utilities.
+ * Utilities (e.g. .hidden) would load after main.css and break responsive nav
+ * (hidden lg:flex → stuck on display:none).
+ */
+@tailwind components;
