@@ -14,46 +14,42 @@ defined( 'ABSPATH' ) || exit;
  */
 function tonkla_render_demo_import_ui() {
 	$groups = array(
-		__( 'Reference Pages', 'tonkla' )     => array(
-			'home'    => array( 'Home', 'Main Landing Page' ),
-			'about'   => array( 'About Us', 'Company Info & Team' ),
-			'contact' => array( 'Contact Us', 'Maps & Form' ),
-			'works'   => array( 'Works', 'Portfolio / Case Studies' ),
+		__( 'หน้าอ้างอิง', 'tonkla' )           => array(
+			'home'    => array( __( 'หน้าแรก', 'tonkla' ), __( 'หน้าแลนดิ้งหลัก', 'tonkla' ) ),
+			'about'   => array( __( 'เกี่ยวกับเรา', 'tonkla' ), __( 'ข้อมูลบริษัทและทีม', 'tonkla' ) ),
+			'contact' => array( __( 'ติดต่อเรา', 'tonkla' ), __( 'แผนที่และฟอร์ม', 'tonkla' ) ),
+			'works'   => array( __( 'ผลงาน', 'tonkla' ), __( 'พอร์ตโฟลิโอ / เคสศึกษา', 'tonkla' ) ),
 		),
-		__( 'Services & Products', 'tonkla' ) => array(
-			'web_dev'     => array( 'Web Application', 'Custom Dev Service' ),
-			'hosting'     => array( 'Web Hosting', 'Pricing Tables' ),
-			'n8n'         => array( 'n8n Automation', 'Workflow Service' ),
-			'domains'     => array( 'Domains', 'Domain Search' ),
-			'pentest'     => array( 'Pentest', 'Security Service' ),
-			'proxmox'     => array( 'Proxmox', 'Server Solutions' ),
-			'ssl'         => array( 'SSL Certificates', 'HTTPS Security' ),
-			'system_impl' => array( 'System Implementation', 'IT Implementation' ),
-			'mobile_app'  => array( 'Mobile App', 'App Development' ),
+		__( 'บริการและผลิตภัณฑ์', 'tonkla' ) => array(
+			'web_dev'     => array( __( 'Web Application', 'tonkla' ), __( 'บริการพัฒนาซอฟต์แวร์', 'tonkla' ) ),
+			'hosting'     => array( __( 'Web Hosting', 'tonkla' ), __( 'ตารางราคา', 'tonkla' ) ),
+			'n8n'         => array( __( 'n8n Automation', 'tonkla' ), __( 'บริการเวิร์กโฟลว์', 'tonkla' ) ),
+			'domains'     => array( __( 'โดเมน', 'tonkla' ), __( 'ค้นหาโดเมน', 'tonkla' ) ),
+			'pentest'     => array( __( 'Pentest', 'tonkla' ), __( 'บริการด้านความปลอดภัย', 'tonkla' ) ),
+			'proxmox'     => array( __( 'Proxmox', 'tonkla' ), __( 'โซลูชันเซิร์ฟเวอร์', 'tonkla' ) ),
+			'ssl'         => array( __( 'SSL Certificates', 'tonkla' ), __( 'ความปลอดภัย HTTPS', 'tonkla' ) ),
+			'system_impl' => array( __( 'System Implementation', 'tonkla' ), __( 'ติดตั้งระบบ IT', 'tonkla' ) ),
+			'mobile_app'  => array( __( 'Mobile App', 'tonkla' ), __( 'พัฒนาแอปมือถือ', 'tonkla' ) ),
 		),
-		__( 'Legal & Components', 'tonkla' )  => array(
-			'solutions' => array( 'Solutions (Hub)', 'Service Overview Page' ),
-			'privacy'   => array( 'Privacy Policy', 'PDPA Content' ),
-			'legal'     => array( 'Legal Pages', 'Terms & Conditions' ),
+		__( 'กฎหมายและคอมโพเนนต์', 'tonkla' ) => array(
+			'solutions' => array( __( 'Solutions (Hub)', 'tonkla' ), __( 'ภาพรวมบริการ', 'tonkla' ) ),
+			'privacy'   => array( __( 'นโยบายความเป็นส่วนตัว', 'tonkla' ), __( 'เนื้อหา PDPA', 'tonkla' ) ),
+			'legal'     => array( __( 'หน้ากฎหมาย', 'tonkla' ), __( 'เงื่อนไขการใช้บริการ', 'tonkla' ) ),
 		),
 	);
 
 	ob_start();
 	?>
 	<div class="tonkla-demo-import">
-		<h3>
-			<span class="dashicons dashicons-download" aria-hidden="true"></span>
-			<?php esc_html_e( 'Import Demo Content', 'tonkla' ); ?>
-		</h3>
 		<p>
-			<?php esc_html_e( 'Select the pages you want to create or update.', 'tonkla' ); ?>
+			<?php esc_html_e( 'เลือกหน้าที่ต้องการสร้างหรืออัปเดต', 'tonkla' ); ?>
 			<br>
-			<span class="tonkla-demo-import__warn"><?php esc_html_e( 'Note: Existing pages with the same slug will be overwritten.', 'tonkla' ); ?></span>
+			<span class="tonkla-demo-import__warn"><?php esc_html_e( 'หมายเหตุ: หน้าที่มี slug เดียวกันจะถูกเขียนทับ', 'tonkla' ); ?></span>
 		</p>
 
 		<div class="tonkla-demo-import__actions">
-			<button type="button" class="button" id="demo-select-all"><?php esc_html_e( 'Select All', 'tonkla' ); ?></button>
-			<button type="button" class="button" id="demo-unselect-all"><?php esc_html_e( 'Unselect All', 'tonkla' ); ?></button>
+			<button type="button" class="button" id="demo-select-all"><?php esc_html_e( 'เลือกทั้งหมด', 'tonkla' ); ?></button>
+			<button type="button" class="button" id="demo-unselect-all"><?php esc_html_e( 'ยกเลิกทั้งหมด', 'tonkla' ); ?></button>
 		</div>
 
 		<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
@@ -76,7 +72,7 @@ function tonkla_render_demo_import_ui() {
 			<?php endforeach; ?>
 
 			<button type="submit" class="button button-primary button-large tonkla-demo-import__submit">
-				<?php esc_html_e( 'Import Selected Content', 'tonkla' ); ?>
+				<?php esc_html_e( 'นำเข้าหน้าที่เลือก', 'tonkla' ); ?>
 			</button>
 		</form>
 	</div>

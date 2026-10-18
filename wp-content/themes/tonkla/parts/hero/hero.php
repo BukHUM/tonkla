@@ -115,8 +115,8 @@ if ($bg_type === 'image' && $bg_image) {
                     <div class="flex flex-wrap gap-4 <?php echo $hero_type === 'home' ? 'justify-center' : ''; ?>">
                         <?php foreach ($buttons as $btn): ?>
                             <?php
-                            // brand-dark (#047857) meets WCAG AA with white text; brand (#10b981) does not.
-                            $btn_style_class = 'bg-brand-dark hover:bg-brand text-white shadow-lg shadow-green-500/30';
+                            // brand-dark meets WCAG AA with white text for typical brand hues.
+                            $btn_style_class = 'bg-brand-dark hover:bg-brand text-white shadow-lg shadow-brand/30';
                     
                             if ($btn['style'] === 'secondary') {
                                 $btn_style_class = 'bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-sm';

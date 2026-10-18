@@ -22,31 +22,31 @@ function tonkla_register_newsletter_cpt()
     $labels = array(
         'name' => _x('Newsletter', 'Post Type General Name', 'tonkla'),
         'singular_name' => _x('Subscriber', 'Post Type Singular Name', 'tonkla'),
-        'menu_name' => __('Newsletter', 'tonkla'),
-        'name_admin_bar' => __('Subscriber', 'tonkla'),
-        'archives' => __('Item Archives', 'tonkla'),
-        'attributes' => __('Item Attributes', 'tonkla'),
-        'parent_item_colon' => __('Parent Item:', 'tonkla'),
-        'all_items' => __('All Subscribers', 'tonkla'),
-        'add_new_item' => __('Add New Subscriber', 'tonkla'),
-        'add_new' => __('Add New', 'tonkla'),
-        'new_item' => __('New Subscriber', 'tonkla'),
-        'edit_item' => __('Edit Subscriber', 'tonkla'),
-        'update_item' => __('Update Subscriber', 'tonkla'),
-        'view_item' => __('View Subscriber', 'tonkla'),
-        'view_items' => __('View Subscribers', 'tonkla'),
-        'search_items' => __('Search Subscriber', 'tonkla'),
-        'not_found' => __('Not found', 'tonkla'),
-        'not_found_in_trash' => __('Not found in Trash', 'tonkla'),
+        'menu_name' => __('สมาชิกจดหมายข่าว', 'tonkla'),
+        'name_admin_bar' => __('ผู้สมัคร', 'tonkla'),
+        'archives' => __('คลังผู้สมัคร', 'tonkla'),
+        'attributes' => __('คุณสมบัติ', 'tonkla'),
+        'parent_item_colon' => __('รายการแม่:', 'tonkla'),
+        'all_items' => __('ผู้สมัครทั้งหมด', 'tonkla'),
+        'add_new_item' => __('เพิ่มผู้สมัคร', 'tonkla'),
+        'add_new' => __('เพิ่มใหม่', 'tonkla'),
+        'new_item' => __('ผู้สมัครใหม่', 'tonkla'),
+        'edit_item' => __('แก้ไขผู้สมัคร', 'tonkla'),
+        'update_item' => __('อัปเดตผู้สมัคร', 'tonkla'),
+        'view_item' => __('ดูผู้สมัคร', 'tonkla'),
+        'view_items' => __('ดูผู้สมัคร', 'tonkla'),
+        'search_items' => __('ค้นหาผู้สมัคร', 'tonkla'),
+        'not_found' => __('ไม่พบ', 'tonkla'),
+        'not_found_in_trash' => __('ไม่พบในถังขยะ', 'tonkla'),
     );
     $args = array(
-        'label' => __('Subscriber', 'tonkla'),
+        'label' => __('ผู้สมัคร', 'tonkla'),
         'labels' => $labels,
         'supports' => array('title', 'custom-fields'), // title = email
         'hierarchical' => false,
         'public' => false,
         'show_ui' => true,
-        'show_in_menu' => 'crb_carbon_fields_container_dashboard.php', // Under TONKLA - IT
+        'show_in_menu' => defined('TONKLA_ADMIN_SLUG_PARENT') ? TONKLA_ADMIN_SLUG_PARENT : 'crb_carbon_fields_container_dashboard.php',
         'show_in_admin_bar' => false,
         'show_in_nav_menus' => false,
         'can_export' => true,
@@ -55,7 +55,7 @@ function tonkla_register_newsletter_cpt()
         'publicly_queryable' => false,
         'capability_type' => 'post',
         'capabilities' => array(
-            'create_posts' => false, // Disable creating new ones via UI if desired, but we might want manual add
+            'create_posts' => false,
         ),
         'map_meta_cap' => true,
     );
@@ -63,76 +63,7 @@ function tonkla_register_newsletter_cpt()
 }
 add_action('init', 'tonkla_register_newsletter_cpt');
 
-/**
- * Find a Carbon Fields submenu row by slug fragment.
- *
- * @param array  $existing Existing submenu rows.
- * @param string $needle   Slug fragment to match.
- * @return array|null
- */
-function tonkla_find_submenu_item(array $existing, $needle)
-{
-    foreach ($existing as $item) {
-        if (!empty($item[2]) && strpos($item[2], $needle) !== false) {
-            return $item;
-        }
-    }
-    return null;
-}
-
-// Add Newsletter submenu explicitly and reorder all submenus
-add_action('admin_menu', 'tonkla_newsletter_submenu', 999);
-function tonkla_newsletter_submenu()
-{
-    global $submenu;
-
-    remove_submenu_page('crb_carbon_fields_container_dashboard.php', 'edit.php?post_type=newsletter');
-
-    $parent = 'crb_carbon_fields_container_dashboard.php';
-    $existing = isset($submenu[$parent]) ? $submenu[$parent] : array();
-    $submenu[$parent] = array();
-
-    $ordered = array(
-        array(
-            __('Dashboard', 'tonkla'),
-            'manage_options',
-            'crb_carbon_fields_container_dashboard.php',
-            __('Dashboard', 'tonkla'),
-        ),
-    );
-
-    $fragments = array(
-        'header_footer',
-        'social_media',
-        'table_of_contents',
-        'customer_service',
-        'legal_pdpa',
-        'advertising',
-    );
-
-    foreach ($fragments as $fragment) {
-        $item = tonkla_find_submenu_item($existing, $fragment);
-        if ($item) {
-            $ordered[] = $item;
-        }
-    }
-
-    $ordered[] = array(
-        __('Newsletter', 'tonkla'),
-        'manage_options',
-        'edit.php?post_type=newsletter',
-        __('Newsletter', 'tonkla'),
-    );
-
-    foreach (array('custom_scripts', 'tools') as $fragment) {
-        $item = tonkla_find_submenu_item($existing, $fragment);
-        if ($item) {
-            $ordered[] = $item;
-        }
-    }
-
-    $submenu[$parent] = $ordered;
-}
+// Submenu order under TONKLA - IT is handled by tonkla_order_theme_submenu() in admin-constants.php.
 
 // 2. Add Status Columns to Admin List
 add_filter('manage_newsletter_posts_columns', 'tonkla_newsletter_columns');

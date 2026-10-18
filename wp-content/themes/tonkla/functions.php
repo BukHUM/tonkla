@@ -26,6 +26,16 @@ require_once get_template_directory() . '/inc/security-headers.php';
 require_once get_template_directory() . '/inc/options-autoload.php';
 
 /**
+ * Shared admin page slugs (needed when Carbon Fields registers on front too).
+ */
+require_once get_template_directory() . '/inc/admin-constants.php';
+
+/**
+ * Appearance: color presets, fonts, CSS custom properties (front-end).
+ */
+require_once get_template_directory() . '/inc/appearance.php';
+
+/**
  * Front-end icon helper (page builder templates).
  */
 require_once get_template_directory() . '/inc/builder/icons.php';
@@ -45,6 +55,7 @@ if ( is_admin() ) {
 	require_once get_template_directory() . '/inc/admin-performance.php';
 	require_once get_template_directory() . '/inc/admin-chrome.php';
 	require_once get_template_directory() . '/inc/admin-menu-order.php';
+	require_once get_template_directory() . '/inc/admin-tools.php';
 	require_once get_template_directory() . '/inc/admin-thumbnails.php';
 
 	add_action( 'admin_enqueue_scripts', 'tonkla_admin_styles' );
@@ -79,6 +90,68 @@ function tonkla_resolve_image_id($value)
     }
 
     return 0;
+}
+
+/**
+ * Default footer blurb when Carbon "footer_description" is empty.
+ * Uses the site tagline from Settings → General (distributable-theme safe).
+ *
+ * @return string
+ */
+function tonkla_default_footer_description(): string {
+	$tagline = get_bloginfo( 'description', 'display' );
+	$tagline = is_string( $tagline ) ? trim( wp_strip_all_tags( $tagline ) ) : '';
+	if ( '' !== $tagline ) {
+		return $tagline;
+	}
+	$name = get_bloginfo( 'name', 'display' );
+	$name = is_string( $name ) ? trim( wp_strip_all_tags( $name ) ) : '';
+	if ( '' === $name ) {
+		return '';
+	}
+	/* translators: %s: site name from Settings → General */
+	return sprintf( __( 'เว็บไซต์อย่างเป็นทางการของ %s', 'tonkla' ), $name );
+}
+
+/**
+ * Default copyright line when Carbon "copyright_text" is empty.
+ *
+ * @return string HTML allowed through wp_kses_post at the call site.
+ */
+function tonkla_default_copyright_text(): string {
+	$name = get_bloginfo( 'name', 'display' );
+	$name = is_string( $name ) ? trim( wp_strip_all_tags( $name ) ) : '';
+	if ( '' === $name ) {
+		$name = 'WordPress';
+	}
+	return sprintf(
+		/* translators: 1: current year, 2: site name */
+		__( '&copy; %1$s %2$s. All rights reserved.', 'tonkla' ),
+		esc_html( wp_date( 'Y' ) ),
+		esc_html( $name )
+	);
+}
+
+/**
+ * Resolved footer description (Carbon option or site-based default).
+ *
+ * @return string
+ */
+function tonkla_get_footer_description(): string {
+	$custom = function_exists( 'carbon_get_theme_option' ) ? (string) carbon_get_theme_option( 'footer_description' ) : '';
+	$custom = trim( $custom );
+	return '' !== $custom ? $custom : tonkla_default_footer_description();
+}
+
+/**
+ * Resolved copyright HTML (Carbon option or site-based default).
+ *
+ * @return string
+ */
+function tonkla_get_copyright_text(): string {
+	$custom = function_exists( 'carbon_get_theme_option' ) ? (string) carbon_get_theme_option( 'copyright_text' ) : '';
+	$custom = trim( $custom );
+	return '' !== $custom ? $custom : tonkla_default_copyright_text();
 }
 
 /**
@@ -273,19 +346,23 @@ function tonkla_scripts()
         'strategy'  => 'defer',
     );
 
-    // Self-hosted Prompt + Sarabun (no fonts.googleapis.com round-trip).
-    wp_enqueue_style(
-        'tonkla-fonts',
-        $theme_uri . '/assets/css/fonts.css',
-        array(),
-        (string) filemtime($theme_dir . '/assets/css/fonts.css')
-    );
+    // Self-hosted Prompt + Sarabun when still selected (see inc/appearance.php).
+    $tonkla_style_deps = array();
+    if ( ! function_exists( 'tonkla_needs_local_fonts' ) || tonkla_needs_local_fonts() ) {
+        wp_enqueue_style(
+            'tonkla-fonts',
+            $theme_uri . '/assets/css/fonts.css',
+            array(),
+            (string) filemtime($theme_dir . '/assets/css/fonts.css')
+        );
+        $tonkla_style_deps[] = 'tonkla-fonts';
+    }
 
     // Tailwind (render-blocking — required for layout; async caused blank/FOUC with .tk-reveal).
     wp_enqueue_style(
         'tonkla-output',
         $theme_uri . '/assets/css/main.css',
-        array('tonkla-fonts'),
+        $tonkla_style_deps,
         (string) filemtime($theme_dir . '/assets/css/main.css')
     );
 
@@ -324,6 +401,7 @@ function tonkla_scripts()
             'ajax_url'  => admin_url('admin-ajax.php'),
             'nonce'     => wp_create_nonce('tonkla_newsletter_nonce'),
             'activated' => tonkla_newsletter_activation_status(),
+            'brand'     => function_exists( 'tonkla_brand_hex' ) ? tonkla_brand_hex() : '#10b981',
         ));
     }
 }
@@ -337,13 +415,15 @@ function tonkla_preload_critical_assets()
     $theme_uri = get_template_directory_uri();
     $theme_dir = get_template_directory();
 
-    $main_ver  = (string) filemtime($theme_dir . '/assets/css/main.css');
-    $fonts_ver = (string) filemtime($theme_dir . '/assets/css/fonts.css');
+    $main_ver = (string) filemtime($theme_dir . '/assets/css/main.css');
 
-    printf(
-        '<link rel="preload" href="%s" as="style" />' . "\n",
-        esc_url($theme_uri . '/assets/css/fonts.css?ver=' . rawurlencode($fonts_ver))
-    );
+    if ( ! function_exists( 'tonkla_needs_local_fonts' ) || tonkla_needs_local_fonts() ) {
+        $fonts_ver = (string) filemtime($theme_dir . '/assets/css/fonts.css');
+        printf(
+            '<link rel="preload" href="%s" as="style" />' . "\n",
+            esc_url($theme_uri . '/assets/css/fonts.css?ver=' . rawurlencode($fonts_ver))
+        );
+    }
     printf(
         '<link rel="preload" href="%s" as="style" />' . "\n",
         esc_url($theme_uri . '/assets/css/main.css?ver=' . rawurlencode($main_ver))

@@ -47,14 +47,15 @@ function tonkla_is_tonkla_admin_screen()
     $post_type = ($screen && isset($screen->post_type)) ? (string) $screen->post_type : '';
 
     $is_carbon_page = ($page && str_contains($page, 'crb_carbon_fields'))
+        || ($page && str_starts_with($page, 'tonkla-'))
         || str_contains($screen_id, 'crb_carbon_fields')
         || str_contains($screen_id, 'tonkla');
 
-    $is_menu_order = ('tonkla-admin-menu-order' === $page);
+    $is_tools = defined('TONKLA_ADMIN_SLUG_TOOLS') && TONKLA_ADMIN_SLUG_TOOLS === $page;
     $is_page_editor = in_array($screen_base, array('post', 'page'), true) && 'page' === $post_type;
     $is_nav_menus = ('nav-menus' === $screen_base);
 
-    return $is_carbon_page || $is_menu_order || $is_page_editor || $is_nav_menus;
+    return $is_carbon_page || $is_tools || $is_page_editor || $is_nav_menus;
 }
 
 /**
@@ -94,15 +95,18 @@ function tonkla_admin_styles($hook_suffix = '')
     }
 
     if (!tonkla_is_tonkla_admin_screen()) {
-        // Early admin_enqueue may run before screen is ready — allow page-builder hook.
-        $allowed_hooks = array(
-            'post.php',
-            'post-new.php',
-            'nav-menus.php',
+        // Early admin_enqueue may run before screen is ready.
+        $page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : '';
+        $is_tonkla_page = $page && (
+            str_contains($page, 'crb_carbon_fields')
+            || str_starts_with($page, 'tonkla-')
         );
-        $is_carbon_page = isset($_GET['page']) && str_contains(sanitize_key(wp_unslash($_GET['page'])), 'crb_carbon_fields');
+        $post_type = isset($_GET['post_type']) ? sanitize_key(wp_unslash($_GET['post_type'])) : 'post';
+        $is_page_edit = in_array($hook_suffix, array('post.php', 'post-new.php'), true)
+            && ('page' === $post_type || ('post.php' === $hook_suffix && isset($_GET['post']) && 'page' === get_post_type(absint($_GET['post']))));
+        $is_nav_menus = ('nav-menus.php' === $hook_suffix);
 
-        if (!$is_carbon_page && !in_array($hook_suffix, $allowed_hooks, true)) {
+        if (!$is_tonkla_page && !$is_page_edit && !$is_nav_menus) {
             return;
         }
     }
@@ -115,7 +119,7 @@ function tonkla_admin_styles($hook_suffix = '')
     wp_enqueue_script(
         'tonkla-admin-script',
         $theme_uri . '/assets/js/admin.js',
-        array('jquery'),
+        array(),
         (string) filemtime($theme_dir . '/assets/js/admin.js'),
         array(
             'in_footer' => true,

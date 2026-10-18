@@ -8,26 +8,36 @@
 defined( 'ABSPATH' ) || exit;
 
 $tonkla_footer_list_class = 'space-y-2 text-sm';
+$tonkla_footer_desc       = tonkla_get_footer_description();
+$tonkla_has_services      = has_nav_menu( 'footer_services' );
+$tonkla_has_solutions     = has_nav_menu( 'footer_solutions' );
+$tonkla_has_customers     = has_nav_menu( 'footer_customers' );
+$tonkla_col_count         = 1 + (int) $tonkla_has_services + (int) $tonkla_has_solutions + (int) $tonkla_has_customers;
+$tonkla_grid_md           = array(
+	1 => 'md:grid-cols-1',
+	2 => 'md:grid-cols-2',
+	3 => 'md:grid-cols-3',
+	4 => 'md:grid-cols-4',
+);
+$tonkla_grid_class        = 'grid grid-cols-2 gap-8 mb-8 ' . ( $tonkla_grid_md[ $tonkla_col_count ] ?? 'md:grid-cols-4' );
 ?>
 <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 mt-auto">
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-		<div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-			<div class="col-span-2 md:col-span-1">
+		<div class="<?php echo esc_attr( $tonkla_grid_class ); ?>">
+			<div class="<?php echo esc_attr( $tonkla_col_count > 1 ? 'col-span-2 md:col-span-1' : 'col-span-2' ); ?>">
 				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="flex items-center gap-2 mb-4">
 					<?php tonkla_the_logo( 'footer', 'h-8 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition' ); ?>
 				</a>
-				<p class="text-xs text-slate-400">
-					<?php
-					echo esc_html(
-						carbon_get_theme_option( 'footer_description' ) ?: 'ผู้ให้บริการ Cloud Hosting และ Digital Solutions ครบวงจร มุ่งเน้นความเสถียร ปลอดภัย และบริการที่จริงใจ'
-					);
-					?>
-				</p>
+				<?php if ( '' !== $tonkla_footer_desc ) : ?>
+					<p class="text-xs text-slate-400">
+						<?php echo esc_html( $tonkla_footer_desc ); ?>
+					</p>
+				<?php endif; ?>
 			</div>
 
-			<div>
-				<p class="text-white font-heading font-bold mb-4">บริการ</p>
-				<?php if ( has_nav_menu( 'footer_services' ) ) : ?>
+			<?php if ( $tonkla_has_services ) : ?>
+				<div>
+					<p class="text-white font-heading font-bold mb-4"><?php esc_html_e( 'บริการ', 'tonkla' ); ?></p>
 					<?php
 					wp_nav_menu(
 						array(
@@ -38,20 +48,12 @@ $tonkla_footer_list_class = 'space-y-2 text-sm';
 						)
 					);
 					?>
-				<?php else : ?>
-					<ul class="<?php echo esc_attr( $tonkla_footer_list_class ); ?>">
-						<li><a href="<?php echo esc_url( home_url( '/domains' ) ); ?>" class="hover:text-brand transition">จดโดเมน</a></li>
-						<li><a href="<?php echo esc_url( home_url( '/whois' ) ); ?>" class="hover:text-brand transition">Whois Lookup</a></li>
-						<li><a href="<?php echo esc_url( home_url( '/hosting' ) ); ?>" class="hover:text-brand transition">Cloud Hosting</a></li>
-						<li><a href="<?php echo esc_url( home_url( '/proxmox' ) ); ?>" class="hover:text-brand transition">Proxmox Server</a></li>
-						<li><a href="<?php echo esc_url( home_url( '/dedicated' ) ); ?>" class="hover:text-brand transition">Dedicated Server</a></li>
-					</ul>
-				<?php endif; ?>
-			</div>
+				</div>
+			<?php endif; ?>
 
-			<div>
-				<p class="text-white font-heading font-bold mb-4">โซลูชัน</p>
-				<?php if ( has_nav_menu( 'footer_solutions' ) ) : ?>
+			<?php if ( $tonkla_has_solutions ) : ?>
+				<div>
+					<p class="text-white font-heading font-bold mb-4"><?php esc_html_e( 'โซลูชัน', 'tonkla' ); ?></p>
 					<?php
 					wp_nav_menu(
 						array(
@@ -62,20 +64,12 @@ $tonkla_footer_list_class = 'space-y-2 text-sm';
 						)
 					);
 					?>
-				<?php else : ?>
-					<ul class="<?php echo esc_attr( $tonkla_footer_list_class ); ?>">
-						<li><a href="<?php echo esc_url( home_url( '/pentest' ) ); ?>" class="hover:text-brand transition">Pentest &amp; Fix</a></li>
-						<li><a href="<?php echo esc_url( home_url( '/ssl' ) ); ?>" class="hover:text-brand transition">SSL Certificates</a></li>
-						<li><a href="<?php echo esc_url( home_url( '/system-implementation' ) ); ?>" class="hover:text-brand transition">System Implementation</a></li>
-						<li><a href="<?php echo esc_url( home_url( '/web-dev' ) ); ?>" class="hover:text-brand transition">Laravel Development</a></li>
-						<li><a href="<?php echo esc_url( home_url( '/n8n-service' ) ); ?>" class="text-brand font-bold cursor-default">n8n Automation</a></li>
-					</ul>
-				<?php endif; ?>
-			</div>
+				</div>
+			<?php endif; ?>
 
-			<div>
-				<p class="text-white font-heading font-bold mb-4">สำหรับลูกค้า</p>
-				<?php if ( has_nav_menu( 'footer_customers' ) ) : ?>
+			<?php if ( $tonkla_has_customers ) : ?>
+				<div>
+					<p class="text-white font-heading font-bold mb-4"><?php esc_html_e( 'สำหรับลูกค้า', 'tonkla' ); ?></p>
 					<?php
 					wp_nav_menu(
 						array(
@@ -86,24 +80,24 @@ $tonkla_footer_list_class = 'space-y-2 text-sm';
 						)
 					);
 					?>
-				<?php else : ?>
-					<ul class="<?php echo esc_attr( $tonkla_footer_list_class ); ?>">
-						<li><a href="<?php echo esc_url( home_url( '/login' ) ); ?>" class="hover:text-brand transition">เข้าสู่ระบบ</a></li>
-						<li><a href="<?php echo esc_url( home_url( '/payment' ) ); ?>" class="hover:text-brand transition">แจ้งชำระเงิน</a></li>
-						<li><a href="<?php echo esc_url( home_url( '/articles' ) ); ?>" class="hover:text-brand transition">บทความ/ความรู้</a></li>
-						<li><a href="<?php echo esc_url( home_url( '/contact' ) ); ?>" class="hover:text-brand transition">ติดต่อเรา</a></li>
-					</ul>
-				<?php endif; ?>
-			</div>
+				</div>
+			<?php endif; ?>
 		</div>
 
 		<div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm gap-4">
 			<div>
+				<?php echo wp_kses_post( tonkla_get_copyright_text() ); ?>
+
 				<?php
-				echo wp_kses_post(
-					carbon_get_theme_option( 'copyright_text' ) ?: '&copy; ' . wp_date( 'Y' ) . ' Tonkla IT Co., Ltd. All rights reserved.'
-				);
-				?>
+				/** Filter: return false to hide the theme credit regardless of the setting. */
+				if ( apply_filters( 'tonkla_show_footer_credit', (bool) carbon_get_theme_option( 'footer_show_credit' ) ) ) :
+					?>
+					<span class="block mt-1 md:mt-0 md:inline text-xs text-slate-400">
+						<span class="hidden md:inline text-slate-600" aria-hidden="true">&middot;</span>
+						<?php esc_html_e( 'พัฒนาโดย', 'tonkla' ); ?>
+						<a href="<?php echo esc_url( 'https://tonkla.co' ); ?>" class="text-slate-300 hover:text-brand hover:underline transition" target="_blank" rel="noopener"><?php esc_html_e( 'ต้นกล้า ไอที', 'tonkla' ); ?></a>
+					</span>
+				<?php endif; ?>
 			</div>
 
 			<div class="flex flex-wrap gap-4 justify-center">
@@ -119,24 +113,35 @@ $tonkla_footer_list_class = 'space-y-2 text-sm';
 					);
 					?>
 				<?php else : ?>
-					<a href="<?php echo esc_url( home_url( '/about' ) ); ?>" class="hover:text-brand transition">เกี่ยวกับเรา</a>
-					<span class="text-slate-700 hidden md:inline">|</span>
-					<a href="<?php echo esc_url( home_url( '/privacy-policy' ) ); ?>" class="hover:text-brand transition">นโยบายความเป็นส่วนตัว</a>
-					<span class="text-slate-700 hidden md:inline">|</span>
-					<a href="<?php echo esc_url( home_url( '/terms' ) ); ?>" class="hover:text-brand transition">เงื่อนไขการให้บริการ</a>
+					<?php
+					$tonkla_privacy_url = function_exists( 'get_privacy_policy_url' ) ? get_privacy_policy_url() : '';
+					if ( $tonkla_privacy_url ) :
+						?>
+						<a href="<?php echo esc_url( $tonkla_privacy_url ); ?>" class="hover:text-brand transition"><?php esc_html_e( 'นโยบายความเป็นส่วนตัว', 'tonkla' ); ?></a>
+					<?php endif; ?>
 				<?php endif; ?>
 			</div>
 
 			<div class="flex gap-4">
 				<?php
-				foreach ( array( 'facebook', 'twitter', 'instagram' ) as $social ) :
-					$url = carbon_get_theme_option( $social . '_url' );
+				$tonkla_social_icons = array(
+					'facebook'  => 'facebook',
+					'twitter'   => 'x-twitter',
+					'instagram' => 'instagram',
+					'line'      => 'line',
+				);
+				foreach ( $tonkla_social_icons as $social_key => $icon_slug ) :
+					$url = carbon_get_theme_option( $social_key . '_url' );
 					if ( ! $url ) {
 						continue;
 					}
+					$aria = 'line' === $social_key ? 'LINE' : ucfirst( $social_key );
+					if ( 'twitter' === $social_key ) {
+						$aria = 'X';
+					}
 					?>
-					<a href="<?php echo esc_url( $url ); ?>" class="hover:text-white" aria-label="<?php echo esc_attr( ucfirst( $social ) ); ?>">
-						<i class="fa-brands fa-<?php echo esc_attr( $social ); ?>" aria-hidden="true"></i>
+					<a href="<?php echo esc_url( $url ); ?>" class="hover:text-brand transition" target="_blank" rel="noopener noreferrer" aria-label="<?php echo esc_attr( $aria ); ?>">
+						<i class="fa-brands fa-<?php echo esc_attr( $icon_slug ); ?>" aria-hidden="true"></i>
 					</a>
 				<?php endforeach; ?>
 			</div>
@@ -154,17 +159,17 @@ $tonkla_footer_list_class = 'space-y-2 text-sm';
 
 <?php
 if ( carbon_get_theme_option( 'pdpa_enable' ) ) :
-	$pdpa_text     = carbon_get_theme_option( 'pdpa_text' ) ?: 'เราใช้คุกกี้เพื่อเพิ่มประสิทธิภาพและประสบการณ์ที่ดีในการใช้งานเว็บไซต์ คุณสามารถศึกษารายละเอียดได้ที่ <a href="#">นโยบายความเป็นส่วนตัว</a>';
-	$pdpa_pos      = carbon_get_theme_option( 'pdpa_position' ) ?: 'bottom-left';
-	$accept_text   = carbon_get_theme_option( 'pdpa_accept_text' ) ?: 'ยอมรับทั้งหมด';
-	$reject_text   = carbon_get_theme_option( 'pdpa_reject_text' ) ?: 'ปฏิเสธ';
-	$pdpa_scripts  = carbon_get_theme_option( 'pdpa_scripts' );
+	$pdpa_text    = carbon_get_theme_option( 'pdpa_text' ) ?: 'เราใช้คุกกี้เพื่อเพิ่มประสิทธิภาพและประสบการณ์ที่ดีในการใช้งานเว็บไซต์ คุณสามารถศึกษารายละเอียดได้ที่ <a href="#">นโยบายความเป็นส่วนตัว</a>';
+	$pdpa_pos     = carbon_get_theme_option( 'pdpa_position' ) ?: 'bottom-left';
+	$accept_text  = carbon_get_theme_option( 'pdpa_accept_text' ) ?: 'ยอมรับทั้งหมด';
+	$reject_text  = carbon_get_theme_option( 'pdpa_reject_text' ) ?: 'ปฏิเสธ';
+	$pdpa_scripts = carbon_get_theme_option( 'pdpa_scripts' );
 	// Skip placeholder Analytics ID from theme defaults — loads ~180KiB of dead gtag.
 	if ( is_string( $pdpa_scripts ) && false !== strpos( $pdpa_scripts, 'UA-XXXXX-Y' ) ) {
 		$pdpa_scripts = '';
 	}
-	$policy_link   = '#';
-	$policy_assoc  = carbon_get_theme_option( 'pdpa_policy_page' );
+	$policy_link  = '#';
+	$policy_assoc = carbon_get_theme_option( 'pdpa_policy_page' );
 
 	if ( $policy_assoc && ! empty( $policy_assoc[0] ) ) {
 		$policy_link = get_permalink( $policy_assoc[0]['id'] );

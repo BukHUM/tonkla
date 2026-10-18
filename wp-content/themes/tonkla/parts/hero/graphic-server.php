@@ -8,16 +8,16 @@
     </div>
     <div class="space-y-3 font-mono text-sm">
         <div class="flex items-center gap-3">
-            <span class="text-green-400">➜</span>
+            <span class="text-brand">➜</span>
             <span class="text-sky-300">~</span>
             <span class="text-slate-300">htop</span>
         </div>
         <div class="grid grid-cols-2 gap-4 text-xs text-slate-400 mt-2">
             <div class="bg-slate-900/50 p-2 rounded">
-                <div class="flex justify-between mb-1"><span>CPU Usage</span> <span class="text-green-400">12.5%</span>
+                <div class="flex justify-between mb-1"><span>CPU Usage</span> <span class="text-brand">12.5%</span>
                 </div>
                 <div class="w-full bg-slate-700 h-1.5 rounded-full">
-                    <div class="bg-green-500 h-1.5 rounded-full" style="width: 12.5%"></div>
+                    <div class="bg-brand h-1.5 rounded-full" style="width: 12.5%"></div>
                 </div>
             </div>
             <div class="bg-slate-900/50 p-2 rounded">

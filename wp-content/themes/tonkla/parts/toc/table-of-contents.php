@@ -21,16 +21,18 @@ $title = carbon_get_theme_option('toc_title') ?: 'สารบัญ';
 
 <!-- Table of Contents -->
 <div x-data="toc()" x-init="init()"
-    class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 sticky top-24 transition-all duration-300">
+    class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 md:p-5 sticky top-24 transition-all duration-300">
 
-    <div class="flex items-center justify-between mb-4 cursor-pointer" @click="toggle()">
-        <h3 class="font-heading font-bold text-slate-800 text-lg flex items-center gap-2">
-            <i class="fa-solid fa-list-ul text-brand"></i>
+    <div class="flex items-center justify-between gap-3 cursor-pointer" :class="expanded ? 'mb-3 md:mb-4' : 'mb-0'" @click="toggle()">
+        <h2 class="font-heading font-bold text-slate-800 text-base md:text-lg flex items-center gap-2">
+            <i class="fa-solid fa-list-ul text-brand" aria-hidden="true"></i>
             <?php echo esc_html($title); ?>
-        </h3>
-        <button class="text-slate-400 hover:text-brand transition transform duration-200"
-            :class="{ 'rotate-180': !expanded }">
-            <i class="fa-solid fa-chevron-up"></i>
+        </h2>
+        <button type="button" class="text-slate-400 hover:text-brand transition transform duration-200"
+            :class="{ 'rotate-180': !expanded }"
+            :aria-expanded="expanded ? 'true' : 'false'"
+            aria-label="<?php echo esc_attr__( 'Toggle table of contents', 'tonkla' ); ?>">
+            <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
         </button>
     </div>
 

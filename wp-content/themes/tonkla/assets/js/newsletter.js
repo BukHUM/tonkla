@@ -1,8 +1,18 @@
 (function () {
     'use strict';
 
-    var COLOR_SUCCESS = '#10b981';
     var COLOR_ERROR = '#EF4444';
+
+    function brandColor() {
+        if (typeof tonkla_ajax !== 'undefined' && tonkla_ajax.brand) {
+            return tonkla_ajax.brand;
+        }
+        var root = getComputedStyle(document.documentElement).getPropertyValue('--tk-brand').trim();
+        if (root) {
+            return 'rgb(' + root.replace(/\s+/g, ', ') + ')';
+        }
+        return '#10b981';
+    }
 
     function showAlert(icon, title, text, buttonText) {
         if (typeof Swal === 'undefined') {
@@ -13,7 +23,7 @@
             text: text,
             icon: icon,
             confirmButtonText: buttonText,
-            confirmButtonColor: icon === 'success' ? COLOR_SUCCESS : COLOR_ERROR
+            confirmButtonColor: icon === 'success' ? brandColor() : COLOR_ERROR
         });
     }
 

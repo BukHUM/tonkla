@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 :root {
+    /*
+     * Brand + font tokens are set only by inc/appearance.php (inline after this file).
+     * Do NOT redefine --tk-brand* / --tk-font* here — main.css would override the preset.
+     */
     --tk-ease: cubic-bezier(0.22, 1, 0.36, 1);
     --tk-duration: 320ms;
     --tk-duration-slow: 560ms;
@@ -142,7 +146,7 @@
 }
 
 .sitemap-list a:hover {
-    color: var(--color-brand, #10b981);
+    color: rgb(var(--tk-brand));
 }
 
 .sitemap-list a::before {

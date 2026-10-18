@@ -6,15 +6,15 @@
 defined( 'ABSPATH' ) || exit;
 ?>
 
-<!-- Standard Container -->
-<div class="space-y-8">
+<!-- Standard Container — match article card rhythm on mobile -->
+<div class="space-y-6 lg:space-y-8">
 
     <!-- Trending/Recent Posts Section -->
-    <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-        <h4 class="text-lg font-heading font-bold text-slate-900 mb-6 border-b border-slate-100 pb-4">
+    <div class="bg-white p-5 md:p-6 lg:p-8 rounded-2xl md:rounded-3xl shadow-sm border border-slate-100">
+        <h2 class="text-base md:text-lg font-heading font-bold text-slate-900 mb-4 md:mb-5 border-b border-slate-100 pb-3 md:pb-4">
             บทความที่แนะนำ
-        </h4>
-        <div class="space-y-6">
+        </h2>
+        <div class="space-y-4 md:space-y-5">
             <?php
             $recent_posts = new WP_Query(array(
                 'posts_per_page' => 3,
@@ -57,10 +57,10 @@ defined( 'ABSPATH' ) || exit;
     </div>
 
     <!-- Categories Widget -->
-    <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-        <h4 class="text-lg font-heading font-bold text-slate-900 mb-6 border-b border-slate-100 pb-4">
+    <div class="bg-white p-5 md:p-6 lg:p-8 rounded-2xl md:rounded-3xl shadow-sm border border-slate-100">
+        <h2 class="text-base md:text-lg font-heading font-bold text-slate-900 mb-4 md:mb-5 border-b border-slate-100 pb-3 md:pb-4">
             หมวดหมู่
-        </h4>
+        </h2>
         <ul class="space-y-3">
             <?php
             $categories = get_categories(array(
@@ -85,12 +85,12 @@ defined( 'ABSPATH' ) || exit;
     </div>
 
     <!-- Newsletter Widget -->
-    <div class="bg-brand p-8 rounded-3xl shadow-lg relative overflow-hidden">
+    <div class="bg-brand p-5 md:p-6 lg:p-8 rounded-2xl md:rounded-3xl shadow-lg relative overflow-hidden">
         <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-8 -mt-8"></div>
-        <h4 class="text-xl font-heading font-bold text-white mb-4 relative z-10 text-center">
+        <p class="text-lg md:text-xl font-heading font-bold text-white mb-3 md:mb-4 relative z-10 text-center">
             รับความรู้ใหม่ๆ ก่อนใคร
-        </h4>
-        <p class="text-white/80 text-center text-sm mb-6 relative z-10">
+        </p>
+        <p class="text-white/80 text-center text-sm mb-4 md:mb-6 relative z-10 leading-relaxed">
             สมัครสมาชิกรับบทความและโปรโมชั่นพิเศษ ส่งตรงถึงอีเมลคุณ
         </p>
         <div class="relative z-10 text-center">

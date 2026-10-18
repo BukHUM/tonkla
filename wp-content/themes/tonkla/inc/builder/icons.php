@@ -148,8 +148,9 @@ function tonkla_icon_color_classes( $color, $mode = 'text' ) {
  * @return array<string,string>
  */
 function tonkla_icon_color_hex_map() {
+	$brand = function_exists( 'tonkla_brand_hex' ) ? tonkla_brand_hex() : '#10b981';
 	return array(
-		'brand'   => '#10b981',
+		'brand'   => $brand,
 		'slate'   => '#64748b',
 		'red'     => '#ef4444',
 		'orange'  => '#f97316',
@@ -157,7 +158,7 @@ function tonkla_icon_color_hex_map() {
 		'yellow'  => '#eab308',
 		'lime'    => '#84cc16',
 		'green'   => '#22c55e',
-		'emerald' => '#10b981',
+		'emerald' => $brand,
 		'teal'    => '#14b8a6',
 		'cyan'    => '#06b6d4',
 		'sky'     => '#0ea5e9',

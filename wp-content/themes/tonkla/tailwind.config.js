@@ -91,15 +91,16 @@ module.exports = {
 	],
 	theme: {
 		extend: {
+			// Values come from :root in input.css; overridden per site by inc/appearance.php.
 			fontFamily: {
-				sans: [ 'Sarabun', 'sans-serif' ],
-				heading: [ 'Prompt', 'sans-serif' ],
+				sans: [ 'var(--tk-font-body)' ],
+				heading: [ 'var(--tk-font-heading)' ],
 			},
 			colors: {
 				brand: {
-					light: '#34d399',
-					DEFAULT: '#10b981',
-					dark: '#047857',
+					light: 'rgb(var(--tk-brand-light) / <alpha-value>)',
+					DEFAULT: 'rgb(var(--tk-brand) / <alpha-value>)',
+					dark: 'rgb(var(--tk-brand-dark) / <alpha-value>)',
 				},
 				n8n: {
 					DEFAULT: '#ea4b71',

@@ -4,3 +4,61 @@
  * (hidden lg:flex → stuck on display:none).
  */
 @tailwind components;
+
+/**
+ * Tighter, even vertical rhythm for article body — especially on mobile.
+ * Default typography plugin uses ~2em before h2 / 3em around hr which feels uneven.
+ */
+.prose :where(h2):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+	margin-top: 1.75em;
+	margin-bottom: 0.75em;
+}
+
+.prose :where(h3):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+	margin-top: 1.4em;
+	margin-bottom: 0.5em;
+}
+
+.prose :where(hr):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+	margin-top: 2em;
+	margin-bottom: 2em;
+}
+
+@media (max-width: 767px) {
+	.prose {
+		font-size: 0.9875rem;
+		line-height: 1.7;
+	}
+
+	.prose :where(p):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+		margin-top: 1em;
+		margin-bottom: 1em;
+	}
+
+	.prose :where(h2):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+		font-size: 1.35em;
+		margin-top: 1.5em;
+		margin-bottom: 0.6em;
+	}
+
+	.prose :where(h3):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+		font-size: 1.15em;
+		margin-top: 1.25em;
+		margin-bottom: 0.5em;
+	}
+
+	.prose :where(ul, ol):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+		margin-top: 1em;
+		margin-bottom: 1em;
+	}
+
+	.prose :where(hr):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+		margin-top: 1.5em;
+		margin-bottom: 1.5em;
+	}
+
+	.prose :where(img, figure):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+		margin-top: 1.5em;
+		margin-bottom: 1.5em;
+	}
+}

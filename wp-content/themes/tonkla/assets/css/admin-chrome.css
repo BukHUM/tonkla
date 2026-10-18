@@ -4,12 +4,15 @@
  */
 
 :root {
-	--tonkla-admin-font: "Google Sans Flex", "Google Sans", Inter, "Noto Sans Thai", "Segoe UI", sans-serif;
+	--tonkla-admin-font: "Sarabun", "Prompt", "Segoe UI", Tahoma, sans-serif;
 	--tonkla-admin-bar: #0b1220;
 	--tonkla-admin-menu: #162032;
 	--tonkla-admin-menu-hover: #1c2b40;
 	--tonkla-admin-menu-current: #0f766e;
 	--tonkla-admin-accent: #059669;
+	/* Link text: ≥ 4.5:1 on #fff and #f0f0f1 */
+	--tonkla-admin-link: #047857;
+	--tonkla-admin-link-hover: #065f46;
 	--tonkla-admin-border: #2a384f;
 	--tonkla-admin-text: #e2e8f0;
 	--tonkla-admin-muted: #94a3b8;
@@ -20,6 +23,28 @@
 	/* WP default = 160px — กว้างขึ้นเล็กน้อยให้อ่านป้ายไทยได้สบาย */
 	--tonkla-admin-menu-width: 190px;
 	--tonkla-admin-menu-folded: 36px;
+}
+
+/* —— Brand color over the WP admin color scheme (WP 7 default "Modern" = blue) ——
+ * RGB triplets default to emerald; Appearance CSS overrides on body.wp-admin. */
+body.wp-admin {
+	--wp-admin-theme-color: var(--tonkla-admin-link);
+	--wp-admin-theme-color--rgb: 4, 120, 87;
+	--wp-admin-theme-color-darker-10: var(--tonkla-admin-link-hover);
+	--wp-admin-theme-color-darker-10--rgb: 6, 95, 70;
+	--wp-admin-theme-color-darker-20: var(--tonkla-admin-link-hover);
+	--wp-admin-theme-color-darker-20--rgb: 6, 95, 70;
+}
+
+/* :where() keeps specificity at (0,1,1) so .button / .submitdelete / notices still win. */
+body.wp-admin :where(#wpbody) a {
+	color: var(--tonkla-admin-link);
+}
+
+body.wp-admin :where(#wpbody) a:hover,
+body.wp-admin :where(#wpbody) a:active,
+body.wp-admin :where(#wpbody) a:focus {
+	color: var(--tonkla-admin-link-hover);
 }
 
 /* —— Typography —— */
@@ -97,30 +122,31 @@ body.wp-admin .wrap > h1 {
 	background: transparent;
 }
 
-/* —— Left sidebar (lifted slate — separate from top bar) —— */
-#adminmenuback,
-#adminmenuwrap,
-#adminmenu {
-	width: var(--tonkla-admin-menu-width);
+/* —— Left sidebar (lifted slate — separate from top bar) ——
+ * Width + content margin must stay locked together. If menu is 190px but
+ * #wpcontent keeps WP’s 160px margin, the light content paints over the menu.
+ */
+#adminmenuback {
+	width: var(--tonkla-admin-menu-width) !important;
+	background: var(--tonkla-admin-menu) !important;
+	box-shadow: inset -1px 0 0 var(--tonkla-admin-border);
 }
 
-#adminmenuback,
 #adminmenuwrap {
+	width: var(--tonkla-admin-menu-width) !important;
 	background: var(--tonkla-admin-menu) !important;
 }
 
-#adminmenuwrap {
-	border-right: 1px solid var(--tonkla-admin-border);
-}
-
-#adminmenu,
-#adminmenu .wp-submenu {
+#adminmenu {
+	width: var(--tonkla-admin-menu-width) !important;
 	background: var(--tonkla-admin-menu) !important;
 	margin: 0;
 }
 
 #adminmenu .wp-submenu {
-	width: var(--tonkla-admin-menu-width);
+	background: var(--tonkla-admin-menu) !important;
+	margin: 0;
+	width: var(--tonkla-admin-menu-width) !important;
 	left: var(--tonkla-admin-menu-width);
 }
 
@@ -132,7 +158,7 @@ body.wp-admin .wrap > h1 {
 
 #wpcontent,
 #wpfooter {
-	margin-left: var(--tonkla-admin-menu-width);
+	margin-left: var(--tonkla-admin-menu-width) !important;
 }
 
 #adminmenu a {
@@ -216,16 +242,6 @@ body.wp-admin .wrap > h1 {
 	color: #fff;
 }
 
-/* —— Content edge: soft separation from chrome —— */
-#wpcontent,
-#wpfooter {
-	background: #f1f5f9;
-}
-
-#wpbody-content {
-	padding-bottom: 48px;
-}
-
 /* Soft borders in content (forms / cards / tables) — keep 1px, lighter ink */
 #wpbody input[type="text"],
 #wpbody input[type="password"],
@@ -304,7 +320,7 @@ body.wp-admin .wrap > h1 {
 .folded #adminmenuwrap,
 .folded #adminmenu,
 .folded #adminmenu .wp-submenu {
-	width: var(--tonkla-admin-menu-folded);
+	width: var(--tonkla-admin-menu-folded) !important;
 	background: var(--tonkla-admin-menu) !important;
 }
 
@@ -314,7 +330,7 @@ body.wp-admin .wrap > h1 {
 
 .folded #wpcontent,
 .folded #wpfooter {
-	margin-left: var(--tonkla-admin-menu-folded);
+	margin-left: var(--tonkla-admin-menu-folded) !important;
 }
 
 @media only screen and (max-width: 960px) {
@@ -322,7 +338,7 @@ body.wp-admin .wrap > h1 {
 	.auto-fold #adminmenuwrap,
 	.auto-fold #adminmenu,
 	.auto-fold #adminmenu .wp-submenu {
-		width: var(--tonkla-admin-menu-folded);
+		width: var(--tonkla-admin-menu-folded) !important;
 	}
 
 	.auto-fold #adminmenu .wp-submenu {
@@ -331,11 +347,11 @@ body.wp-admin .wrap > h1 {
 
 	.auto-fold #wpcontent,
 	.auto-fold #wpfooter {
-		margin-left: var(--tonkla-admin-menu-folded);
+		margin-left: var(--tonkla-admin-menu-folded) !important;
 	}
 
 	.auto-fold .wp-responsive-open #wpcontent {
-		margin-left: 0;
+		margin-left: 0 !important;
 	}
 }
 
@@ -344,20 +360,21 @@ body.wp-admin .wrap > h1 {
 	.auto-fold #adminmenuback,
 	.auto-fold #adminmenuwrap,
 	.auto-fold #adminmenu {
-		width: var(--tonkla-admin-menu-width);
+		width: var(--tonkla-admin-menu-width) !important;
 	}
 
 	.auto-fold #wpcontent,
 	.auto-fold #wpfooter {
-		margin-left: 0;
+		margin-left: 0 !important;
 	}
 }
 
-/* Accent for primary admin buttons (subtle brand cue) */
+/* Accent for primary admin buttons — tracks Appearance preset via --tonkla-admin-* */
 body.wp-admin .wrap .page-title-action,
-body.wp-admin .button-primary {
+body.wp-admin .button-primary,
+body.wp-admin .wp-core-ui .button-primary {
 	background: var(--tonkla-admin-accent);
-	border-color: #047857;
+	border-color: var(--tonkla-admin-link);
 	color: #fff;
 	text-shadow: none;
 	box-shadow: none;
@@ -366,9 +383,11 @@ body.wp-admin .button-primary {
 body.wp-admin .wrap .page-title-action:hover,
 body.wp-admin .wrap .page-title-action:focus,
 body.wp-admin .button-primary:hover,
-body.wp-admin .button-primary:focus {
-	background: #047857;
-	border-color: #065f46;
+body.wp-admin .button-primary:focus,
+body.wp-admin .wp-core-ui .button-primary:hover,
+body.wp-admin .wp-core-ui .button-primary:focus {
+	background: var(--tonkla-admin-link);
+	border-color: var(--tonkla-admin-link-hover);
 	color: #fff;
 	box-shadow: none;
 }

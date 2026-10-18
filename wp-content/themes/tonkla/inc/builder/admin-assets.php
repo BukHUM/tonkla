@@ -18,10 +18,10 @@ function tonkla_is_page_builder_screen() {
 	}
 
 	$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-	if ( ! $screen || ! in_array( $screen->base, array( 'post', 'page' ), true ) ) {
+	if ( ! $screen || 'page' !== $screen->post_type ) {
 		return false;
 	}
-	if ( 'page' !== $screen->post_type ) {
+	if ( ! in_array( $screen->base, array( 'post', 'page' ), true ) ) {
 		return false;
 	}
 
@@ -33,14 +33,8 @@ function tonkla_is_page_builder_screen() {
 		$post_id = (int) $GLOBALS['post']->ID;
 	}
 
-	if ( $post_id ) {
-		$slug = get_page_template_slug( $post_id );
-		if ( 'page-flexible.php' === $slug ) {
-			return true;
-		}
-	}
-
-	// New page or template just switched — allow assets; JS gates on #page_template.
+	// All page editors (including new / template switch) — JS gates UI on #page_template.
+	// Do not enqueue on posts or other CPTs (previous bug: post.php fallback).
 	return true;
 }
 
@@ -60,14 +54,13 @@ function tonkla_is_nav_menus_screen() {
  * @param string $hook_suffix Admin hook.
  */
 function tonkla_enqueue_builder_admin_assets( $hook_suffix = '' ) {
+	unset( $hook_suffix );
+
 	$is_builder = tonkla_is_page_builder_screen();
 	$is_menus   = tonkla_is_nav_menus_screen();
 
 	if ( ! $is_builder && ! $is_menus ) {
-		// Early enqueue before screen is ready.
-		if ( ! in_array( $hook_suffix, array( 'post.php', 'post-new.php', 'nav-menus.php' ), true ) ) {
-			return;
-		}
+		return;
 	}
 
 	$theme_uri = get_template_directory_uri();
@@ -88,7 +81,6 @@ function tonkla_enqueue_builder_admin_assets( $hook_suffix = '' ) {
 	);
 
 	$builder_deps = array();
-	// Prefer loading after Carbon Fields React metaboxes.
 	foreach ( array( 'carbon-fields-metaboxes', 'carbon-fields-core', 'carbon-fields-vendor' ) as $handle ) {
 		if ( wp_script_is( $handle, 'registered' ) || wp_script_is( $handle, 'enqueued' ) ) {
 			$builder_deps[] = $handle;
@@ -103,6 +95,7 @@ function tonkla_enqueue_builder_admin_assets( $hook_suffix = '' ) {
 		(string) filemtime( $theme_dir . '/assets/js/builder-admin.js' ),
 		array(
 			'in_footer' => true,
+			'strategy'  => 'defer',
 		)
 	);
 
@@ -120,10 +113,10 @@ function tonkla_enqueue_builder_admin_assets( $hook_suffix = '' ) {
 		'tonkla-builder-admin',
 		'tonklaBuilder',
 		array(
-			'iconsUrl'   => $theme_uri . '/assets/data/fa-icons.json',
-			'modules'    => $modules,
-			'colorMap'   => tonkla_icon_color_hex_map(),
-			'i18n'       => array(
+			'iconsUrl' => $theme_uri . '/assets/data/fa-icons.json',
+			'modules'  => $modules,
+			'colorMap' => tonkla_icon_color_hex_map(),
+			'i18n'     => array(
 				'browse'       => __( 'เลือกไอคอน', 'tonkla' ),
 				'clear'        => __( 'ล้าง', 'tonkla' ),
 				'searchIcons'  => __( 'ค้นหาไอคอน…', 'tonkla' ),
@@ -142,4 +135,3 @@ function tonkla_enqueue_builder_admin_assets( $hook_suffix = '' ) {
 	);
 }
 add_action( 'admin_enqueue_scripts', 'tonkla_enqueue_builder_admin_assets', 20 );
-

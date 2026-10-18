@@ -179,21 +179,6 @@ function tonkla_sync_admin_menu_separators(): void {
 add_action( 'admin_menu', 'tonkla_sync_admin_menu_separators', 9999 );
 
 /**
- * Register settings submenu under TONKLA - IT.
- */
-function tonkla_register_admin_menu_order_page(): void {
-	add_submenu_page(
-		'crb_carbon_fields_container_dashboard.php',
-		__( 'Admin Menu', 'tonkla' ),
-		__( 'Admin Menu', 'tonkla' ),
-		'edit_theme_options',
-		'tonkla-admin-menu-order',
-		'tonkla_render_admin_menu_order_page'
-	);
-}
-add_action( 'admin_menu', 'tonkla_register_admin_menu_order_page', 1000 );
-
-/**
  * Snapshot of top-level admin menus (slug => label).
  *
  * @return array<string,string>
@@ -281,9 +266,13 @@ function tonkla_handle_admin_menu_order_save(): void {
 
 	$action = sanitize_key( wp_unslash( (string) $_POST['tonkla_admin_menu_order_action'] ) );
 
+	$redirect_base = function_exists( 'tonkla_admin_page_url' )
+		? tonkla_admin_page_url( TONKLA_ADMIN_SLUG_TOOLS, array( 'tab' => 'menu' ) )
+		: admin_url( 'admin.php?page=tonkla-tools&tab=menu' );
+
 	if ( 'reset' === $action ) {
 		delete_option( TONKLA_ADMIN_MENU_ORDER_OPTION );
-		wp_safe_redirect( add_query_arg( 'tonkla_menu_reset', '1', admin_url( 'admin.php?page=tonkla-admin-menu-order' ) ) );
+		wp_safe_redirect( add_query_arg( 'tonkla_menu_reset', '1', $redirect_base ) );
 		exit;
 	}
 
@@ -304,62 +293,22 @@ function tonkla_handle_admin_menu_order_save(): void {
 	}
 
 	update_option( TONKLA_ADMIN_MENU_ORDER_OPTION, $order, false );
-	wp_safe_redirect( add_query_arg( 'tonkla_menu_saved', '1', admin_url( 'admin.php?page=tonkla-admin-menu-order' ) ) );
+	wp_safe_redirect( add_query_arg( 'tonkla_menu_saved', '1', $redirect_base ) );
 	exit;
 }
 add_action( 'admin_init', 'tonkla_handle_admin_menu_order_save' );
 
 /**
- * Enqueue sortable UI on the editor page.
- *
- * @param string $hook_suffix Admin hook.
+ * Render menu-order panel (used inside System Tools tab).
  */
-function tonkla_enqueue_admin_menu_order_assets( string $hook_suffix ): void {
-	$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( (string) $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	if ( 'tonkla-admin-menu-order' !== $page && false === strpos( $hook_suffix, 'tonkla-admin-menu-order' ) ) {
-		return;
-	}
-
-	wp_enqueue_script( 'jquery-ui-sortable' );
-	wp_enqueue_style(
-		'tonkla-admin-style',
-		get_template_directory_uri() . '/assets/css/admin.css',
-		array(),
-		(string) filemtime( get_template_directory() . '/assets/css/admin.css' )
-	);
-	wp_enqueue_script(
-		'tonkla-admin-menu-order',
-		get_template_directory_uri() . '/assets/js/admin-menu-order.js',
-		array( 'jquery', 'jquery-ui-sortable' ),
-		(string) filemtime( get_template_directory() . '/assets/js/admin-menu-order.js' ),
-		array(
-			'in_footer' => true,
-			'strategy'  => 'defer',
-		)
-	);
-	wp_localize_script(
-		'tonkla-admin-menu-order',
-		'tonklaMenuOrder',
-		array(
-			'separatorLabel' => __( '— เส้นคั่นกลุ่ม —', 'tonkla' ),
-			'removeLabel'    => __( 'ลบเส้นคั่น', 'tonkla' ),
-		)
-	);
-}
-add_action( 'admin_enqueue_scripts', 'tonkla_enqueue_admin_menu_order_assets' );
-
-/**
- * Render editor page.
- */
-function tonkla_render_admin_menu_order_page(): void {
+function tonkla_render_admin_menu_order_panel(): void {
 	if ( ! current_user_can( 'edit_theme_options' ) ) {
 		wp_die( esc_html__( 'ไม่มีสิทธิ์', 'tonkla' ) );
 	}
 
 	$rows = tonkla_build_admin_menu_editor_rows();
 	?>
-	<div class="wrap tonkla-menu-order">
-		<h1><?php esc_html_e( 'จัดกลุ่มเมนูแอดมิน', 'tonkla' ); ?></h1>
+	<div class="tonkla-menu-order">
 		<p class="description">
 			<?php esc_html_e( 'ลากรายการเพื่อจัดลำดับ กด “เพิ่มเส้นคั่นกลุ่ม” เพื่อแบ่งกลุ่มเมนู แล้วบันทึก — รายการเมนูที่ยังไม่อยู่ในลำดับจะไปอยู่ท้ายอัตโนมัติ', 'tonkla' ); ?>
 		</p>
@@ -368,7 +317,7 @@ function tonkla_render_admin_menu_order_page(): void {
 			<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'บันทึกลำดับเมนูแล้ว', 'tonkla' ); ?></p></div>
 		<?php endif; ?>
 		<?php if ( ! empty( $_GET['tonkla_menu_reset'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
-			<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'คืนค่าลำดับเริ่มต้นของต้นกล้าแล้ว', 'tonkla' ); ?></p></div>
+			<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'คืนค่าลำดับเริ่มต้นแล้ว', 'tonkla' ); ?></p></div>
 		<?php endif; ?>
 
 		<form method="post" id="tonkla-menu-order-form">
