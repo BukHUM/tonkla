@@ -8,7 +8,7 @@
     <?php wp_head(); ?>
 </head>
 
-<body <?php body_class( 'bg-slate-50 text-slate-800 font-sans flex flex-col min-h-screen' ); ?>>
+<body <?php body_class( 'font-sans flex flex-col min-h-screen' ); ?>>
     <?php wp_body_open(); ?>
 
     <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-sm transition-all duration-300" id="navbar">

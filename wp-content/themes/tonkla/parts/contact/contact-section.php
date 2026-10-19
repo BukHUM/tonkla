@@ -10,9 +10,9 @@ $module = get_query_var('module');
 $form_shortcode = isset($module['form_shortcode']) ? $module['form_shortcode'] : '';
 ?>
 
-<section class="py-20 bg-white -mt-10 relative z-20 rounded-t-3xl">
+<section class="tonkla-contact-section pt-16 pb-20 md:pt-20 md:pb-24 bg-slate-50 -mt-10 relative z-20 rounded-t-3xl">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden flex flex-col lg:flex-row">
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200/80 overflow-hidden flex flex-col lg:flex-row">
 
             <!-- Contact Form (Left) -->
             <div class="lg:w-3/5 p-8 md:p-12">
@@ -28,12 +28,12 @@ $form_shortcode = isset($module['form_shortcode']) ? $module['form_shortcode'] :
                 <?php endif; ?>
             </div>
 
-            <!-- Contact Info (Right) -->
+            <!-- Contact Info (Right) — slate-800 so it does not merge with site footer -->
             <div
-                class="lg:w-2/5 bg-slate-900 p-8 md:p-12 text-white flex flex-col justify-between relative overflow-hidden">
+                class="lg:w-2/5 bg-slate-800 p-8 md:p-12 text-white flex flex-col justify-between relative overflow-hidden lg:rounded-r-2xl">
                 <!-- Background Pattern -->
                 <div
-                    class="absolute inset-0 bg-brand/10 bg-[url('<?php echo get_template_directory_uri(); ?>/assets/images/grid-pattern.png')] opacity-20">
+                    class="absolute inset-0 bg-brand/10 bg-[url('<?php echo esc_url( get_template_directory_uri() ); ?>/assets/images/grid-pattern.png')] opacity-20">
                 </div>
 
                 <div class="relative z-10">

@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
 loadFontAwesomeWhenIdle();
 
 /**
- * Load Font Awesome after first paint so ~250KiB of webfonts do not contend with LCP.
+ * Load Font Awesome subset after first paint so webfonts do not contend with LCP.
+ * Subset CSS is ~15KiB (vs ~100KiB full kit) — see bin/build-fa-subset.php.
  */
 function loadFontAwesomeWhenIdle() {
     const href = (window.tonklaPerf && window.tonklaPerf.faCss) || '';
@@ -26,13 +27,15 @@ function loadFontAwesomeWhenIdle() {
         document.head.appendChild(link);
     };
 
-    if ('requestIdleCallback' in window) {
-        window.requestIdleCallback(inject, { timeout: 2500 });
-        return;
-    }
-
-    window.addEventListener('load', () => {
-        setTimeout(inject, 200);
+    // After first paint: rAF twice, then idle (short timeout — subset is small).
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            if ('requestIdleCallback' in window) {
+                window.requestIdleCallback(inject, { timeout: 1200 });
+                return;
+            }
+            setTimeout(inject, 100);
+        });
     });
 }
 
@@ -230,6 +233,35 @@ function initScrollReveal() {
     });
 }
 
+function openPDPABanner(banner, backdrop) {
+    if (!banner) {
+        return;
+    }
+
+    const position = banner.getAttribute('data-position');
+
+    if (position === 'center') {
+        banner.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+        if (backdrop) {
+            backdrop.classList.remove('opacity-0', 'pointer-events-none');
+            backdrop.setAttribute('aria-hidden', 'false');
+        }
+        document.documentElement.classList.add('overflow-hidden');
+        const accept = document.getElementById('pdpa-accept-btn');
+        if (accept) {
+            accept.focus({ preventScroll: true });
+        }
+        return;
+    }
+
+    if (position === 'bottom-bar') {
+        banner.classList.remove('translate-y-full');
+        return;
+    }
+
+    banner.classList.remove('translate-y-[150%]');
+}
+
 function initPDPA() {
     const banner = document.getElementById('pdpa-banner');
     const acceptBtn = document.getElementById('pdpa-accept-btn');
@@ -243,16 +275,8 @@ function initPDPA() {
         loadPDPAScripts();
     } else if (isRejected !== 'true' && banner) {
         setTimeout(() => {
-            const position = banner.getAttribute('data-position');
-
-            if (position === 'center') {
-                banner.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
-            } else if (position === 'bottom-bar') {
-                banner.classList.remove('translate-y-full');
-            } else {
-                banner.classList.remove('translate-y-[150%]');
-            }
-        }, prefersReducedMotion() ? 0 : 1000);
+            openPDPABanner(banner, backdrop);
+        }, prefersReducedMotion() ? 0 : 800);
     }
 
     if (acceptBtn) {
@@ -273,6 +297,15 @@ function initPDPA() {
             closePDPABanner(banner, backdrop);
         });
     }
+
+    if (backdrop) {
+        backdrop.addEventListener('click', () => {
+            // Backdrop click = soft dismiss (same as reject) — no tracking scripts.
+            localStorage.setItem('pdpa_rejected', 'true');
+            localStorage.removeItem('pdpa_accepted');
+            closePDPABanner(banner, backdrop);
+        });
+    }
 }
 
 function closePDPABanner(banner, backdrop) {
@@ -283,6 +316,7 @@ function closePDPABanner(banner, backdrop) {
     const position = banner.getAttribute('data-position');
     if (position === 'center') {
         banner.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+        document.documentElement.classList.remove('overflow-hidden');
     } else if (position === 'bottom-bar') {
         banner.classList.add('translate-y-full');
     } else {
@@ -290,7 +324,8 @@ function closePDPABanner(banner, backdrop) {
     }
 
     if (backdrop) {
-        backdrop.classList.add('hidden');
+        backdrop.classList.add('opacity-0', 'pointer-events-none');
+        backdrop.setAttribute('aria-hidden', 'true');
     }
 }
 

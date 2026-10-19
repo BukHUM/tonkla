@@ -346,23 +346,12 @@ function tonkla_scripts()
         'strategy'  => 'defer',
     );
 
-    // Self-hosted Prompt + Sarabun when still selected (see inc/appearance.php).
-    $tonkla_style_deps = array();
-    if ( ! function_exists( 'tonkla_needs_local_fonts' ) || tonkla_needs_local_fonts() ) {
-        wp_enqueue_style(
-            'tonkla-fonts',
-            $theme_uri . '/assets/css/fonts.css',
-            array(),
-            (string) filemtime($theme_dir . '/assets/css/fonts.css')
-        );
-        $tonkla_style_deps[] = 'tonkla-fonts';
-    }
-
     // Tailwind (render-blocking — required for layout; async caused blank/FOUC with .tk-reveal).
+    // Local Prompt/Sarabun load non-blocking in tonkla_preload_critical_assets() (font-display:swap).
     wp_enqueue_style(
         'tonkla-output',
         $theme_uri . '/assets/css/main.css',
-        $tonkla_style_deps,
+        array(),
         (string) filemtime($theme_dir . '/assets/css/main.css')
     );
 
@@ -376,20 +365,41 @@ function tonkla_scripts()
         );
     }
 
-    // Alpine.js Plugins (Collapse) - Must load before Alpine Core
-    wp_enqueue_script('alpine-collapse', 'https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.13.3/dist/cdn.min.js', array(), '3.13.3', $defer);
-
-    // Enqueue Alpine.js
-    wp_enqueue_script('alpine', 'https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js', array('alpine-collapse'), '3.13.3', $defer);
+    // Alpine.js — self-hosted (no third-party DNS / HTTP/1.1 contention on local).
+    $alpine_collapse = $theme_dir . '/assets/vendor/alpine/collapse.min.js';
+    $alpine_core     = $theme_dir . '/assets/vendor/alpine/cdn.min.js';
+    if ( is_readable( $alpine_collapse ) && is_readable( $alpine_core ) ) {
+        wp_enqueue_script(
+            'alpine-collapse',
+            $theme_uri . '/assets/vendor/alpine/collapse.min.js',
+            array(),
+            (string) filemtime( $alpine_collapse ),
+            $defer
+        );
+        wp_enqueue_script(
+            'alpine',
+            $theme_uri . '/assets/vendor/alpine/cdn.min.js',
+            array( 'alpine-collapse' ),
+            (string) filemtime( $alpine_core ),
+            $defer
+        );
+    } else {
+        wp_enqueue_script( 'alpine-collapse', 'https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.13.3/dist/cdn.min.js', array(), '3.13.3', $defer );
+        wp_enqueue_script( 'alpine', 'https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js', array( 'alpine-collapse' ), '3.13.3', $defer );
+    }
 
     wp_enqueue_script('tonkla-script', $theme_uri . '/assets/js/main.js', array(), (string) filemtime($theme_dir . '/assets/js/main.js'), $defer);
 
-    // Font Awesome CSS+fonts after first paint — avoid ~250KiB competing with LCP.
+    // Font Awesome subset (~15KiB CSS vs ~100KiB full) after first paint.
+    $fa_subset = $theme_dir . '/assets/vendor/fontawesome/css/fa-subset.min.css';
+    $fa_href   = is_readable( $fa_subset )
+        ? $theme_uri . '/assets/vendor/fontawesome/css/fa-subset.min.css?ver=' . rawurlencode( (string) filemtime( $fa_subset ) )
+        : $theme_uri . '/assets/vendor/fontawesome/css/all.min.css?ver=6.4.0';
     wp_localize_script(
         'tonkla-script',
         'tonklaPerf',
         array(
-            'faCss' => $theme_uri . '/assets/vendor/fontawesome/css/all.min.css?ver=6.4.0',
+            'faCss' => $fa_href,
         )
     );
 
@@ -408,28 +418,48 @@ function tonkla_scripts()
 add_action('wp_enqueue_scripts', 'tonkla_scripts');
 
 /**
- * Preload critical stylesheets early (fonts still load via @font-face when needed).
+ * Preload main CSS; load local webfonts CSS without blocking first paint.
  */
 function tonkla_preload_critical_assets()
 {
     $theme_uri = get_template_directory_uri();
     $theme_dir = get_template_directory();
 
-    $main_ver = (string) filemtime($theme_dir . '/assets/css/main.css');
-
-    if ( ! function_exists( 'tonkla_needs_local_fonts' ) || tonkla_needs_local_fonts() ) {
-        $fonts_ver = (string) filemtime($theme_dir . '/assets/css/fonts.css');
-        printf(
-            '<link rel="preload" href="%s" as="style" />' . "\n",
-            esc_url($theme_uri . '/assets/css/fonts.css?ver=' . rawurlencode($fonts_ver))
-        );
-    }
+    $main_ver = (string) filemtime( $theme_dir . '/assets/css/main.css' );
     printf(
         '<link rel="preload" href="%s" as="style" />' . "\n",
-        esc_url($theme_uri . '/assets/css/main.css?ver=' . rawurlencode($main_ver))
+        esc_url( $theme_uri . '/assets/css/main.css?ver=' . rawurlencode( $main_ver ) )
     );
+
+    if ( ! function_exists( 'tonkla_local_font_slugs' ) ) {
+        return;
+    }
+
+    $map = array(
+        'prompt'  => 'fonts-prompt.css',
+        'sarabun' => 'fonts-sarabun.css',
+    );
+
+    foreach ( tonkla_local_font_slugs() as $slug ) {
+        if ( ! isset( $map[ $slug ] ) ) {
+            continue;
+        }
+        $file = $theme_dir . '/assets/css/' . $map[ $slug ];
+        if ( ! is_readable( $file ) ) {
+            continue;
+        }
+        $href = esc_url(
+            $theme_uri . '/assets/css/' . $map[ $slug ] . '?ver=' . rawurlencode( (string) filemtime( $file ) )
+        );
+        // Non-blocking (font-display:swap). media=print→all avoids blocking FCP.
+        printf(
+            '<link rel="stylesheet" href="%1$s" media="print" onload="this.media=\'all\'" />' . "\n" .
+            '<noscript><link rel="stylesheet" href="%1$s" /></noscript>' . "\n",
+            $href
+        );
+    }
 }
-add_action('wp_head', 'tonkla_preload_critical_assets', 1);
+add_action( 'wp_head', 'tonkla_preload_critical_assets', 1 );
 
 /**
  * Skip Contact Form 7 CSS/JS on pages without a form (homepage often loads them unused).

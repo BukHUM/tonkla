@@ -20,8 +20,8 @@ if (tonkla_is_toc_enabled()) {
 ?>
 
 <!-- Dynamic Sidebar Area -->
-<?php if (is_active_sidebar('sidebar-page')): ?>
-    <div class="mt-8">
-        <?php dynamic_sidebar('sidebar-page'); ?>
-    </div>
+<?php if ( is_active_sidebar( 'sidebar-page' ) ) : ?>
+	<div class="mt-6">
+		<?php dynamic_sidebar( 'sidebar-page' ); ?>
+	</div>
 <?php endif; ?>

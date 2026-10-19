@@ -1320,6 +1320,19 @@
 		});
 	}
 
+	/**
+	 * admin_footer renders credit outside #wpbody — move into .itwt-wrap
+	 * so theme/plugin credit CSS (link color) actually applies.
+	 */
+	function initDeveloperCredit() {
+		var credit = document.querySelector('.itwt-developer-credit');
+		var wrap = document.querySelector('.wrap.itwt-wrap');
+		if (!credit || !wrap || credit.parentElement === wrap) {
+			return;
+		}
+		wrap.appendChild(credit);
+	}
+
 	function bootAdmin() {
 		initToasts();
 		initConfirmActions();
@@ -1329,6 +1342,7 @@
 		initModals();
 		initListBulk();
 		initCustomerPicker();
+		initDeveloperCredit();
 		window.itwtConfirm = itwtConfirm;
 
 		var genBtn = document.getElementById('itwt-gen-tag');
@@ -1482,16 +1496,16 @@
 
 		function buildSpecRow(idx, item) {
 			item = item || {};
-			var row = document.createElement('div');
-			row.className = 'itwt-spec-row';
-			row.innerHTML =
-				'<input type="text" name="spec_key[' +
-				idx +
+				var row = document.createElement('div');
+				row.className = 'itwt-spec-row';
+				row.innerHTML =
+					'<input type="text" name="spec_key[' +
+					idx +
 				']" placeholder="เช่น CPU" aria-label="คีย์" value="' +
 				escapeAttr(item.key || '') +
 				'" />' +
-				'<input type="text" name="spec_value[' +
-				idx +
+					'<input type="text" name="spec_value[' +
+					idx +
 				']" placeholder="เช่น 32 Cores" aria-label="ค่า" value="' +
 				escapeAttr(item.value || '') +
 				'" />' +

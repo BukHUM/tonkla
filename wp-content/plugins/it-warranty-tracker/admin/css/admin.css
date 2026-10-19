@@ -352,14 +352,6 @@
 	line-height: 1.4;
 }
 
-.itwt-quick-links {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 8px;
-	margin: 0 0 24px;
-}
-
 /* ปุ่มหลักของปลั๊กอิน — ขนาดเดียวทุกหน้า (ใกล้เคียง .button ของ WP) */
 .itwt-action,
 .itwt-wrap .button,
@@ -402,49 +394,71 @@
 	box-shadow: none;
 }
 
+/*
+ * Filled actions need white text. Theme `body.wp-admin :where(#wpbody) a`
+ * otherwise paints teal on blue/red/green fills (poor contrast).
+ */
+.itwt-wrap a.itwt-action--primary,
+.itwt-wrap button.itwt-action--primary,
 .itwt-action--primary,
 .itwt-wrap .button-primary {
 	border-color: var(--itwt-accent);
 	background: var(--itwt-accent);
-	color: #fff;
+	color: #fff !important;
 }
 
+.itwt-wrap a.itwt-action--primary:hover,
+.itwt-wrap a.itwt-action--primary:focus,
+.itwt-wrap button.itwt-action--primary:hover,
+.itwt-wrap button.itwt-action--primary:focus,
 .itwt-action--primary:hover,
 .itwt-action--primary:focus,
 .itwt-wrap .button-primary:hover,
 .itwt-wrap .button-primary:focus {
 	border-color: #094a8f;
 	background: #094a8f;
-	color: #fff;
+	color: #fff !important;
 	box-shadow: none;
 }
 
+.itwt-wrap a.itwt-action--danger,
+.itwt-wrap button.itwt-action--danger,
 .itwt-action--danger {
 	border-color: var(--itwt-bad, #b42318);
 	background: var(--itwt-bad, #b42318);
-	color: #fff;
+	color: #fff !important;
 }
 
+.itwt-wrap a.itwt-action--danger:hover,
+.itwt-wrap a.itwt-action--danger:focus,
+.itwt-wrap button.itwt-action--danger:hover,
+.itwt-wrap button.itwt-action--danger:focus,
 .itwt-action--danger:hover,
 .itwt-action--danger:focus {
 	border-color: #8a1c14;
 	background: #8a1c14;
-	color: #fff;
+	color: #fff !important;
 	box-shadow: none;
 }
 
 /* ปุ่มสร้าง/เพิ่ม — เขียว แยกจาก primary น้ำเงิน */
+.itwt-wrap a.itwt-action--add,
+.itwt-wrap button.itwt-action--add,
 .itwt-action--add {
 	border-color: var(--itwt-ok, #0a7a3e);
 	background: var(--itwt-ok, #0a7a3e);
-	color: #fff;
+	color: #fff !important;
 }
 
+.itwt-wrap a.itwt-action--add:hover,
+.itwt-wrap a.itwt-action--add:focus,
+.itwt-wrap button.itwt-action--add:hover,
+.itwt-wrap button.itwt-action--add:focus,
 .itwt-action--add:hover,
 .itwt-action--add:focus {
 	border-color: #086433;
 	background: #086433;
-	color: #fff;
+	color: #fff !important;
 	box-shadow: none;
 }
 
@@ -3073,32 +3087,60 @@ body.itwt-modal-open {
 	color: var(--itwt-accent, #2271b1);
 }
 
-/* Developer credit (admin footer / help) */
-.itwt-developer-credit {
-	margin: 24px 0 8px;
-	padding: 0;
-	color: var(--itwt-muted);
-	font-size: 12px;
-	line-height: 1.5;
+/*
+ * Developer credit — match Image Optimization attribution.
+ * Rendered via admin_footer (#wpfooter); admin.js moves it into .itwt-wrap.
+ * Links must set color explicitly: #wpfooter { color } makes bare <a> inherit gray.
+ */
+.itwt-wrap > .itwt-developer-credit,
+body.wp-admin .itwt-developer-credit {
+	display: block;
+	margin: 28px 0 12px;
+	padding: 18px 12px 4px;
+	border-top: 1px solid #dcdcde;
+	color: #646970;
+	font-size: 13px;
+	line-height: 1.55;
 	text-align: center;
 }
 
-.itwt-developer-credit__link {
-	color: var(--itwt-muted);
-	font-weight: 600;
-	text-decoration: none;
-	border-bottom: 1px solid color-mix(in srgb, var(--itwt-muted) 35%, transparent);
+.itwt-developer-credit__byline,
+.itwt-developer-credit__license {
+	margin: 0 0 6px;
 }
 
-.itwt-developer-credit__link:hover,
-.itwt-developer-credit__link:focus-visible {
-	color: var(--itwt-accent);
-	border-bottom-color: var(--itwt-accent);
+.itwt-developer-credit__license {
+	margin-bottom: 0;
+	max-width: 52rem;
+	margin-left: auto;
+	margin-right: auto;
+	color: #787c82;
+	font-size: 12px;
+}
+
+body.wp-admin #wpfooter .itwt-developer-credit a.itwt-developer-credit__link,
+body.wp-admin .itwt-developer-credit a.itwt-developer-credit__link,
+.itwt-wrap .itwt-developer-credit a.itwt-developer-credit__link {
+	color: #047857 !important;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+body.wp-admin #wpfooter .itwt-developer-credit a.itwt-developer-credit__link:hover,
+body.wp-admin #wpfooter .itwt-developer-credit a.itwt-developer-credit__link:focus-visible,
+body.wp-admin .itwt-developer-credit a.itwt-developer-credit__link:hover,
+body.wp-admin .itwt-developer-credit a.itwt-developer-credit__link:focus-visible,
+.itwt-wrap .itwt-developer-credit a.itwt-developer-credit__link:hover,
+.itwt-wrap .itwt-developer-credit a.itwt-developer-credit__link:focus-visible {
+	color: #065f46 !important;
+	text-decoration: underline;
 	outline: none;
 }
 
 .itwt-developer-credit--help {
 	margin: 0;
+	padding: 0;
+	border-top: none;
 	text-align: left;
 }
 

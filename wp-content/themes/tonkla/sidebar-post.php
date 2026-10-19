@@ -7,14 +7,14 @@ defined( 'ABSPATH' ) || exit;
 ?>
 
 <!-- Standard Container — match article card rhythm on mobile -->
-<div class="space-y-6 lg:space-y-8">
+<div class="space-y-6">
 
     <!-- Trending/Recent Posts Section -->
-    <div class="bg-white p-5 md:p-6 lg:p-8 rounded-2xl md:rounded-3xl shadow-sm border border-slate-100">
-        <h2 class="text-base md:text-lg font-heading font-bold text-slate-900 mb-4 md:mb-5 border-b border-slate-100 pb-3 md:pb-4">
+    <div class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100">
+        <h2 class="text-sm md:text-base font-heading font-bold text-slate-900 mb-3 border-b border-slate-100 pb-2">
             บทความที่แนะนำ
         </h2>
-        <div class="space-y-4 md:space-y-5">
+        <div class="space-y-4">
             <?php
             $recent_posts = new WP_Query(array(
                 'posts_per_page' => 3,
@@ -57,8 +57,8 @@ defined( 'ABSPATH' ) || exit;
     </div>
 
     <!-- Categories Widget -->
-    <div class="bg-white p-5 md:p-6 lg:p-8 rounded-2xl md:rounded-3xl shadow-sm border border-slate-100">
-        <h2 class="text-base md:text-lg font-heading font-bold text-slate-900 mb-4 md:mb-5 border-b border-slate-100 pb-3 md:pb-4">
+    <div class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-100">
+        <h2 class="text-sm md:text-base font-heading font-bold text-slate-900 mb-3 border-b border-slate-100 pb-2">
             หมวดหมู่
         </h2>
         <ul class="space-y-3">

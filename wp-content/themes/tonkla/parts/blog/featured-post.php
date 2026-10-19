@@ -38,7 +38,7 @@ if (!defined('ABSPATH')) {
                 <?php endif; ?>
             </div>
             <div class="p-8 lg:p-12 flex flex-col justify-center">
-                <div class="flex items-center gap-4 text-xs text-slate-500 mb-4 font-medium uppercase tracking-wider">
+                <div class="flex items-center gap-4 text-caption mb-4 font-medium uppercase tracking-wider">
                     <span class="text-brand"><i class="fa-solid fa-folder-open mr-1"></i>
                         <?php the_category(', '); ?>
                     </span>

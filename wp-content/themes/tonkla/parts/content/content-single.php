@@ -11,6 +11,7 @@ $author_description  = get_the_author_meta( 'description' );
 $categories          = get_the_category();
 ?>
 
+<div class="tonkla-single-stack flex flex-col gap-6">
 <article id="post-<?php the_ID(); ?>" <?php post_class('bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-100 overflow-hidden'); ?>>
     <!-- Featured Image -->
     <?php if (has_post_thumbnail()): ?>
@@ -28,10 +29,10 @@ $categories          = get_the_category();
         </div>
     <?php endif; ?>
 
-    <!-- Article Body — mobile spacing scale: 16 / 24 -->
-    <div class="p-5 md:p-8 lg:p-12">
+    <!-- Article Body -->
+    <div class="p-5 md:p-8 lg:p-10">
         <!-- Meta -->
-        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-400 mb-5 md:mb-6 border-b border-slate-100 pb-5 md:pb-6">
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-caption mb-5 md:mb-6 border-b border-slate-100 pb-5 md:pb-6">
             <div class="flex items-center gap-2">
                 <?php echo get_avatar(get_the_author_meta('ID'), 32, '', '', array('class' => 'w-8 h-8 rounded-full border border-slate-100')); ?>
                 <span class="text-slate-900 font-bold">
@@ -62,9 +63,9 @@ $categories          = get_the_category();
             <?php the_title(); ?>
         </h1>
 
-        <!-- Content -->
+        <!-- Content — max-width:none enforced in prose.css (loads after utilities). -->
         <div
-            class="prose prose-slate prose max-w-none prose-headings:font-heading prose-headings:font-bold prose-a:text-brand prose-img:rounded-2xl pb-6 md:pb-8 border-b border-slate-100">
+            class="prose prose-slate max-w-none prose-headings:font-heading prose-headings:font-bold prose-a:text-brand prose-img:rounded-2xl pb-6 md:pb-8 border-b border-slate-100">
             <?php the_content(); ?>
         </div>
 
@@ -126,4 +127,5 @@ $categories          = get_the_category();
             <?php echo esc_html($author_description ?: 'System Security Architect @ Tonkla IT. ผู้เชี่ยวชาญด้าน Cloud และ Network Security'); ?>
         </p>
     </div>
+</div>
 </div>

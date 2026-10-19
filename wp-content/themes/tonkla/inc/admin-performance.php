@@ -116,14 +116,12 @@ function tonkla_admin_styles($hook_suffix = '')
 
     tonkla_enqueue_admin_style();
 
+    // No defer: save-bar reorder must run before Carbon applies sticky .fixed.
     wp_enqueue_script(
         'tonkla-admin-script',
         $theme_uri . '/assets/js/admin.js',
         array(),
         (string) filemtime($theme_dir . '/assets/js/admin.js'),
-        array(
-            'in_footer' => true,
-            'strategy'  => 'defer',
-        )
+        true
     );
 }

@@ -353,23 +353,34 @@ body.itwt-theme-dense {
 
 .itwt-portal__footer .itwt-developer-credit {
 	margin: 12px 0 0;
-	padding: 0;
+	padding: 12px 0 0;
+	border-top: 1px solid var(--itwt-border, #e2e4e7);
+	max-width: none;
 	font-size: 0.85rem;
+	line-height: 1.55;
 	color: var(--itwt-muted);
 	text-align: center;
 }
 
+.itwt-portal__footer .itwt-developer-credit__byline,
+.itwt-portal__footer .itwt-developer-credit__license {
+	margin: 0 0 4px;
+}
+
+.itwt-portal__footer .itwt-developer-credit__license {
+	margin-bottom: 0;
+	font-size: 0.8rem;
+}
+
 .itwt-portal__footer .itwt-developer-credit__link {
-	color: var(--itwt-muted);
+	color: var(--itwt-accent);
 	font-weight: 600;
 	text-decoration: none;
-	border-bottom: 1px solid color-mix(in srgb, var(--itwt-muted) 40%, transparent);
 }
 
 .itwt-portal__footer .itwt-developer-credit__link:hover,
 .itwt-portal__footer .itwt-developer-credit__link:focus-visible {
-	color: var(--itwt-accent);
-	border-bottom-color: var(--itwt-accent);
+	text-decoration: underline;
 }
 
 .itwt-search {

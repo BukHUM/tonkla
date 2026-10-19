@@ -57,31 +57,38 @@ body.tonkla-admin-overview #poststuff {
 }
 
 /*
- * Settings: stack fields then Actions (WP/Carbon may float sidebar first visually).
+ * Settings: fields first, save bar last.
+ * Carbon prints Actions in #postbox-container-1 (WP columns-2 float = button appears
+ * at the top-right before you read the fields). Force a single-column stack.
  */
-body.tonkla-admin-settings #poststuff #post-body.columns-2 {
-	display: flex;
-	flex-direction: column;
-	margin-right: 0;
+body.tonkla-admin-settings #poststuff #post-body.columns-2,
+body.tonkla-admin-settings #poststuff #post-body.columns-1 {
+	display: flex !important;
+	flex-direction: column !important;
+	margin-right: 0 !important;
 }
 
-body.tonkla-admin-settings #post-body-content {
-	order: 1;
+body.tonkla-admin-settings #poststuff #post-body > #post-body-content {
+	order: 1 !important;
 	float: none !important;
 	width: 100% !important;
 	margin: 0 !important;
 }
 
-/* Carbon toggles .fixed on scroll for its right sidebar; keep the action bar in flow. */
-body.tonkla-admin-settings #post-body.columns-2 #postbox-container-1,
-body.tonkla-admin-settings #post-body.columns-2 #postbox-container-1.fixed {
+/* Kill Carbon/WP sidebar float + sticky .fixed so Actions never sit above fields. */
+body.tonkla-admin-settings #poststuff #post-body > #postbox-container-1,
+body.tonkla-admin-settings #poststuff #post-body > #postbox-container-1.fixed {
+	order: 2 !important;
 	position: static !important;
-	order: 2;
+	top: auto !important;
+	right: auto !important;
+	bottom: auto !important;
+	left: auto !important;
 	float: none !important;
 	width: 100% !important;
-	margin: 12px 0 0 !important;
-	padding: 0;
-	clear: both;
+	margin: 16px 0 0 !important;
+	padding: 0 !important;
+	clear: both !important;
 }
 
 body.tonkla-admin-settings #post-body-content > .postbox {
@@ -608,4 +615,126 @@ body.tonkla-admin-settings #postbox-container-1 #publish {
 	flex-wrap: wrap;
 	gap: 8px;
 	align-items: center;
+}
+
+/* —— PDPA position wireframes —— */
+.tonkla-pdpa-wireframes {
+	margin: 0 0 8px;
+}
+
+.tonkla-pdpa-wireframes__hint {
+	margin: 0 0 10px;
+	font-size: 12px;
+	color: #64748b;
+}
+
+.tonkla-pdpa-wireframes__grid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 10px;
+}
+
+@media (max-width: 1100px) {
+	.tonkla-pdpa-wireframes__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+.tonkla-pdpa-wireframe {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+	padding: 10px;
+	border: 1px solid var(--tonkla-admin-line, #e5e9ef);
+	border-radius: 8px;
+	background: #fff;
+	cursor: pointer;
+	text-align: left;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.tonkla-pdpa-wireframe:hover,
+.tonkla-pdpa-wireframe:focus-visible {
+	border-color: #94a3b8;
+	box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+	outline: none;
+}
+
+.tonkla-pdpa-wireframe.is-active {
+	border-color: #475569;
+	background: #f8fafc;
+	box-shadow: inset 0 0 0 1px #475569;
+}
+
+.tonkla-pdpa-wireframe__screen {
+	position: relative;
+	display: block;
+	height: 72px;
+	border-radius: 4px;
+	border: 1px solid #cbd5e1;
+	background: #f1f5f9;
+	overflow: hidden;
+}
+
+.tonkla-pdpa-wireframe__chrome {
+	display: block;
+	height: 8px;
+	background: #e2e8f0;
+	border-bottom: 1px solid #cbd5e1;
+}
+
+.tonkla-pdpa-wireframe__lines {
+	display: block;
+	margin: 10px 8px 0;
+	height: 28px;
+	background:
+		linear-gradient(#cbd5e1, #cbd5e1) 0 0 / 70% 4px no-repeat,
+		linear-gradient(#e2e8f0, #e2e8f0) 0 10px / 90% 3px no-repeat,
+		linear-gradient(#e2e8f0, #e2e8f0) 0 18px / 55% 3px no-repeat;
+}
+
+.tonkla-pdpa-wireframe__bar {
+	position: absolute;
+	background: #334155;
+	border-radius: 2px;
+	box-shadow: 0 1px 2px rgba(15, 23, 42, 0.2);
+}
+
+.tonkla-pdpa-wireframe__bar--bottom-left {
+	left: 6px;
+	bottom: 6px;
+	width: 38%;
+	height: 18px;
+}
+
+.tonkla-pdpa-wireframe__bar--bottom-right {
+	right: 6px;
+	bottom: 6px;
+	width: 38%;
+	height: 18px;
+}
+
+.tonkla-pdpa-wireframe__bar--bottom-bar {
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 14px;
+	border-radius: 0;
+}
+
+.tonkla-pdpa-wireframe__bar--center {
+	left: 50%;
+	top: 54%;
+	width: 48%;
+	height: 26px;
+	transform: translate(-50%, -50%);
+	border-radius: 3px;
+}
+
+.tonkla-pdpa-wireframe__label {
+	font-size: 12px;
+	font-weight: 600;
+	color: #334155;
+	line-height: 1.35;
 }

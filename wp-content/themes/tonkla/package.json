@@ -5,6 +5,7 @@
     "main": "index.js",
     "scripts": {
         "build": "tailwindcss -i ./assets/css/input.css -o ./assets/css/main.css --minify && tailwindcss -i ./assets/css/input-prose.css -o ./assets/css/prose.css --minify -c ./tailwind.prose.config.js",
+        "build:fa": "php bin/build-fa-subset.php",
         "watch": "tailwindcss -i ./assets/css/input.css -o ./assets/css/main.css --watch"
     },
     "devDependencies": {

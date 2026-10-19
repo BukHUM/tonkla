@@ -30,6 +30,153 @@
         background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2310b981' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     }
 
+    /*
+     * Fixed header clearance (nav h-20 = 5rem) + 1rem gap (= breadcrumb mb-4).
+     * Do NOT add admin-bar height here — WP already applies html.admin-bar { margin-top }.
+     * Only shift the fixed #navbar below the admin bar.
+     */
+    .admin-bar #navbar {
+        top: 32px;
+    }
+
+    .tonkla-single-main {
+        padding-top: calc(5rem + 1rem);
+    }
+
+    /* Page hero — nav clearance only; equal visual pad is py-* on the inner container */
+    .tonkla-page-hero {
+        padding-top: 5rem;
+    }
+
+    @media screen and (max-width: 782px) {
+        .admin-bar #navbar {
+            top: 46px;
+        }
+    }
+
+    /*
+     * Single-post sticky panels (TOC rail + right sidebar).
+     * No max-height / overflow — right sidebar must not grow its own scrollbar.
+     */
+    .tonkla-sticky-panel {
+        position: sticky;
+        top: 5.75rem;
+    }
+
+    .admin-bar .tonkla-sticky-panel {
+        top: calc(5.75rem + 32px);
+    }
+
+    @media screen and (max-width: 782px) {
+        .admin-bar .tonkla-sticky-panel {
+            top: calc(5.75rem + 46px);
+        }
+    }
+
+    /*
+     * Site footer — separated from contact module (different shade + brand top edge).
+     * Menu markers via ::before so all footer nav columns stay consistent.
+     */
+    .tonkla-site-footer {
+        position: relative;
+        border-top: 1px solid rgb(30 41 59); /* slate-800 */
+        box-shadow: inset 0 1px 0 0 rgb(var(--tk-brand) / 0.4); /* brand hairline */
+    }
+
+    .tonkla-footer-menu {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .tonkla-footer-menu > li {
+        margin: 0;
+    }
+
+    .tonkla-footer-menu a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgb(148 163 184); /* slate-400 */
+        text-decoration: none;
+        transition: color var(--tk-duration) var(--tk-ease), transform var(--tk-duration) var(--tk-ease);
+    }
+
+    /* สำหรับลูกค้า / คอลัมน์เมนู — chevron */
+    .tonkla-footer-menu a::before {
+        content: "\f054"; /* fa-chevron-right */
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        font-size: 0.625rem;
+        line-height: 1;
+        color: rgb(var(--tk-brand));
+        opacity: 0.9;
+        flex-shrink: 0;
+        transition: transform var(--tk-duration) var(--tk-ease), opacity var(--tk-duration) var(--tk-ease);
+    }
+
+    .tonkla-footer-menu a:hover,
+    .tonkla-footer-menu a:focus-visible {
+        color: #fff;
+    }
+
+    .tonkla-footer-menu a:hover::before,
+    .tonkla-footer-menu a:focus-visible::before {
+        opacity: 1;
+        transform: translateX(2px);
+    }
+
+    /* แถบ legal ด้านล่าง (นโยบาย / เงื่อนไข / แผนผัง) — จุดใหญ่ */
+    .tonkla-footer-legal {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .tonkla-footer-legal > li {
+        margin: 0;
+    }
+
+    .tonkla-footer-legal a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgb(148 163 184); /* slate-400 — contrast on slate-950 */
+        text-decoration: none;
+        transition: color var(--tk-duration) var(--tk-ease);
+    }
+
+    .tonkla-footer-legal a::before {
+        content: "";
+        width: 0.375rem;
+        height: 0.375rem;
+        border-radius: 9999px;
+        background-color: rgb(var(--tk-brand));
+        flex-shrink: 0;
+        opacity: 0.9;
+        transition: opacity var(--tk-duration) var(--tk-ease), transform var(--tk-duration) var(--tk-ease);
+    }
+
+    .tonkla-footer-legal a:hover,
+    .tonkla-footer-legal a:focus-visible {
+        color: #fff;
+    }
+
+    .tonkla-footer-legal a:hover::before,
+    .tonkla-footer-legal a:focus-visible::before {
+        opacity: 1;
+        transform: scale(1.15);
+    }
+
+    /* Mobile / tablet in-flow TOC: stay above article while scrolling */
+    .tonkla-sticky-toc-mobile {
+        z-index: 30;
+    }
+
+    .tonkla-sticky-toc-mobile > div {
+        box-shadow: 0 4px 14px rgb(15 23 42 / 0.08);
+    }
+
     /* Scroll reveal — applied by main.js */
     .tk-reveal {
         opacity: 0;

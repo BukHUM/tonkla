@@ -50,6 +50,10 @@ final class Admin_Menu {
 		if ( '' === $page || 0 !== strpos( $page, 'itwt-' ) ) {
 			return;
 		}
+		// Print sticker UI is print-first; credit stays on screen pages only.
+		if ( 'itwt-print-label' === $page ) {
+			return;
+		}
 		Settings::render_developer_credit( 'admin' );
 	}
 

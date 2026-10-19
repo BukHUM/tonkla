@@ -107,13 +107,6 @@ $itwt_render_expiring = static function ( array $rows, string $today ): void {
 		</a>
 	</div>
 
-	<nav class="itwt-quick-links" aria-label="<?php esc_attr_e( 'ทางลัด', 'it-warranty-tracker' ); ?>">
-		<a class="itwt-action itwt-action--primary" href="<?php echo esc_url( admin_url( 'admin.php?page=itwt-assets&action=new' ) ); ?>"><?php esc_html_e( 'เพิ่มทรัพย์สิน', 'it-warranty-tracker' ); ?></a>
-		<a class="itwt-action" href="<?php echo esc_url( admin_url( 'admin.php?page=itwt-requests&status=new' ) ); ?>"><?php esc_html_e( 'คำขอใหม่', 'it-warranty-tracker' ); ?></a>
-		<a class="itwt-action" href="<?php echo esc_url( admin_url( 'admin.php?page=itwt-print-label' ) ); ?>"><?php esc_html_e( 'พิมพ์สติ๊กเกอร์', 'it-warranty-tracker' ); ?></a>
-		<a class="itwt-action" href="<?php echo esc_url( admin_url( 'admin.php?page=itwt-settings' ) ); ?>"><?php esc_html_e( 'ตั้งค่า', 'it-warranty-tracker' ); ?></a>
-	</nav>
-
 	<section class="itwt-panel">
 		<header class="itwt-panel__head">
 			<h2 class="itwt-panel__title"><?php esc_html_e( 'ใกล้หมดภายใน 30 วัน', 'it-warranty-tracker' ); ?></h2>

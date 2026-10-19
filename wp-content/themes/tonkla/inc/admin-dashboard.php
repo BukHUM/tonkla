@@ -33,11 +33,9 @@ function tonkla_admin_readiness_items(): array {
 	$line      = function_exists( 'carbon_get_theme_option' ) ? (string) carbon_get_theme_option( 'line_url' ) : '';
 	$contact_ok = ( '' !== trim( $phone ) || '' !== trim( $facebook ) || '' !== trim( $line ) );
 
-	$policy_ok = false;
-	if ( function_exists( 'carbon_get_theme_option' ) ) {
-		$policy = carbon_get_theme_option( 'pdpa_policy_page' );
-		$policy_ok = is_array( $policy ) && ! empty( $policy );
-	}
+	$policy_ok = function_exists( 'tonkla_get_pdpa_policy_page_id' )
+		? tonkla_get_pdpa_policy_page_id() > 0
+		: false;
 
 	$pll_ok = function_exists( 'pll_the_languages' ) && function_exists( 'pll_languages_list' ) && count( pll_languages_list() ) >= 2;
 

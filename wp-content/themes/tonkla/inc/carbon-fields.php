@@ -13,6 +13,137 @@ use Carbon_Fields\Field;
 require_once get_template_directory() . '/inc/admin-dashboard.php';
 
 /**
+ * Page choices for PDPA privacy policy (single select).
+ *
+ * @return array<string,string>
+ */
+function tonkla_pdpa_policy_page_options(): array {
+	$options = array(
+		'0' => __( '— เลือกหน้า —', 'tonkla' ),
+	);
+
+	$pages = get_pages(
+		array(
+			'sort_column' => 'post_title',
+			'sort_order'  => 'ASC',
+			'number'      => 200,
+		)
+	);
+
+	if ( ! is_array( $pages ) ) {
+		return $options;
+	}
+
+	foreach ( $pages as $page ) {
+		$options[ (string) (int) $page->ID ] = $page->post_title;
+	}
+
+	return $options;
+}
+
+/**
+ * Resolved privacy-policy page ID (new select, or legacy association).
+ *
+ * @return int
+ */
+function tonkla_get_pdpa_policy_page_id(): int {
+	if ( ! function_exists( 'carbon_get_theme_option' ) ) {
+		return 0;
+	}
+
+	$id = absint( carbon_get_theme_option( 'pdpa_policy_page_id' ) );
+	if ( $id > 0 ) {
+		return $id;
+	}
+
+	// Legacy association field (array of { id, type, subtype }).
+	$assoc = carbon_get_theme_option( 'pdpa_policy_page' );
+	if ( is_array( $assoc ) && ! empty( $assoc[0]['id'] ) ) {
+		return absint( $assoc[0]['id'] );
+	}
+
+	return 0;
+}
+
+/**
+ * Permalink for the PDPA privacy policy page (empty if unset).
+ *
+ * @return string
+ */
+function tonkla_get_pdpa_policy_url(): string {
+	$id = tonkla_get_pdpa_policy_page_id();
+	if ( $id > 0 ) {
+		$url = get_permalink( $id );
+		return is_string( $url ) ? $url : '';
+	}
+
+	$fallback = function_exists( 'get_privacy_policy_url' ) ? get_privacy_policy_url() : '';
+	return is_string( $fallback ) ? $fallback : '';
+}
+
+/**
+ * Wireframe gallery HTML for PDPA bar position (admin preview).
+ *
+ * @return string
+ */
+function tonkla_pdpa_position_wireframes_html(): string {
+	$items = array(
+		'bottom-left'  => __( 'ลอยมุมล่างซ้าย', 'tonkla' ),
+		'bottom-right' => __( 'ลอยมุมล่างขวา', 'tonkla' ),
+		'bottom-bar'   => __( 'แถบเต็มด้านล่าง', 'tonkla' ),
+		'center'       => __( 'กล่องกลางจอ', 'tonkla' ),
+	);
+
+	$html  = '<div class="tonkla-pdpa-wireframes" role="list" aria-label="' . esc_attr__( 'ตัวอย่างตำแหน่งแถบคุกกี้', 'tonkla' ) . '">';
+	$html .= '<p class="tonkla-pdpa-wireframes__hint">' . esc_html__( 'คลิกตัวอย่างเพื่อเลือกตำแหน่ง — กล่องเข้มคือแถบยินยอม', 'tonkla' ) . '</p>';
+	$html .= '<div class="tonkla-pdpa-wireframes__grid">';
+
+	foreach ( $items as $slug => $label ) {
+		$html .= sprintf(
+			'<button type="button" class="tonkla-pdpa-wireframe" data-position="%1$s" role="listitem" aria-pressed="false">'
+			. '<span class="tonkla-pdpa-wireframe__screen" aria-hidden="true">'
+			. '<span class="tonkla-pdpa-wireframe__chrome"></span>'
+			. '<span class="tonkla-pdpa-wireframe__lines"></span>'
+			. '<span class="tonkla-pdpa-wireframe__bar tonkla-pdpa-wireframe__bar--%1$s"></span>'
+			. '</span>'
+			. '<span class="tonkla-pdpa-wireframe__label">%2$s</span>'
+			. '</button>',
+			esc_attr( $slug ),
+			esc_html( $label )
+		);
+	}
+
+	$html .= '</div></div>';
+	return $html;
+}
+
+/**
+ * One-time: copy legacy association → select so existing sites keep their page.
+ */
+function tonkla_migrate_pdpa_policy_page_field(): void {
+	if ( get_option( 'tonkla_pdpa_policy_page_migrated' ) ) {
+        return;
+    }
+	if ( ! function_exists( 'carbon_get_theme_option' ) || ! function_exists( 'carbon_set_theme_option' ) ) {
+		return;
+	}
+
+	$existing = absint( carbon_get_theme_option( 'pdpa_policy_page_id' ) );
+	if ( $existing > 0 ) {
+		update_option( 'tonkla_pdpa_policy_page_migrated', '1', false );
+		return;
+	}
+
+	$assoc = carbon_get_theme_option( 'pdpa_policy_page' );
+	if ( is_array( $assoc ) && ! empty( $assoc[0]['id'] ) ) {
+		carbon_set_theme_option( 'pdpa_policy_page_id', (string) absint( $assoc[0]['id'] ) );
+	}
+
+	update_option( 'tonkla_pdpa_policy_page_migrated', '1', false );
+}
+add_action( 'carbon_fields_fields_registered', 'tonkla_migrate_pdpa_policy_page_field' );
+
+/**
  * Icon color options for menu / builder fields.
  *
  * @return array<string,string>
@@ -80,6 +211,48 @@ function tonkla_complex_item_title() {
 }
 
 /**
+ * Carbon fields for one typography role block (Appearance tab).
+ *
+ * @param string $role  Role slug: body|heading|nav|caption.
+ * @param string $label Block title.
+ * @return array<int,mixed>
+ */
+function tonkla_carbon_appearance_role_fields( string $role, string $label ): array {
+	$defaults = tonkla_typography_role_defaults()[ $role ];
+	$fields   = array(
+		Field::make( 'separator', "appearance_{$role}_sep", $label ),
+		Field::make( 'select', "appearance_{$role}_font", __( 'ฟอนต์', 'tonkla' ) )
+			->add_options( tonkla_font_options() )
+			->set_default_value( $defaults['font'] )
+			->set_width( 50 ),
+	);
+
+	if ( 'heading' === $role ) {
+		$fields[] = Field::make( 'select', "appearance_{$role}_size", __( 'สเกลขนาดหัวข้อ', 'tonkla' ) )
+			->add_options( tonkla_heading_scale_options() )
+			->set_default_value( $defaults['size'] )
+			->set_width( 25 );
+	} else {
+		$fields[] = Field::make( 'select', "appearance_{$role}_size", __( 'ขนาด', 'tonkla' ) )
+			->add_options( tonkla_font_size_options() )
+			->set_default_value( $defaults['size'] )
+			->set_width( 25 );
+	}
+
+	$fields[] = Field::make( 'select', "appearance_{$role}_weight", __( 'น้ำหนัก', 'tonkla' ) )
+		->add_options( tonkla_font_weight_options() )
+		->set_default_value( $defaults['weight'] )
+		->set_width( 25 );
+
+	$fields[] = Field::make( 'color', "appearance_{$role}_color", __( 'สีตัวอักษร', 'tonkla' ) )
+		->set_palette( array( '#0f172a', '#1e293b', '#334155', '#475569', '#64748b', '#ffffff' ) )
+		->set_help_text( __( 'ว่างไว้ = ใช้สีพื้นผิว/ค่าเริ่มต้นของธีม', 'tonkla' ) )
+		->set_width( 50 );
+
+	return $fields;
+}
+
+/**
  * Language switcher field with Polylang status help text.
  *
  * @return \Carbon_Fields\Field\Field
@@ -113,7 +286,7 @@ Container::make( 'theme_options', __( 'Dashboard', 'tonkla' ) )
 	->set_page_file( TONKLA_ADMIN_SLUG_PARENT )
 	->set_icon( 'dashicons-admin-site-alt3' )
 	->add_fields(
-		array(
+                        array(
 			Field::make( 'html', 'dashboard_stats' )
 				->set_html(
 					static function () {
@@ -131,7 +304,7 @@ Container::make( 'theme_options', __( 'ตั้งค่าเว็บไซ�
 	->set_page_file( TONKLA_ADMIN_SLUG_SITE )
 	->add_tab(
 		__( 'ส่วนหัว', 'tonkla' ),
-		array(
+                                array(
 			Field::make( 'image', 'main_logo', __( 'โลโก้หลัก', 'tonkla' ) )
 				->set_width( 50 ),
 			Field::make( 'image', 'footer_logo', __( 'โลโก้ส่วนท้าย', 'tonkla' ) )
@@ -156,7 +329,7 @@ Container::make( 'theme_options', __( 'ตั้งค่าเว็บไซ�
 				->set_default_value( true )
 				->set_help_text( __( 'แสดงธงประเทศในตัวสลับภาษา', 'tonkla' ) )
 				->set_conditional_logic(
-					array(
+                                array(
 						array(
 							'field' => 'enable_language_switcher',
 							'value' => true,
@@ -167,7 +340,7 @@ Container::make( 'theme_options', __( 'ตั้งค่าเว็บไซ�
 	)
 	->add_tab(
 		__( 'ส่วนท้าย', 'tonkla' ),
-		array(
+                                array(
 			Field::make( 'textarea', 'footer_description', __( 'คำอธิบายส่วนท้าย', 'tonkla' ) )
 				->set_rows( 3 )
 				->set_help_text( __( 'ว่างไว้จะใช้ “คำโปรยเว็บไซต์” จาก Settings → General (ถ้าไม่มีคำโปรย จะใช้ชื่อเว็บไซต์)', 'tonkla' ) ),
@@ -183,7 +356,7 @@ Container::make( 'theme_options', __( 'ตั้งค่าเว็บไซ�
 	)
 	->add_tab(
 		__( 'ติดต่อและโซเชียล', 'tonkla' ),
-		array(
+                                array(
 			Field::make( 'text', 'phone_number', __( 'เบอร์โทรศัพท์', 'tonkla' ) )
 				->set_width( 50 ),
 			Field::make( 'text', 'line_url', __( 'URL LINE', 'tonkla' ) )
@@ -198,75 +371,78 @@ Container::make( 'theme_options', __( 'ตั้งค่าเว็บไซ�
 	)
 	->add_tab(
 		__( 'รูปลักษณ์', 'tonkla' ),
-		array(
-			Field::make( 'html', 'appearance_swatches' )
-				->set_html(
-					static function () {
-						return tonkla_color_preset_swatches_html();
-					}
-				),
-			Field::make( 'select', 'appearance_color_preset', __( 'พรีเซ็ตสีหลัก', 'tonkla' ) )
-				->add_options( tonkla_color_preset_options() )
-				->set_default_value( 'emerald' )
-				->set_help_text( __( 'เปลี่ยนสีปุ่ม ลิงก์ และจุดเน้นทั้งเว็บ — ค่าเริ่มต้นคือเขียวมรกต', 'tonkla' ) ),
-			Field::make( 'color', 'appearance_custom_brand', __( 'สีหลักกำหนดเอง', 'tonkla' ) )
-				->set_palette( array( '#10b981', '#0ea5e9', '#6366f1', '#f43f5e', '#f59e0b', '#475569' ) )
-				->set_help_text( __( 'ใช้เมื่อเลือกพรีเซ็ต “กำหนดเอง” — ระบบจะคำนวณสีอ่อน/เข้มให้อัตโนมัติ', 'tonkla' ) )
-				->set_conditional_logic(
-					array(
+		array_merge(
+                                array(
+				Field::make( 'separator', 'appearance_brand_sep', __( 'สีแบรนด์', 'tonkla' ) ),
+				Field::make( 'html', 'appearance_swatches' )
+					->set_html(
+						static function () {
+							return tonkla_color_preset_swatches_html();
+						}
+					),
+				Field::make( 'select', 'appearance_color_preset', __( 'พรีเซ็ตสีหลัก', 'tonkla' ) )
+					->add_options( tonkla_color_preset_options() )
+					->set_default_value( 'emerald' )
+					->set_help_text( __( 'เปลี่ยนสีปุ่ม ลิงก์ และจุดเน้นทั้งเว็บ — ค่าเริ่มต้นคือเขียวมรกต', 'tonkla' ) ),
+				Field::make( 'color', 'appearance_custom_brand', __( 'สีหลักกำหนดเอง', 'tonkla' ) )
+					->set_palette( array( '#10b981', '#0ea5e9', '#6366f1', '#f43f5e', '#f59e0b', '#475569' ) )
+					->set_help_text( __( 'ใช้เมื่อเลือกพรีเซ็ต “กำหนดเอง” — ระบบจะคำนวณสีอ่อน/เข้มให้อัตโนมัติ', 'tonkla' ) )
+					->set_conditional_logic(
 						array(
-							'field' => 'appearance_color_preset',
-							'value' => 'custom',
-						),
+							array(
+								'field' => 'appearance_color_preset',
+								'value' => 'custom',
+							),
+						)
+					),
+				Field::make( 'separator', 'appearance_surface_sep', __( 'สีพื้นผิว', 'tonkla' ) ),
+				Field::make( 'color', 'appearance_surface_bg', __( 'พื้นหลังหน้า', 'tonkla' ) )
+					->set_palette( array( '#f8fafc', '#ffffff', '#f1f5f9', '#0f172a' ) )
+					->set_help_text( __( 'ว่างไว้ = slate-50', 'tonkla' ) )
+					->set_width( 25 ),
+				Field::make( 'color', 'appearance_surface_text', __( 'ข้อความหลัก', 'tonkla' ) )
+					->set_palette( array( '#0f172a', '#1e293b', '#334155' ) )
+					->set_help_text( __( 'ว่างไว้ = slate-800', 'tonkla' ) )
+					->set_width( 25 ),
+				Field::make( 'color', 'appearance_surface_muted', __( 'ข้อความรอง', 'tonkla' ) )
+					->set_palette( array( '#64748b', '#94a3b8', '#475569' ) )
+					->set_help_text( __( 'ว่างไว้ = slate-500', 'tonkla' ) )
+					->set_width( 25 ),
+				Field::make( 'color', 'appearance_surface_link', __( 'สีลิงก์', 'tonkla' ) )
+					->set_palette( array( '#047857', '#0ea5e9', '#1e293b' ) )
+					->set_help_text( __( 'ว่างไว้ = สี brand เข้ม', 'tonkla' ) )
+					->set_width( 25 ),
+				Field::make( 'html', 'appearance_font_limit_note' )
+					->set_html(
+						'<p style="margin:0 0 8px;color:#64748b;font-size:13px;">'
+						. esc_html__( 'ตัวอักษรตามบทบาท — Google Fonts โหลดสูงสุด 2 ตระกูล (ลำดับ: เนื้อหา → หัวข้อ → เมนู → คำบรรยาย); ตระกูลที่เกินจะใช้ฟอนต์เนื้อหาแทน', 'tonkla' )
+						. '</p>'
+					),
+			),
+			tonkla_carbon_appearance_role_fields( 'body', __( 'เนื้อหา (Body)', 'tonkla' ) ),
+			tonkla_carbon_appearance_role_fields( 'heading', __( 'หัวข้อ (Heading)', 'tonkla' ) ),
+			tonkla_carbon_appearance_role_fields( 'nav', __( 'เมนูนำทาง (Nav)', 'tonkla' ) ),
+			tonkla_carbon_appearance_role_fields( 'caption', __( 'คำบรรยาย / Meta (Caption)', 'tonkla' ) ),
+                                array(
+				Field::make( 'separator', 'appearance_button_sep', __( 'ปุ่ม', 'tonkla' ) ),
+				Field::make( 'select', 'appearance_button_radius', __( 'ความโค้งมุมปุ่ม', 'tonkla' ) )
+					->add_options(
+						array(
+							'0'    => __( 'เหลี่ยม (0)', 'tonkla' ),
+							'4'    => '4px',
+							'8'    => '8px (' . __( 'ค่าเริ่มต้น', 'tonkla' ) . ')',
+							'12'   => '12px',
+							'9999' => __( 'แคปซูล', 'tonkla' ),
+						)
 					)
-				),
-			Field::make( 'select', 'appearance_font_body', __( 'ฟอนต์เนื้อหา', 'tonkla' ) )
-				->add_options( tonkla_font_options() )
-				->set_default_value( 'sarabun' )
-				->set_width( 50 )
-				->set_help_text( __( 'ฟอนต์เริ่มต้นโฮสต์ในธีม — Google Fonts โหลดเมื่อเลือกเท่านั้น (สูงสุด 2 ตระกูล)', 'tonkla' ) ),
-			Field::make( 'select', 'appearance_font_heading', __( 'ฟอนต์หัวข้อ', 'tonkla' ) )
-				->add_options( tonkla_font_options() )
-				->set_default_value( 'prompt' )
-				->set_width( 50 ),
-			Field::make( 'select', 'appearance_base_size', __( 'ขนาดตัวอักษรพื้นฐาน', 'tonkla' ) )
-				->add_options(
-					array(
-						'15' => '15px',
-						'16' => '16px (' . __( 'ค่าเริ่มต้น', 'tonkla' ) . ')',
-						'17' => '17px',
-						'18' => '18px',
-					)
-				)
-				->set_default_value( '16' )
-				->set_width( 33 ),
-			Field::make( 'select', 'appearance_heading_weight', __( 'น้ำหนักฟอนต์หัวข้อ', 'tonkla' ) )
-				->add_options(
-					array(
-						'500' => 'Medium (500)',
-						'600' => 'Semi Bold (600)',
-						'700' => 'Bold (700)',
-					)
-				)
-				->set_default_value( '600' )
-				->set_width( 33 ),
-			Field::make( 'select', 'appearance_button_radius', __( 'ความโค้งมุมปุ่ม', 'tonkla' ) )
-				->add_options(
-					array(
-						'0'    => __( 'เหลี่ยม (0)', 'tonkla' ),
-						'4'    => '4px',
-						'8'    => '8px (' . __( 'ค่าเริ่มต้น', 'tonkla' ) . ')',
-						'12'   => '12px',
-						'9999' => __( 'แคปซูล', 'tonkla' ),
-					)
-				)
-				->set_default_value( '8' )
-				->set_width( 34 ),
+					->set_default_value( '8' )
+					->set_width( 50 ),
+			)
 		)
 	)
 	->add_tab(
 		__( 'สารบัญบทความ', 'tonkla' ),
-		array(
+                                array(
 			Field::make( 'checkbox', 'toc_enable', __( 'เปิดสารบัญบทความ', 'tonkla' ) )
 				->set_default_value( true ),
 			Field::make( 'text', 'toc_title', __( 'หัวข้อสารบัญ', 'tonkla' ) )
@@ -281,7 +457,7 @@ Container::make( 'theme_options', __( 'ตั้งค่าเว็บไซ�
 				),
 			Field::make( 'multiselect', 'toc_depth', __( 'ระดับหัวข้อ', 'tonkla' ) )
 				->add_options(
-					array(
+                                array(
 						'h2' => 'H2',
 						'h3' => 'H3',
 						'h4' => 'H4',
@@ -291,7 +467,7 @@ Container::make( 'theme_options', __( 'ตั้งค่าเว็บไซ�
 				)
 				->set_default_value( array( 'h2', 'h3', 'h4' ) )
 				->set_conditional_logic(
-					array(
+                                array(
 						array(
 							'field' => 'toc_enable',
 							'value' => true,
@@ -309,9 +485,10 @@ Container::make( 'theme_options', __( 'การตลาดและควา�
 	->set_page_file( TONKLA_ADMIN_SLUG_MARKETING )
 	->add_tab(
 		__( 'คุกกี้ PDPA', 'tonkla' ),
-		array(
-			Field::make( 'checkbox', 'pdpa_enable', __( 'เปิดแถบยินยอมคุกกี้', 'tonkla' ) )
-				->set_default_value( true ),
+                                array(
+			Field::make( 'checkbox', 'pdpa_enable', __( 'แสดงแถบยินยอมคุกกี้บนหน้าบ้าน', 'tonkla' ) )
+				->set_default_value( true )
+				->set_help_text( __( 'ติ๊กเพื่อแสดงบนหน้าบ้าน — ตั้งค่าด้านล่างได้เสมอแม้ปิดการแสดง', 'tonkla' ) ),
 			Field::make( 'select', 'pdpa_position', __( 'ตำแหน่งแถบ', 'tonkla' ) )
 				->add_options(
 					array(
@@ -322,82 +499,34 @@ Container::make( 'theme_options', __( 'การตลาดและควา�
 					)
 				)
 				->set_default_value( 'bottom-left' )
-				->set_conditional_logic(
-					array(
-						array(
-							'field' => 'pdpa_enable',
-							'value' => true,
-						),
-					)
+				->set_classes( 'tonkla-pdpa-position-field' ),
+			Field::make( 'html', 'pdpa_position_wireframes' )
+				->set_html(
+					static function () {
+						return tonkla_pdpa_position_wireframes_html();
+					}
 				),
 			Field::make( 'rich_text', 'pdpa_text', __( 'ข้อความยินยอม', 'tonkla' ) )
-				->set_default_value( 'เราใช้คุกกี้เพื่อเพิ่มประสิทธิภาพและประสบการณ์ที่ดีในการใช้งานเว็บไซต์ คุณสามารถศึกษารายละเอียดได้ที่ <a href="#">นโยบายความเป็นส่วนตัว</a>' )
-				->set_conditional_logic(
-					array(
-						array(
-							'field' => 'pdpa_enable',
-							'value' => true,
-						),
-					)
-				),
+				->set_default_value( 'เราใช้คุกกี้เพื่อเพิ่มประสิทธิภาพและประสบการณ์ที่ดีในการใช้งานเว็บไซต์ คุณสามารถศึกษารายละเอียดได้ที่ <a href="#">นโยบายความเป็นส่วนตัว</a>' ),
 			Field::make( 'text', 'pdpa_accept_text', __( 'ข้อความปุ่มยอมรับ', 'tonkla' ) )
 				->set_default_value( 'ยอมรับทั้งหมด' )
-				->set_width( 50 )
-				->set_conditional_logic(
-					array(
-						array(
-							'field' => 'pdpa_enable',
-							'value' => true,
-						),
-					)
-				),
+				->set_width( 50 ),
 			Field::make( 'text', 'pdpa_reject_text', __( 'ข้อความปุ่มปฏิเสธ', 'tonkla' ) )
 				->set_default_value( 'ปฏิเสธ/ปิด' )
-				->set_width( 50 )
-				->set_conditional_logic(
-					array(
-						array(
-							'field' => 'pdpa_enable',
-							'value' => true,
-						),
-					)
-				),
-			Field::make( 'association', 'pdpa_policy_page', __( 'หน้านโยบายความเป็นส่วนตัว', 'tonkla' ) )
-				->set_types(
-					array(
-						array(
-							'type'      => 'post',
-							'post_type' => 'page',
-						),
-					)
-				)
-				->set_max( 1 )
-				->set_help_text( __( 'เลือกหน้าที่แสดงนโยบายความเป็นส่วนตัว', 'tonkla' ) )
-				->set_conditional_logic(
-					array(
-						array(
-							'field' => 'pdpa_enable',
-							'value' => true,
-						),
-					)
-				),
+				->set_width( 50 ),
+			Field::make( 'select', 'pdpa_policy_page_id', __( 'หน้านโยบายความเป็นส่วนตัว', 'tonkla' ) )
+				->add_options( tonkla_pdpa_policy_page_options() )
+				->set_help_text( __( 'เลือกได้เพียง 1 หน้า — ลิงก์ในแถบคุกกี้จะชี้ไปหน้านั้นเท่านั้น', 'tonkla' ) ),
 			Field::make( 'textarea', 'pdpa_scripts', __( 'สคริปต์ที่โหลดหลังยินยอม', 'tonkla' ) )
-				->set_help_text( __( 'วางโค้ด Analytics / Pixel จริงที่นี่ (โหลดหลังยินยอมเท่านั้น) ห้ามใส่ ID ตัวอย่าง', 'tonkla' ) )
-				->set_conditional_logic(
-					array(
-						array(
-							'field' => 'pdpa_enable',
-							'value' => true,
-						),
-					)
-				),
+				->set_help_text( __( 'วางโค้ด Analytics / Pixel จริงที่นี่ (โหลดหลังยินยอมเท่านั้น) ห้ามใส่ ID ตัวอย่าง', 'tonkla' ) ),
 		)
 	)
 	->add_tab(
 		__( 'โฆษณา', 'tonkla' ),
-		array(
-			Field::make( 'checkbox', 'ad_sidebar_enable', __( 'เปิดโฆษณาแถบข้าง (บทความ)', 'tonkla' ) )
-				->set_default_value( true ),
+                                array(
+			Field::make( 'checkbox', 'ad_sidebar_enable', __( 'แสดงโฆษณาแถบข้างบนหน้าบ้าน (บทความ)', 'tonkla' ) )
+				->set_default_value( true )
+				->set_help_text( __( 'ติ๊กเพื่อแสดงบนหน้าบ้าน — ตั้งค่าด้านล่างได้เสมอแม้ปิดการแสดง', 'tonkla' ) ),
 			Field::make( 'select', 'ad_sidebar_type', __( 'ประเภทโฆษณา', 'tonkla' ) )
 				->add_options(
 					array(
@@ -405,36 +534,20 @@ Container::make( 'theme_options', __( 'การตลาดและควา�
 						'image' => __( 'แบนเนอร์รูปภาพ', 'tonkla' ),
 					)
 				)
-				->set_default_value( 'code' )
-				->set_conditional_logic(
-					array(
-						array(
-							'field' => 'ad_sidebar_enable',
-							'value' => true,
-						),
-					)
-				),
+				->set_default_value( 'code' ),
 			Field::make( 'textarea', 'ad_sidebar_code', __( 'โค้ดโฆษณา', 'tonkla' ) )
 				->set_help_text( __( 'วางโค้ด Google AdSense หรือ HTML อื่น ๆ', 'tonkla' ) )
 				->set_conditional_logic(
-					array(
-						array(
-							'field' => 'ad_sidebar_enable',
-							'value' => true,
-						),
+                                array(
 						array(
 							'field' => 'ad_sidebar_type',
 							'value' => 'code',
-						),
+                                ),
 					)
 				),
 			Field::make( 'image', 'ad_sidebar_image', __( 'รูปแบนเนอร์', 'tonkla' ) )
 				->set_conditional_logic(
-					array(
-						array(
-							'field' => 'ad_sidebar_enable',
-							'value' => true,
-						),
+                                array(
 						array(
 							'field' => 'ad_sidebar_type',
 							'value' => 'image',
@@ -443,11 +556,7 @@ Container::make( 'theme_options', __( 'การตลาดและควา�
 				),
 			Field::make( 'text', 'ad_sidebar_link', __( 'URL เมื่อคลิกแบนเนอร์', 'tonkla' ) )
 				->set_conditional_logic(
-					array(
-						array(
-							'field' => 'ad_sidebar_enable',
-							'value' => true,
-						),
+                                array(
 						array(
 							'field' => 'ad_sidebar_type',
 							'value' => 'image',
@@ -455,32 +564,17 @@ Container::make( 'theme_options', __( 'การตลาดและควา�
 					)
 				),
 			Field::make( 'checkbox', 'ad_sidebar_label', __( 'แสดงป้าย “โฆษณา”', 'tonkla' ) )
-				->set_default_value( true )
-				->set_conditional_logic(
-					array(
-						array(
-							'field' => 'ad_sidebar_enable',
-							'value' => true,
-						),
-					)
-				),
+				->set_default_value( true ),
 		)
 	)
 	->add_tab(
 		__( 'แชท', 'tonkla' ),
-		array(
-			Field::make( 'checkbox', 'chat_enable', __( 'เปิดวิดเจ็ตแชท', 'tonkla' ) )
-				->set_default_value( true ),
+                                array(
+			Field::make( 'checkbox', 'chat_enable', __( 'แสดงวิดเจ็ตแชทบนหน้าบ้าน', 'tonkla' ) )
+				->set_default_value( true )
+				->set_help_text( __( 'ติ๊กเพื่อแสดงบนหน้าบ้าน — ตั้งค่าด้านล่างได้เสมอแม้ปิดการแสดง', 'tonkla' ) ),
 			Field::make( 'textarea', 'chat_script', __( 'โค้ดฝังแชท', 'tonkla' ) )
-				->set_help_text( __( 'วาง JS SDK หรือ iframe ของผู้ให้บริการแชท', 'tonkla' ) )
-				->set_conditional_logic(
-					array(
-						array(
-							'field' => 'chat_enable',
-							'value' => true,
-						),
-					)
-				),
+				->set_help_text( __( 'วาง JS SDK หรือ iframe ของผู้ให้บริการแชท', 'tonkla' ) ),
 		)
 	)
 	->add_tab(
@@ -514,7 +608,7 @@ add_action(
  */
 Container::make( 'nav_menu_item', __( 'การตั้งค่าเมนู', 'tonkla' ) )
 	->add_fields(
-		array(
+                                array(
 			Field::make( 'text', 'icon_class', __( 'ไอคอน (FontAwesome)', 'tonkla' ) )
 				->set_classes( 'tonkla-icon-field' )
 				->set_help_text( __( 'กด “เลือกไอคอน” หรือพิมพ์คลาส เช่น fa-solid fa-house', 'tonkla' ) ),
@@ -543,7 +637,7 @@ Container::make( 'nav_menu_item', __( 'การตั้งค่าเมน�
 			Field::make( 'text', 'dropdown_footer_url', __( 'URL ปุ่ม', 'tonkla' ) )
 				->set_help_text( __( 'ลิงก์เมื่อคลิกปุ่ม “ดูทั้งหมด”', 'tonkla' ) )
 				->set_conditional_logic(
-					array(
+                                array(
 						array(
 							'field' => 'enable_dropdown_footer',
 							'value' => true,

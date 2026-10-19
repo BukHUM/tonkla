@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$tonkla_footer_list_class = 'space-y-2 text-sm';
+$tonkla_footer_list_class = 'tonkla-footer-menu space-y-2.5 text-sm';
 $tonkla_footer_desc       = tonkla_get_footer_description();
 $tonkla_has_services      = has_nav_menu( 'footer_services' );
 $tonkla_has_solutions     = has_nav_menu( 'footer_solutions' );
@@ -19,17 +19,17 @@ $tonkla_grid_md           = array(
 	3 => 'md:grid-cols-3',
 	4 => 'md:grid-cols-4',
 );
-$tonkla_grid_class        = 'grid grid-cols-2 gap-8 mb-8 ' . ( $tonkla_grid_md[ $tonkla_col_count ] ?? 'md:grid-cols-4' );
+$tonkla_grid_class        = 'grid grid-cols-2 gap-8 mb-10 ' . ( $tonkla_grid_md[ $tonkla_col_count ] ?? 'md:grid-cols-4' );
 ?>
-<footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 mt-auto">
-	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<footer class="tonkla-site-footer bg-slate-950 text-slate-400 mt-auto">
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-14">
 		<div class="<?php echo esc_attr( $tonkla_grid_class ); ?>">
 			<div class="<?php echo esc_attr( $tonkla_col_count > 1 ? 'col-span-2 md:col-span-1' : 'col-span-2' ); ?>">
-				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="flex items-center gap-2 mb-4">
-					<?php tonkla_the_logo( 'footer', 'h-8 w-auto brightness-0 invert opacity-80 hover:opacity-100 transition' ); ?>
+				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="inline-flex items-center gap-2 mb-4">
+					<?php tonkla_the_logo( 'footer', 'h-8 w-auto brightness-0 invert opacity-90 hover:opacity-100 transition' ); ?>
 				</a>
 				<?php if ( '' !== $tonkla_footer_desc ) : ?>
-					<p class="text-xs text-slate-400">
+					<p class="text-xs text-slate-500 leading-relaxed max-w-xs">
 						<?php echo esc_html( $tonkla_footer_desc ); ?>
 					</p>
 				<?php endif; ?>
@@ -37,7 +37,7 @@ $tonkla_grid_class        = 'grid grid-cols-2 gap-8 mb-8 ' . ( $tonkla_grid_md[ 
 
 			<?php if ( $tonkla_has_services ) : ?>
 				<div>
-					<p class="text-white font-heading font-bold mb-4"><?php esc_html_e( 'บริการ', 'tonkla' ); ?></p>
+					<p class="text-white font-heading font-bold mb-4 text-sm tracking-wide"><?php esc_html_e( 'บริการ', 'tonkla' ); ?></p>
 					<?php
 					wp_nav_menu(
 						array(
@@ -53,7 +53,7 @@ $tonkla_grid_class        = 'grid grid-cols-2 gap-8 mb-8 ' . ( $tonkla_grid_md[ 
 
 			<?php if ( $tonkla_has_solutions ) : ?>
 				<div>
-					<p class="text-white font-heading font-bold mb-4"><?php esc_html_e( 'โซลูชัน', 'tonkla' ); ?></p>
+					<p class="text-white font-heading font-bold mb-4 text-sm tracking-wide"><?php esc_html_e( 'โซลูชัน', 'tonkla' ); ?></p>
 					<?php
 					wp_nav_menu(
 						array(
@@ -69,7 +69,7 @@ $tonkla_grid_class        = 'grid grid-cols-2 gap-8 mb-8 ' . ( $tonkla_grid_md[ 
 
 			<?php if ( $tonkla_has_customers ) : ?>
 				<div>
-					<p class="text-white font-heading font-bold mb-4"><?php esc_html_e( 'สำหรับลูกค้า', 'tonkla' ); ?></p>
+					<p class="text-white font-heading font-bold mb-4 text-sm tracking-wide"><?php esc_html_e( 'สำหรับลูกค้า', 'tonkla' ); ?></p>
 					<?php
 					wp_nav_menu(
 						array(
@@ -84,30 +84,30 @@ $tonkla_grid_class        = 'grid grid-cols-2 gap-8 mb-8 ' . ( $tonkla_grid_md[ 
 			<?php endif; ?>
 		</div>
 
-		<div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm gap-4">
-			<div>
+		<div class="border-t border-slate-800/80 pt-8 flex flex-col md:flex-row justify-between items-center text-sm gap-4">
+			<div class="text-center md:text-left">
 				<?php echo wp_kses_post( tonkla_get_copyright_text() ); ?>
 
 				<?php
 				/** Filter: return false to hide the theme credit regardless of the setting. */
 				if ( apply_filters( 'tonkla_show_footer_credit', (bool) carbon_get_theme_option( 'footer_show_credit' ) ) ) :
 					?>
-					<span class="block mt-1 md:mt-0 md:inline text-xs text-slate-400">
-						<span class="hidden md:inline text-slate-600" aria-hidden="true">&middot;</span>
+					<span class="block mt-1 md:mt-0 md:inline text-xs text-slate-500">
+						<span class="hidden md:inline text-slate-700" aria-hidden="true">&middot;</span>
 						<?php esc_html_e( 'พัฒนาโดย', 'tonkla' ); ?>
-						<a href="<?php echo esc_url( 'https://tonkla.co' ); ?>" class="text-slate-300 hover:text-brand hover:underline transition" target="_blank" rel="noopener"><?php esc_html_e( 'ต้นกล้า ไอที', 'tonkla' ); ?></a>
+						<a href="<?php echo esc_url( 'https://tonkla.co' ); ?>" class="text-slate-400 hover:text-brand hover:underline transition" target="_blank" rel="noopener"><?php esc_html_e( 'ต้นกล้า ไอที', 'tonkla' ); ?></a>
 					</span>
 				<?php endif; ?>
 			</div>
 
-			<div class="flex flex-wrap gap-4 justify-center">
+			<div class="flex flex-wrap gap-x-5 gap-y-2 justify-center text-xs text-slate-500">
 				<?php if ( has_nav_menu( 'footer_legal' ) ) : ?>
 					<?php
 					wp_nav_menu(
 						array(
 							'theme_location' => 'footer_legal',
 							'container'      => false,
-							'menu_class'     => 'flex flex-wrap gap-4 justify-center',
+							'menu_class'     => 'tonkla-footer-legal flex flex-wrap gap-x-5 gap-y-2 justify-center',
 							'fallback_cb'    => false,
 						)
 					);
@@ -122,7 +122,7 @@ $tonkla_grid_class        = 'grid grid-cols-2 gap-8 mb-8 ' . ( $tonkla_grid_md[ 
 				<?php endif; ?>
 			</div>
 
-			<div class="flex gap-4">
+			<div class="flex gap-3">
 				<?php
 				$tonkla_social_icons = array(
 					'facebook'  => 'facebook',
@@ -140,7 +140,9 @@ $tonkla_grid_class        = 'grid grid-cols-2 gap-8 mb-8 ' . ( $tonkla_grid_md[ 
 						$aria = 'X';
 					}
 					?>
-					<a href="<?php echo esc_url( $url ); ?>" class="hover:text-brand transition" target="_blank" rel="noopener noreferrer" aria-label="<?php echo esc_attr( $aria ); ?>">
+					<a href="<?php echo esc_url( $url ); ?>"
+						class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-800 bg-slate-900/60 text-slate-400 hover:border-brand/40 hover:text-brand hover:bg-brand/10 transition"
+						target="_blank" rel="noopener noreferrer" aria-label="<?php echo esc_attr( $aria ); ?>">
 						<i class="fa-brands fa-<?php echo esc_attr( $icon_slug ); ?>" aria-hidden="true"></i>
 					</a>
 				<?php endforeach; ?>
@@ -168,32 +170,37 @@ if ( carbon_get_theme_option( 'pdpa_enable' ) ) :
 	if ( is_string( $pdpa_scripts ) && false !== strpos( $pdpa_scripts, 'UA-XXXXX-Y' ) ) {
 		$pdpa_scripts = '';
 	}
-	$policy_link  = '#';
-	$policy_assoc = carbon_get_theme_option( 'pdpa_policy_page' );
-
-	if ( $policy_assoc && ! empty( $policy_assoc[0] ) ) {
-		$policy_link = get_permalink( $policy_assoc[0]['id'] );
+	$policy_link = '#';
+	$policy_url  = function_exists( 'tonkla_get_pdpa_policy_url' ) ? tonkla_get_pdpa_policy_url() : '';
+	if ( '' !== $policy_url ) {
+		$policy_link = $policy_url;
+	}
+	if ( '#' !== $policy_link ) {
+		$pdpa_text = str_replace( 'href="#"', 'href="' . esc_url( $policy_link ) . '"', $pdpa_text );
 	}
 
-	$container_classes = 'fixed z-[60] bg-white border border-slate-200 transition-transform duration-500 ';
-	$pdpa_slide_off    = 'translate-y-[150%]';
-	$translate_class   = $pdpa_slide_off;
+	$is_center     = ( 'center' === $pdpa_pos );
+	$is_bottom_bar = ( 'bottom-bar' === $pdpa_pos );
+
+	$container_classes = 'fixed z-[60] bg-white border border-slate-200 shadow-lg transition duration-300 ease-out ';
+	$hidden_class      = 'translate-y-[150%]';
 
 	switch ( $pdpa_pos ) {
 		case 'bottom-right':
-			$container_classes .= 'bottom-6 right-6 w-full md:w-96 rounded-none md:rounded-2xl p-6';
+			$container_classes .= 'bottom-6 right-6 left-6 sm:left-auto w-auto sm:w-96 rounded-xl p-5';
 			break;
 		case 'bottom-bar':
-			$container_classes .= 'bottom-0 left-0 w-full p-6 border-t border-slate-200';
-			$translate_class    = 'translate-y-full';
+			$container_classes .= 'bottom-0 left-0 w-full rounded-none p-4 sm:p-5 border-x-0 border-b-0 shadow-[0_-4px_24px_rgba(15,23,42,0.06)]';
+			$hidden_class       = 'translate-y-full';
 			break;
 		case 'center':
-			$container_classes .= 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg rounded-2xl p-8 opacity-0 pointer-events-none scale-95';
-			$translate_class    = 'opacity-0 pointer-events-none scale-95';
+			// Dialog card — backdrop is a sibling below.
+			$container_classes .= 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-md rounded-2xl p-6 sm:p-7 shadow-2xl shadow-slate-900/15';
+			$hidden_class       = 'opacity-0 pointer-events-none scale-95';
 			break;
 		case 'bottom-left':
 		default:
-			$container_classes .= 'bottom-6 left-6 w-full md:w-96 rounded-none md:rounded-2xl p-6';
+			$container_classes .= 'bottom-6 left-6 right-6 sm:right-auto w-auto sm:w-96 rounded-xl p-5';
 			break;
 	}
 	?>
@@ -204,43 +211,45 @@ if ( carbon_get_theme_option( 'pdpa_enable' ) ) :
 		</script>
 	<?php endif; ?>
 
-	<div id="pdpa-banner" data-position="<?php echo esc_attr( $pdpa_pos ); ?>"
-		class="<?php echo esc_attr( $container_classes . ' ' . $translate_class ); ?>">
+	<?php if ( $is_center ) : ?>
+		<div id="pdpa-backdrop"
+			class="fixed inset-0 z-[59] bg-slate-900/40 opacity-0 pointer-events-none transition-opacity duration-300"
+			aria-hidden="true"></div>
+	<?php endif; ?>
 
-		<?php if ( 'center' === $pdpa_pos ) : ?>
-			<div id="pdpa-backdrop" class="fixed inset-0 bg-slate-900/50 -z-10 absolute"></div>
-		<?php endif; ?>
+	<div id="pdpa-banner"
+		data-position="<?php echo esc_attr( $pdpa_pos ); ?>"
+		class="<?php echo esc_attr( $container_classes . ' ' . $hidden_class ); ?>"
+		<?php echo $is_center ? 'role="dialog" aria-modal="true" aria-labelledby="pdpa-title"' : 'role="region" aria-label="' . esc_attr__( 'ยินยอมคุกกี้', 'tonkla' ) . '"'; ?>>
 
-		<div class="flex <?php echo ( 'bottom-bar' === $pdpa_pos ) ? 'flex-col md:flex-row items-center justify-between gap-6' : 'flex-col items-start gap-4'; ?>">
-			<div class="flex items-start gap-4">
-				<div class="text-3xl text-brand shrink-0" aria-hidden="true">
-					<i class="fa-solid fa-cookie-bite"></i>
+		<div class="flex <?php echo $is_bottom_bar ? 'flex-col sm:flex-row sm:items-center sm:justify-between gap-4' : 'flex-col gap-5'; ?>">
+			<div class="flex items-start gap-3.5 min-w-0">
+				<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand" aria-hidden="true">
+					<i class="fa-solid fa-cookie-bite text-lg"></i>
 				</div>
-				<div>
-					<h4 class="font-bold text-slate-900 mb-2">เว็บไซต์นี้ใช้คุกกี้</h4>
-					<div class="text-xs text-slate-500 leading-relaxed pdpa-content [&_a]:text-brand [&_a]:underline">
+				<div class="min-w-0 pt-0.5">
+					<h4 id="pdpa-title" class="font-heading font-bold text-slate-900 text-base leading-snug mb-1.5">
+						<?php esc_html_e( 'เว็บไซต์นี้ใช้คุกกี้', 'tonkla' ); ?>
+					</h4>
+					<div class="text-sm text-slate-600 leading-relaxed pdpa-content [&_a]:text-brand [&_a]:underline [&_a]:font-medium">
 						<?php
-						if ( '#' !== $policy_link ) {
-							$pdpa_text = str_replace( 'href="#"', 'href="' . esc_url( $policy_link ) . '"', $pdpa_text );
-						}
 						echo wp_kses_post( $pdpa_text );
-
 						if ( '#' !== $policy_link && false === strpos( $pdpa_text, 'href' ) ) :
 							?>
-							<a href="<?php echo esc_url( $policy_link ); ?>" class="text-brand hover:underline">นโยบายความเป็นส่วนตัว</a>
+							<a href="<?php echo esc_url( $policy_link ); ?>" class="text-brand hover:underline"><?php esc_html_e( 'นโยบายความเป็นส่วนตัว', 'tonkla' ); ?></a>
 						<?php endif; ?>
 					</div>
 				</div>
 			</div>
 
-			<div class="flex gap-2 shrink-0 <?php echo ( 'bottom-bar' === $pdpa_pos ) ? 'mt-4 md:mt-0' : 'mt-2'; ?>">
-				<button id="pdpa-accept-btn" type="button"
-					class="px-6 py-2.5 bg-brand hover:bg-brand-dark text-white text-sm font-bold rounded-lg transition border border-brand">
-					<?php echo esc_html( $accept_text ); ?>
-				</button>
+			<div class="flex <?php echo $is_center ? 'flex-col-reverse sm:flex-row' : ( $is_bottom_bar ? 'flex-row' : 'flex-row' ); ?> gap-2 shrink-0 w-full <?php echo $is_bottom_bar ? 'sm:w-auto' : ''; ?>">
 				<button id="pdpa-reject-btn" type="button"
-					class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-bold rounded-lg transition border border-slate-200">
+					class="<?php echo $is_center ? 'flex-1' : ''; ?> px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold rounded-lg transition border border-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400">
 					<?php echo esc_html( $reject_text ); ?>
+				</button>
+				<button id="pdpa-accept-btn" type="button"
+					class="<?php echo $is_center ? 'flex-1' : ''; ?> px-5 py-2.5 bg-brand hover:bg-brand-dark text-white text-sm font-semibold rounded-lg transition border border-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">
+					<?php echo esc_html( $accept_text ); ?>
 				</button>
 			</div>
 		</div>

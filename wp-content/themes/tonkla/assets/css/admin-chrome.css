@@ -5,15 +5,22 @@
 
 :root {
 	--tonkla-admin-font: "Sarabun", "Prompt", "Segoe UI", Tahoma, sans-serif;
-	--tonkla-admin-bar: #0b1220;
-	--tonkla-admin-menu: #162032;
-	--tonkla-admin-menu-hover: #1c2b40;
+	/* Top bar stays near-black; sidebar is a clearly lifted slate so regions read apart. */
+	--tonkla-admin-bar: #080e18;
+	/* Admin-bar dropdowns stay in the bar family — do NOT reuse sidebar slate. */
+	--tonkla-admin-bar-hover: #121a28;
+	--tonkla-admin-bar-dropdown: #0e1522;
+	--tonkla-admin-bar-dropdown-hover: #182234;
+	/* Sidebar: neutral slate/grey (no blue from WP “Modern” scheme). */
+	--tonkla-admin-menu: #2a2f36;
+	--tonkla-admin-menu-hover: #3d4450;
+	--tonkla-admin-menu-submenu: #22262c;
 	--tonkla-admin-menu-current: #0f766e;
 	--tonkla-admin-accent: #059669;
 	/* Link text: ≥ 4.5:1 on #fff and #f0f0f1 */
 	--tonkla-admin-link: #047857;
 	--tonkla-admin-link-hover: #065f46;
-	--tonkla-admin-border: #2a384f;
+	--tonkla-admin-border: #4a5160;
 	--tonkla-admin-text: #e2e8f0;
 	--tonkla-admin-muted: #94a3b8;
 	/* เส้นขอบโซนเนื้อหา (อ่อนกว่าค่า WP มาตรฐาน) */
@@ -50,7 +57,6 @@ body.wp-admin :where(#wpbody) a:focus {
 /* —— Typography —— */
 body.wp-admin,
 body.wp-admin #wpadminbar,
-body.wp-admin #wpadminbar *,
 body.wp-admin #adminmenu,
 body.wp-admin #adminmenu .wp-submenu a,
 body.wp-admin #wpbody,
@@ -59,10 +65,40 @@ body.wp-admin #wpcontent,
 body.wp-admin input,
 body.wp-admin select,
 body.wp-admin textarea,
-body.wp-admin button,
+body.wp-admin button:not(.dashicons),
 body.wp-admin .button,
 body.wp-admin .page-title-action {
 	font-family: var(--tonkla-admin-font);
+}
+
+/*
+ * Dashicons must keep their icon font. Forcing Sarabun on buttons turned Carbon
+ * association dismiss/edit controls into empty squares.
+ */
+body.wp-admin .dashicons,
+body.wp-admin .dashicons-before:before,
+body.wp-admin button.dashicons,
+body.wp-admin .cf-association__option-action {
+	font-family: dashicons !important;
+}
+
+/*
+ * Checkboxes: quiet slate accent — no thick brand-green ring (WP theme color /
+ * accent-color made every Carbon toggle look loud).
+ */
+body.tonkla-admin-chrome input[type="checkbox"],
+body.tonkla-admin-chrome .cf-checkbox__input {
+	accent-color: #64748b;
+}
+
+body.tonkla-admin-chrome input[type="checkbox"]:focus,
+body.tonkla-admin-chrome input[type="checkbox"]:focus-visible,
+body.tonkla-admin-chrome .cf-checkbox__input:focus,
+body.tonkla-admin-chrome .cf-checkbox__input:focus-visible {
+	outline: 1px solid #94a3b8;
+	outline-offset: 1px;
+	box-shadow: none;
+	border-color: #94a3b8;
 }
 
 body.wp-admin {
@@ -99,13 +135,13 @@ body.wp-admin .wrap > h1 {
 #wpadminbar .ab-top-menu > li.hover > .ab-item,
 #wpadminbar .ab-top-menu > li > .ab-item:focus,
 #wpadminbar.nojq .quicklinks .ab-top-menu > li > .ab-item:focus {
-	background: var(--tonkla-admin-menu) !important;
+	background: var(--tonkla-admin-bar-hover) !important;
 	color: #fff !important;
 }
 
 #wpadminbar .ab-submenu {
-	background: var(--tonkla-admin-menu) !important;
-	border: 1px solid var(--tonkla-admin-border);
+	background: var(--tonkla-admin-bar-dropdown) !important;
+	border: 1px solid #1e2a3d;
 }
 
 #wpadminbar .ab-submenu .ab-item {
@@ -114,12 +150,23 @@ body.wp-admin .wrap > h1 {
 
 #wpadminbar .ab-submenu .ab-item:hover,
 #wpadminbar .ab-submenu .ab-item:focus {
-	background: var(--tonkla-admin-menu-hover) !important;
+	background: var(--tonkla-admin-bar-dropdown-hover) !important;
 	color: #fff !important;
 }
 
 #wpadminbar .ab-top-secondary {
 	background: transparent;
+}
+
+/*
+ * Site icon / blavatar on the dark bar: force greyscale + invert so dark/brand
+ * favicons read as light grey (no background chip).
+ */
+#wpadminbar #wp-admin-bar-site-name > .ab-item img.site-icon,
+#wpadminbar .quicklinks li img.blavatar {
+	filter: grayscale(100%) invert(1);
+	opacity: 0.9;
+	vertical-align: middle;
 }
 
 /* —— Left sidebar (lifted slate — separate from top bar) ——
@@ -171,34 +218,52 @@ body.wp-admin .wrap > h1 {
 	opacity: 1;
 }
 
-#adminmenu li.menu-top:hover,
-#adminmenu li.opensub > a.menu-top,
-#adminmenu li > a.menu-top:focus {
+/*
+ * Hover must paint the <a> (WP Modern / colors.css paints blue there). Neutral grey only.
+ */
+body.tonkla-admin-chrome #adminmenu li.menu-top:hover,
+body.tonkla-admin-chrome #adminmenu li.menu-top:hover > a,
+body.tonkla-admin-chrome #adminmenu li.menu-top:hover > a.menu-top,
+body.tonkla-admin-chrome #adminmenu li.opensub > a.menu-top,
+body.tonkla-admin-chrome #adminmenu li > a.menu-top:focus,
+body.tonkla-admin-chrome #adminmenu li.menu-top > a:focus,
+body.tonkla-admin-chrome #adminmenu li.menu-top > a:hover,
+body.tonkla-admin-chrome #adminmenu a.menu-top:hover,
+body.tonkla-admin-chrome #adminmenu a.menu-top:focus {
 	background: var(--tonkla-admin-menu-hover) !important;
+	background-color: var(--tonkla-admin-menu-hover) !important;
+	color: #fff !important;
+	box-shadow: none !important;
+}
+
+body.tonkla-admin-chrome #adminmenu li.menu-top:hover div.wp-menu-image:before,
+body.tonkla-admin-chrome #adminmenu li.opensub > a.menu-top div.wp-menu-image:before,
+body.tonkla-admin-chrome #adminmenu li.menu-top > a:hover div.wp-menu-image:before,
+body.tonkla-admin-chrome #adminmenu li.menu-top > a:focus div.wp-menu-image:before,
+body.tonkla-admin-chrome #adminmenu a.menu-top:hover div.wp-menu-image:before,
+body.tonkla-admin-chrome #adminmenu a.menu-top:focus div.wp-menu-image:before {
 	color: #fff !important;
 }
 
-#adminmenu li.menu-top:hover div.wp-menu-image:before,
-#adminmenu li.opensub > a.menu-top div.wp-menu-image:before {
-	color: #fff !important;
-}
-
-#adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
-#adminmenu li.current a.menu-top,
-#adminmenu .wp-submenu li.current,
-#adminmenu .wp-submenu li.current a,
-#adminmenu .wp-submenu li.current a:hover {
+body.tonkla-admin-chrome #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
+body.tonkla-admin-chrome #adminmenu li.wp-has-current-submenu:hover > a.wp-has-current-submenu,
+body.tonkla-admin-chrome #adminmenu li.current a.menu-top,
+body.tonkla-admin-chrome #adminmenu li.current.menu-top:hover > a.menu-top,
+body.tonkla-admin-chrome #adminmenu .wp-submenu li.current,
+body.tonkla-admin-chrome #adminmenu .wp-submenu li.current a,
+body.tonkla-admin-chrome #adminmenu .wp-submenu li.current a:hover {
 	background: var(--tonkla-admin-menu-current) !important;
+	background-color: var(--tonkla-admin-menu-current) !important;
 	color: #fff !important;
 }
 
-#adminmenu li.wp-has-current-submenu div.wp-menu-image:before,
-#adminmenu li.current div.wp-menu-image:before {
+body.tonkla-admin-chrome #adminmenu li.wp-has-current-submenu div.wp-menu-image:before,
+body.tonkla-admin-chrome #adminmenu li.current div.wp-menu-image:before {
 	color: #fff !important;
 }
 
 #adminmenu .wp-submenu {
-	background: #121c2c !important;
+	background: var(--tonkla-admin-menu-submenu) !important;
 	border: 1px solid var(--tonkla-admin-border);
 	border-left: 0;
 }
@@ -207,10 +272,12 @@ body.wp-admin .wrap > h1 {
 	color: var(--tonkla-admin-muted) !important;
 }
 
-#adminmenu .wp-submenu a:hover,
-#adminmenu .wp-submenu a:focus {
+body.tonkla-admin-chrome #adminmenu .wp-submenu a:hover,
+body.tonkla-admin-chrome #adminmenu .wp-submenu a:focus {
 	background: var(--tonkla-admin-menu-hover) !important;
+	background-color: var(--tonkla-admin-menu-hover) !important;
 	color: #fff !important;
+	box-shadow: none !important;
 }
 
 #adminmenu .wp-submenu-head,

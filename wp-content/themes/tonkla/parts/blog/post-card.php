@@ -37,7 +37,7 @@ if (!defined('ABSPATH')) {
         ?>
     </div>
     <div class="p-6 flex-1 flex flex-col">
-        <div class="text-xs text-slate-500 mb-3 flex justify-between">
+        <div class="text-caption mb-3 flex justify-between">
             <span><?php echo esc_html(get_the_date('j M Y')); ?></span>
             <span><?php echo esc_html(tonkla_reading_time()); ?> min read</span>
         </div>

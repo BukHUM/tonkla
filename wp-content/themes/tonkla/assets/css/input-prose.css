@@ -6,6 +6,15 @@
 @tailwind components;
 
 /**
+ * Typography plugin defaults to max-width: 65ch — that wins over Tailwind's
+ * max-w-none because prose.css loads after main.css, leaving a wide empty
+ * strip beside article text. Force full column width on content pages.
+ */
+.prose {
+	max-width: none;
+}
+
+/**
  * Tighter, even vertical rhythm for article body — especially on mobile.
  * Default typography plugin uses ~2em before h2 / 3em around hr which feels uneven.
  */

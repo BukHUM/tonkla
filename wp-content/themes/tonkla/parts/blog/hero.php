@@ -23,7 +23,7 @@ $search_id = isset($args['search_id']) ? $args['search_id'] : 'tonkla-blog-searc
     <div class="absolute top-0 right-0 w-96 h-96 bg-brand/5 rounded-full blur-3xl opacity-50 -mr-20 -mt-20"></div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         <span
-            class="inline-block py-1 px-3 rounded-full bg-slate-100 border border-slate-200 text-slate-500 text-xs font-heading tracking-wide mb-6">
+            class="inline-block py-1 px-3 rounded-full bg-slate-100 border border-slate-200 text-caption tracking-wide mb-6">
             <?php echo esc_html($badge_text); ?>
         </span>
         <h1 class="text-4xl md:text-5xl font-heading font-bold text-slate-900 mb-6">

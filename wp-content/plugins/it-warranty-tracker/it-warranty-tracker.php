@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ITWT_VERSION', '1.5.17' );
+define( 'ITWT_VERSION', '1.5.21' );
 define( 'ITWT_DB_VERSION', '1.3.1' );
 define( 'ITWT_PLUGIN_FILE', __FILE__ );
 define( 'ITWT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );

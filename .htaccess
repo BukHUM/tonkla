@@ -1,3 +1,33 @@
+# ---------------------------------------------------------------------------
+# Performance: compression + long-cache for versioned static assets
+# (Safe with ?ver= / filemtime query strings — URL changes when file changes.)
+# ---------------------------------------------------------------------------
+<IfModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript
+	AddOutputFilterByType DEFLATE application/javascript application/x-javascript application/json
+	AddOutputFilterByType DEFLATE application/xml application/rss+xml application/xhtml+xml
+	AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+	ExpiresActive On
+	ExpiresDefault "access plus 1 week"
+	ExpiresByType text/css "access plus 1 year"
+	ExpiresByType text/javascript "access plus 1 year"
+	ExpiresByType application/javascript "access plus 1 year"
+	ExpiresByType font/woff2 "access plus 1 year"
+	ExpiresByType application/font-woff2 "access plus 1 year"
+	ExpiresByType image/jpeg "access plus 1 month"
+	ExpiresByType image/png "access plus 1 month"
+	ExpiresByType image/webp "access plus 1 month"
+	ExpiresByType image/svg+xml "access plus 1 month"
+</IfModule>
+
+<IfModule mod_headers.c>
+	<FilesMatch "\.(css|js|woff2|jpg|jpeg|png|webp|svg)$">
+		Header set Cache-Control "public, max-age=31536000, immutable"
+	</FilesMatch>
+</IfModule>
 
 # BEGIN WordPress
 # ทิศทาง (เส้น) ระหว่าง "จุดเริ่มต้น WordPress" และ "จุดสิ้นสุด WordPress" จะถูกสร้างขึ้นมา

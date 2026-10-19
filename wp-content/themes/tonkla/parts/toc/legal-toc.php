@@ -33,19 +33,21 @@ if ($slug === 'privacy-policy' || $slug === 'privacy') {
 }
 ?>
 <div x-data="toc()" x-init="init()"
-    class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 sticky top-24 transition-all duration-300">
-    <div class="flex items-center justify-between mb-4 cursor-pointer" @click="toggle()">
-        <h3 class="font-heading font-bold text-slate-800 text-lg flex items-center gap-2">
-            <i class="fa-solid fa-list-ul text-brand"></i>
-            สารบัญเนื้อหา
+    class="bg-white rounded-xl shadow-sm border border-slate-100 p-3 md:p-4 transition-all duration-300">
+    <div class="flex items-center justify-between gap-3 cursor-pointer" :class="expanded ? 'mb-2 md:mb-3' : 'mb-0'" @click="toggle()">
+        <h3 class="font-heading font-bold text-slate-800 text-sm md:text-base flex items-center gap-2">
+            <i class="fa-solid fa-list-ul text-brand" aria-hidden="true"></i>
+            <?php esc_html_e( 'สารบัญเนื้อหา', 'tonkla' ); ?>
         </h3>
-        <button class="text-slate-400 hover:text-brand transition transform duration-200"
-            :class="{ 'rotate-180': !expanded }">
-            <i class="fa-solid fa-chevron-up"></i>
+        <button type="button" class="text-slate-400 hover:text-brand transition transform duration-200"
+            :class="{ 'rotate-180': !expanded }"
+            :aria-expanded="expanded ? 'true' : 'false'"
+            aria-label="<?php echo esc_attr__( 'Toggle table of contents', 'tonkla' ); ?>">
+            <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
         </button>
     </div>
 
-    <div x-show="expanded" x-collapse class="overflow-hidden transition-all duration-300">
+    <div x-show="expanded" x-collapse.duration.300ms class="overflow-hidden">
         <nav class="toc-nav relative">
             <ul class="space-y-1 relative">
                 <?php foreach ($items as $item): ?>
