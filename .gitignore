@@ -72,8 +72,15 @@ secrets.json
 # Ignore all plugins, then allowlist custom ones
 /wp-content/plugins/*
 !/wp-content/plugins/index.php
-!/wp-content/plugins/it-warranty-tracker/
-!/wp-content/plugins/it-warranty-tracker/**
+!/wp-content/plugins/tonkla-warranty-tracker/
+!/wp-content/plugins/tonkla-warranty-tracker/**
+!/wp-content/plugins/tonkla-image-optimizer/
+!/wp-content/plugins/tonkla-image-optimizer/**
+!/wp-content/plugins/tonkla-database-cleaner/
+!/wp-content/plugins/tonkla-database-cleaner/**
+
+# Local Suite migration backups (never commit)
+/_suite-backups/
 
 # Ignore all themes, then allowlist Tonkla theme
 /wp-content/themes/*

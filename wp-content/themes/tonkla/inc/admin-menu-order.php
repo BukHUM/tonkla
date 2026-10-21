@@ -51,6 +51,7 @@ function tonkla_default_admin_menu_order(): array {
 		'index.php',
 		'crb_carbon_fields_container_dashboard.php',
 		'itwt-dashboard',
+		'tonkla-image-optimizer',
 		'separator1',
 		'edit.php',
 		'upload.php',

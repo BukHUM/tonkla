@@ -1,0 +1,10 @@
+{
+    "name": "tonkla/image-optimizer",
+    "description": "Tonkla Image Optimizer — part of Tonkla Suite for WordPress.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": { "php": ">=8.1" },
+    "autoload": {
+        "psr-4": { "Tonkla\\ImageOptimizer\\": "src/" }
+    }
+}

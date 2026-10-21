@@ -89,8 +89,12 @@ $tonkla_grid_class        = 'grid grid-cols-2 gap-8 mb-10 ' . ( $tonkla_grid_md[
 				<?php echo wp_kses_post( tonkla_get_copyright_text() ); ?>
 
 				<?php
-				/** Filter: return false to hide the theme credit regardless of the setting. */
-				if ( apply_filters( 'tonkla_show_footer_credit', (bool) carbon_get_theme_option( 'footer_show_credit' ) ) ) :
+				/**
+				 * Developer credit is a condition of the free license and is always
+				 * shown. The filter remains as a code-level escape hatch for
+				 * licensed/commercial builds only; there is no admin off switch.
+				 */
+				if ( apply_filters( 'tonkla_show_footer_credit', true ) ) :
 					?>
 					<span class="block mt-1 md:mt-0 md:inline text-xs text-slate-500">
 						<span class="hidden md:inline text-slate-700" aria-hidden="true">&middot;</span>

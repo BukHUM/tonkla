@@ -1,13 +1,15 @@
-# Tonkla IT WordPress Theme
+# Tonkla — WordPress Theme
+
+ส่วนหนึ่งของ **Tonkla Suite for WordPress** โดย ต้นกล้า ไอที — https://tonkla.co
 
 Custom WordPress theme for Tonkla IT, built with Tailwind CSS and Carbon Fields.
 
-**Author:** [Tonkla IT Team](https://www.konderntang.com)
+**Author:** [ต้นกล้า ไอที](https://tonkla.co)
 
 ## Requirements
 
--   **WordPress**: 6.0+
--   **PHP**: 7.4+
+-   **WordPress**: 6.2+
+-   **PHP**: 8.1+
 -   **Plugins Required**:
     -   [Carbon Fields](https://carbonfields.net/) (Essential for Theme Options & Page Builder)
     -   [Polylang](https://wordpress.org/plugins/polylang/) (Optional, for multi-language support)

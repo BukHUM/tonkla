@@ -282,7 +282,7 @@ function tonkla_language_switcher_field() {
  * Overview (Dashboard) — keep stable parent slug.
  */
 Container::make( 'theme_options', __( 'Dashboard', 'tonkla' ) )
-	->set_page_menu_title( 'TONKLA - IT' )
+	->set_page_menu_title( 'Tonkla - Theme' )
 	->set_page_file( TONKLA_ADMIN_SLUG_PARENT )
 	->set_icon( 'dashicons-admin-site-alt3' )
 	->add_fields(
@@ -347,9 +347,17 @@ Container::make( 'theme_options', __( 'ตั้งค่าเว็บไซ�
 			Field::make( 'text', 'copyright_text', __( 'ข้อความลิขสิทธิ์', 'tonkla' ) )
 				->set_help_text( __( 'ว่างไว้จะแสดง © ปี + ชื่อเว็บไซต์จาก Settings → General', 'tonkla' ) )
 				->set_attribute( 'placeholder', '© 2026 Your Site Name. All rights reserved.' ),
-			Field::make( 'checkbox', 'footer_show_credit', __( 'แสดงเครดิตผู้พัฒนาธีม', 'tonkla' ) )
-				->set_default_value( true )
-				->set_help_text( __( 'แสดงข้อความ “พัฒนาโดย ต้นกล้า ไอที” ต่อท้ายข้อความลิขสิทธิ์ — เอาเครื่องหมายออกเพื่อซ่อน', 'tonkla' ) ),
+			// Credit display is a condition of the free license, so there is no off
+			// switch: this read-only notice replaces the former checkbox. (A disabled
+			// checkbox would also be saved as "false" by Carbon Fields on every save.)
+			Field::make( 'html', 'footer_credit_notice', __( 'เครดิตผู้พัฒนาธีม', 'tonkla' ) )
+				->set_html(
+					static function () {
+						return '<p style="margin:0;color:#50575e"><strong style="color:#1d2327">' . esc_html__( 'แสดงเสมอ:', 'tonkla' ) . '</strong> '
+							. esc_html__( 'ข้อความ “พัฒนาโดย ต้นกล้า ไอที” ต่อท้ายข้อความลิขสิทธิ์ — ธีมนี้ให้ใช้ฟรีภายใต้เงื่อนไขว่าต้องแสดงเครดิตผู้พัฒนา จึงไม่มีตัวเลือกปิด', 'tonkla' )
+							. ' (<a href="https://www.gnu.org/licenses/gpl-2.0.html" target="_blank" rel="noopener">GPL v2 or later</a>)</p>';
+					}
+				),
 			Field::make( 'checkbox', 'enable_back_to_top', __( 'ปุ่มกลับขึ้นบน', 'tonkla' ) )
 				->set_default_value( true ),
 		)

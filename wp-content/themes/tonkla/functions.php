@@ -15,6 +15,20 @@ if ( is_readable( $tonkla_autoload ) ) {
 	require_once $tonkla_autoload;
 }
 
+/* PSR-4 fallback for Tonkla\Theme\ new code (src/) when Composer autoload is stale. */
+spl_autoload_register(
+	static function ( $tonkla_class ) {
+		$tonkla_prefix = 'Tonkla\\Theme\\';
+		if ( strpos( $tonkla_class, $tonkla_prefix ) !== 0 ) {
+			return;
+		}
+		$tonkla_file = get_template_directory() . '/src/' . str_replace( '\\', '/', substr( $tonkla_class, strlen( $tonkla_prefix ) ) ) . '.php';
+		if ( is_readable( $tonkla_file ) ) {
+			require_once $tonkla_file;
+		}
+	}
+);
+
 /**
  * Front-end security headers (XFO, nosniff, Referrer-Policy, Permissions-Policy)
  */

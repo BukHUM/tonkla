@@ -1,0 +1,47 @@
+.tonkla-db-wrap{max-width:none;margin:10px 20px 20px 2px}
+.tonkla-db-wrap h2{margin-top:28px}
+.tonkla-db-card{background:#fff;border:1px solid #dcdcde;border-radius:4px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;color:#50575e;text-decoration:none}
+.tonkla-db-card-num{font-size:22px;font-weight:600;color:#1d2327;line-height:1.2}
+.tonkla-db-num-warn{color:#b32d2e}
+a.tonkla-db-card:hover{border-color:#047857}
+.tonkla-db-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 8px}
+.tonkla-db-card-label{color:#50575e}
+.tonkla-db-safety{position:sticky;top:32px;z-index:20;background:#fff;border:1px solid #dcdcde;border-left:4px solid #d63638;padding:10px 16px;margin:0 0 12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.tonkla-db-backup{font-weight:600}
+.tonkla-db-tabs{margin-bottom:0}
+.tonkla-db-tabpanel{background:transparent;padding-top:16px}
+.tonkla-db-table{margin:12px 0 24px;border-collapse:collapse}
+.tonkla-db-table th,.tonkla-db-table td{padding:8px 10px;vertical-align:middle;line-height:1.5;font-size:13px}
+.tonkla-db-table thead th{font-weight:600;border-bottom:1px solid #c3c4c7;background:#f6f7f7}
+.tonkla-db-table tbody td{border-top:1px solid #eeeeee}
+.tonkla-db-table-checkable{table-layout:fixed}
+.tonkla-db-table-checkable th:first-child,.tonkla-db-table-checkable td:first-child{width:36px;text-align:center;padding-left:8px;padding-right:0}
+.tonkla-db-table-checkable th:first-child input,.tonkla-db-table-checkable td:first-child input{display:block;margin:0 auto}
+.tonkla-db-table thead th{vertical-align:middle;line-height:1.4}
+.tonkla-db-table thead th:first-child{padding-top:8px;padding-bottom:8px}
+.tonkla-db-table .tonkla-db-col-num{width:150px;text-align:right}
+.tonkla-db-table .tonkla-db-col-action{width:130px;text-align:right}
+.tonkla-db-table-general td:nth-child(3){text-align:right;font-variant-numeric:tabular-nums}
+.tonkla-db-table-general td:nth-child(4){text-align:right}
+.tonkla-db-orphan-table td:nth-child(2){width:32%;word-break:break-all}
+.tonkla-db-orphan-table td:nth-child(3){width:18%}
+.tonkla-db-orphan-table td:nth-child(5){text-align:right;font-variant-numeric:tabular-nums}
+.tonkla-db-group-row td{background:#f6f7f7;padding-top:6px;padding-bottom:6px}
+.tonkla-db-group-row strong{font-size:13px;color:#1d2327}
+.tonkla-db-orphan-table thead th{position:sticky;top:118px;background:#f6f7f7;z-index:5}
+.tonkla-db-group-row td{background:#f6f7f7}
+.tonkla-db-scanbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.tonkla-db-actionbar{position:sticky;top:76px;z-index:15;background:#f0f0f1;padding:8px 4px}
+.tonkla-db-segmented{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 8px}
+.tonkla-db-segmented .button{height:auto;padding:6px 12px;line-height:1.4}
+.tonkla-db-seg-count{display:block;font-size:11px;color:#50575e}
+.tonkla-db-wrap .button:focus-visible,.tonkla-db-wrap select:focus-visible,.tonkla-db-wrap input:focus-visible,.tonkla-db-wrap a:focus-visible{outline:2px solid #047857;outline-offset:1px}
+.tonkla-db-credit{text-align:center;color:#50575e;margin:24px 0 8px}
+.tonkla-db-credit a{color:#047857}
+#tonkla-db-status,#tonkla-db-general-status{color:#50575e}
+.tonkla-db-danger{color:#b32d2e;border-color:#b32d2e}
+.tonkla-db-danger:hover,.tonkla-db-danger:focus{color:#8a2424;border-color:#8a2424}
+.tonkla-db-dangerzone{display:flex;gap:16px;align-items:center;justify-content:space-between;background:#fff;border:1px solid #dcdcde;border-left:4px solid #b32d2e;padding:14px 16px;margin:20px 0 4px}
+.tonkla-db-dangerzone p{margin:4px 0 0;color:#50575e}
+@media (max-width:960px){.tonkla-db-cards{grid-template-columns:repeat(2,1fr)}.tonkla-db-safety{top:46px}.tonkla-db-orphan-table thead th{top:132px}.tonkla-db-dangerzone{flex-direction:column;align-items:flex-start}}
+@media (max-width:600px){.tonkla-db-cards{grid-template-columns:1fr}}

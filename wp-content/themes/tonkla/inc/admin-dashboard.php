@@ -221,7 +221,7 @@ function tonkla_render_admin_dashboard(): string {
 				</h2>
 				<ul class="tonkla-dashboard__list">
 					<li>
-						<span class="tonkla-dashboard__label"><?php esc_html_e( 'ธีม TONKLA - IT', 'tonkla' ); ?></span>
+						<span class="tonkla-dashboard__label"><?php esc_html_e( 'ธีม Tonkla - Theme', 'tonkla' ); ?></span>
 						<span class="tonkla-dashboard__value"><?php echo esc_html( (string) $theme->get( 'Version' ) ); ?></span>
 					</li>
 					<li>
@@ -286,6 +286,37 @@ function tonkla_render_admin_dashboard(): string {
 						</li>
 					<?php endforeach; ?>
 				</ul>
+			</section>
+
+			<section class="tonkla-dashboard__card">
+				<h2>
+					<span class="dashicons dashicons-media-text" aria-hidden="true"></span>
+					<?php esc_html_e( 'สัญญาอนุญาต (License)', 'tonkla' ); ?>
+				</h2>
+				<ul class="tonkla-dashboard__list">
+					<li>
+						<span class="tonkla-dashboard__label"><?php esc_html_e( 'สัญญาอนุญาต', 'tonkla' ); ?></span>
+						<a class="tonkla-dashboard__value tonkla-dashboard__link" href="https://www.gnu.org/licenses/gpl-2.0.html" target="_blank" rel="noopener">
+							GNU GPL v2 or later
+						</a>
+					</li>
+					<li>
+						<span class="tonkla-dashboard__label"><?php esc_html_e( 'ลิขสิทธิ์', 'tonkla' ); ?></span>
+						<span class="tonkla-dashboard__value">&copy; <?php echo esc_html( gmdate( 'Y' ) ); ?> <?php esc_html_e( 'ต้นกล้า ไอที', 'tonkla' ); ?></span>
+					</li>
+					<li>
+						<span class="tonkla-dashboard__label"><?php esc_html_e( 'ผู้พัฒนา', 'tonkla' ); ?></span>
+						<a class="tonkla-dashboard__value tonkla-dashboard__link" href="https://tonkla.co" target="_blank" rel="noopener">tonkla.co</a>
+					</li>
+					<li>
+						<span class="tonkla-dashboard__label"><?php esc_html_e( 'ส่วนประกอบบุคคลที่สาม', 'tonkla' ); ?></span>
+						<span class="tonkla-dashboard__value"><?php esc_html_e( 'Font Awesome, Alpine.js, Tailwind CSS (MIT/OFL) — ดูรายละเอียดใน THIRD-PARTY-NOTICES.md', 'tonkla' ); ?></span>
+					</li>
+				</ul>
+				<p class="tonkla-dashboard__card-footer">
+					<?php esc_html_e( 'ข้อความสัญญาอนุญาตฉบับเต็มอยู่ในไฟล์ LICENSE ในโฟลเดอร์ธีม และที่', 'tonkla' ); ?>
+					<a href="https://www.gnu.org/licenses/gpl-2.0.html" target="_blank" rel="noopener">gnu.org/licenses/gpl-2.0.html</a>
+				</p>
 			</section>
 
 			<section class="tonkla-dashboard__card">
